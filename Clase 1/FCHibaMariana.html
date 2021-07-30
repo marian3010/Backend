@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Desafio 1 - Funcion</title>
+</head>
+
+<body>
+    <script>
+        function Usuario(nombre, apellido, libros, mascotas) {
+            this.nombre = nombre;
+            this.apellido = apellido;
+            this.libros = libros;
+            this.mascotas = mascotas;
+        }
+
+        Usuario.prototype.getFullName = function() {
+            return `${this.nombre} ${this.apellido}`
+        }
+
+        Usuario.prototype.addMascota = function(mascota) {
+            this.mascotas.push(mascota);
+        }
+
+        Usuario.prototype.getMascotas = function() {
+            return `el usuario tiene ${this.mascotas.length} mascotas`
+        }
+
+        Usuario.prototype.addBook = function(titulo, autor) {
+            const libro = {
+                titulo: titulo,
+                autor: autor,
+            }
+            this.libros.push(libro);
+        }
+
+        Usuario.prototype.getBook = function() {
+            return this.libros.map((libro) => libro.titulo)
+        }
+
+        const nombre = "Pedro";
+        const apellido = "Sanchez";
+        const libros = [{
+            titulo: "La Iliada",
+            autor: "Homero"
+        }, {
+            titulo: "La Odisea",
+            autor: "Homero"
+        }];
+        const mascotas = ["perro", "gato"];
+
+        const usuario = new Usuario(nombre, apellido, libros, mascotas);
+
+        console.log(usuario.getFullName());
+        console.log(usuario.getMascotas());
+        usuario.addMascota("peces");
+        console.log(usuario.getMascotas());
+        console.log(usuario.getBook());
+        usuario.addBook("Yo, Julia", "Santiago Posteguillo");
+        console.log(usuario.getBook());
+    </script>
+</body>
+
+</html>
