@@ -7,7 +7,7 @@
         this.num2 = num2;
       }
 
-    getResultado() {
+    getResultado():number {
       return this.num1 + this.num2;
     };
   };
