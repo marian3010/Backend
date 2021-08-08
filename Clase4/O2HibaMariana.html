@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /> ​
+    <script src="https://unpkg.com/rxjs@^7/dist/bundles/rxjs.umd.min.js"></script>
+    ​
+    <title>Consigna 1</title>
+</head>
+
+<body>
+    <label id="response">Ingrese un texto</label>
+    <input type="text" id="userInput" /> ​
+    <div id="textoEspejo"></div>
+    <script>
+        // Para la Consigna 2, tienen que usar la documentación oficial 
+        // de "Operadores" de RxJS --> https://rxjs.dev/guide/operators#categories-of-operators
+
+        const {
+            Observable,
+            fromEvent /*pipe*/
+        } = rxjs;
+
+        const {
+            filter,
+            map
+        } = rxjs.operators;
+
+        const userInput = document.getElementById("userInput");
+        const input = fromEvent(userInput, 'input');
+
+        let texto = [];
+        let espejo = document.getElementById("textoEspejo");
+
+        const observer = {
+            next: x => {
+                console.log(x.target.value)
+                texto.unshift(x.target.value[x.target.value.length - 1]);
+                console.log(texto);
+                espejo.innerHtml = texto;
+            },
+            error: () => {},
+            complete: () => {}
+        }
+        const inputsubscribido = input.subscribe(observer);
+        setTimeout(() => {
+            console.log("terminaron los 30 segundos")
+            inputsubscribido.unsubscribe();
+        }, 30000)
+    </script>
+</body>
+
+</html>

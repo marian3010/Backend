@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /> ​
+    <script src="https://unpkg.com/rxjs@^7/dist/bundles/rxjs.umd.min.js"></script>
+    ​
+    <title>Consigna 1</title>
+</head>
+
+<body>
+    <div>
+        <label id="response">Ingrese un texto</label>
+        <input type="text" id="userInput" /> ​
+        <p id="textoEspejo"></p>
+    </div>
+
+    <script>
+        const {
+            Observable,
+            fromEvent
+        } = rxjs;
+
+        const userInput = document.getElementById("userInput");
+        const input = fromEvent(userInput, 'input');
+
+        let texto = [];
+
+        const observer = {
+            next: x => {
+                console.log(x.target.value);
+                if (x.target.value === "error") {
+                    throw new Error("hubo un error")
+                }
+                texto.unshift(x.target.value[x.target.value.length - 1]);
+                console.log(texto);
+                const muestroTexto = (texto.join(''));
+                console.log(muestroTexto);
+                document.getElementById("textoEspejo").innerHTML = muestroTexto;
+            },
+            error: (e) => {
+                console.log(e.message);
+            },
+            complete: () => {
+                console.log("termine")
+            }
+        }
+        const inputsubscribe = input.subscribe(observer);
+        setTimeout(() => {
+            console.log("terminaron los 30 segundos");
+            inputsubscribe.unsubscribe();
+        }, 30000)
+    </script>
+</body>
+
+</html>
