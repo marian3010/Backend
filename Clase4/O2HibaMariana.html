@@ -20,7 +20,8 @@
 
         const {
             Observable,
-            fromEvent /*pipe*/
+            fromEvent,
+            pipe
         } = rxjs;
 
         const {
@@ -31,23 +32,46 @@
         const userInput = document.getElementById("userInput");
         const input = fromEvent(userInput, 'input');
 
-        let texto = [];
-        let espejo = document.getElementById("textoEspejo");
+        function finalObservador() {
+            userInput.disabled = true;
+            userInput.value = "";
+            inputsubscribe.unsubscribe();
+        }
+
+        const texto = [];
 
         const observer = {
             next: x => {
-                console.log(x.target.value)
-                texto.unshift(x.target.value[x.target.value.length - 1]);
-                console.log(texto);
-                espejo.innerHtml = texto;
+                console.log(x);
+                if (x === "error") {
+                    observer.error("Tipeaste error")
+                    finalObservador();
+                    return;
+                } else if (x === "complete") {
+                    observer.complete("Tipeaste complete")
+                    finalObservador();
+                    return;
+                }
+                texto.unshift(x[x.length - 1]);
+                const muestroTexto = (texto.join(''));
+                console.log(muestroTexto);
+                document.getElementById("textoEspejo").innerHTML = muestroTexto;
             },
-            error: () => {},
-            complete: () => {}
+            error: (e) => {
+                console.log(e);
+            },
+            complete: (e) => {
+                console.log(e)
+            }
         }
-        const inputsubscribido = input.subscribe(observer);
+        const inputPipe = input.pipe(
+            filter(x => x.target.value !== "error"),
+            map(x => x.target.value.toLowerCase())
+        );
+        const inputsubscribe = inputPipe.subscribe(observer);
         setTimeout(() => {
             console.log("terminaron los 30 segundos")
-            inputsubscribido.unsubscribe();
+            finalObservador();
         }, 30000)
     </script>
 </body>
