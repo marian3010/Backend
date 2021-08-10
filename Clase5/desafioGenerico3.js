@@ -15,7 +15,7 @@ const server = http.createServer((_, response) => {
     }
 });
 
-const port = 3080;
+const port = 6400;
 server.listen(port, () => {
     console.log(`Servidor escuchando en ${port}`);
 });
