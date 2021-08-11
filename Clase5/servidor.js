@@ -4,17 +4,19 @@ function numAleatorio(min, max) {
     let number;
     return number = Math.floor(min + Math.random() * (max - min + 1));
 }
+const objeto = [];
 
-const objeto = {
-    id: `${numAleatorio(1,10)}`,
-    title: "Producto" + `${numAleatorio(1,10)}`,
-    price: `${numAleatorio(0,9999.99)}`,
-    thumbnail: "Foto" + `${numAleatorio(1,10)}`
+function generoObjeto(objeto) {
+    return objeto = {
+        id: `${numAleatorio(1,10)}`,
+        title: "Producto" + `${numAleatorio(1,10)}`,
+        price: `${numAleatorio(0,9999.99)}`,
+        thumbnail: "Foto" + `${numAleatorio(1,10)}`
+    }
 }
 
 const server = http.createServer((request, response) => {
-    response.end("Hola mundo!");
-    response.end(JSON.stringify(objeto));
+    response.end(JSON.stringify(generoObjeto(objeto)));
 });
 
 const port = 6400;
