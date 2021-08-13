@@ -65,7 +65,7 @@
             }
         }
         const inputPipe = input.pipe(
-            filter(x => x.target.value !== "error"),
+            filter(x => x.target.value !== "perro"),
             map(x => x.target.value.toLowerCase())
         );
         const inputsubscribe = inputPipe.subscribe(observer);
