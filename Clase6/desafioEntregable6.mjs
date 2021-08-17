@@ -21,22 +21,16 @@ class Archivo {
 
     async guardarArch(nuevoProducto) {
         let productosStr = {};
-
         try {
             let productos = await this.leerArch();
             nuevoProducto.id = productos.length + 1;
             productos.push(nuevoProducto);
             productosStr = JSON.stringify(productos, null, "\t");
-        } catch (err) {
-            console.log("no pudo leer el archivo para guardar")
-        }
-
-        try {
             await fs.promises.writeFile(
                 this.nombre,
                 productosStr);
         } catch (err) {
-            console.log("hubo un error al actualizar el archivo");
+            console.log("Hubo un error al guardar el archivo")
         }
     };
 
@@ -48,7 +42,6 @@ class Archivo {
         }
     };
 };
-
 
 const archivo = new Archivo("./productos.txt")
 archivo.leerArch();
