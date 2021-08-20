@@ -52,11 +52,9 @@ app.get('/api/productos/listar/:id', async(req, res) => {
 
     try {
         const productos = await leerArch();
-        console.log(productos);
-        console.log(productos.length);
-        for (let i = 0; i > productos.length; i++) {
-            console.log("paso por aca");
-            if (productos[i].id === req.params.id) {
+        for (let i = 0; i < productos.length; i++) {
+
+            if (productos[i].id == req.params.id) {
                 console.log(productos[i]);
                 res.send({ item: productos[i] });
                 return;
