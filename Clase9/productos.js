@@ -4,7 +4,11 @@ class Productos {
     }
 
     agregarProducto(title, price, thumbnail) {
-        const producto = { title: title, price: price, thumbnail: thumbnail, id: this.productos.length + 1 };
+        let nuevoId = 1;
+        if (this.productos.length !== 0) {
+            nuevoId = this.productos[this.productos.length - 1].id + 1;
+        }
+        const producto = { title: title, price: price, thumbnail: thumbnail, id: nuevoId };
         this.productos.push(producto);
         return this.productos[this.productos.length - 1];
     };
