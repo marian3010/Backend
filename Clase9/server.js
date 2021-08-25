@@ -83,6 +83,6 @@ router.put('/productos/actualizar/:id', (req, res) => {
     }
 })
 
-router.get("/api", (req, res) => {
+router.get("/", (req, res) => {
     res.sendFile(__dirname + "/index.html");
 });
