@@ -1,0 +1,9 @@
+ {{#if listExists}}
+    {{#each listaProductos}}
+      {{> tablaProds}}
+    {{/each}}
+{{/if}}
+
+ {{#if error}}
+      {{> noProducts}}
+{{/if}}
