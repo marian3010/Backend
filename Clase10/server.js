@@ -62,7 +62,8 @@ router.get('/productos/listar/:id', (req, res) => {
 //guardo un nuevo producto
 router.post('/productos/guardar', (req, res) => {
     const producto = productos.agregarProducto(req.body.title, req.body.price, req.body.thumbnail);
-    res.send(producto);
+    //res.send(producto);
+    res.sendFile(__dirname + "/index.html");
 });
 
 //busco un producto por id y lo borro
