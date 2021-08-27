@@ -1,7 +1,16 @@
  {{#if listExists}}
+    <table class="table table-light">
+    <thead>
+      <tr>
+        <th scope="col">Title</th>
+        <th scope="col">Price</th>
+        <th scope="col">Thumbnail</th>
+      </tr>
+    </thead>
     {{#each listaProductos}}
       {{> tablaProds}}
     {{/each}}
+    </table>
 {{/if}}
 
  {{#if error}}
