@@ -98,7 +98,7 @@ router.put('/productos/actualizar/:id', (req, res) => {
 router.get("/", (req, res) => {
     res.sendFile(__dirname + "/index.html");
 });
-
+//
 router.get('/productos/vista', (req, res) => {
     const listaProductos = productos.listarProductos();
     if (listaProductos.length == 0) {

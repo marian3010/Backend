@@ -2,14 +2,16 @@
     <table class="table table-light">
     <thead>
       <tr>
-        <th scope="col">Title</th>
-        <th scope="col">Price</th>
-        <th scope="col">Thumbnail</th>
+        <th scope="col" class="titulos">Title</th>
+        <th scope="col" class="titulos">Price</th>
+        <th scope="col" class="titulos">Thumbnail</th>
       </tr>
     </thead>
+    <tbody>
     {{#each listaProductos}}
       {{> tablaProds}}
     {{/each}}
+    </tbody>
     </table>
 {{/if}}
 
