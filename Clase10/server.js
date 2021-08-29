@@ -1,7 +1,9 @@
 import express from "express";
 import path from "path";
-import productos from "./productos.js";
+import Productos from "./productos.js";
 import handlebars from "express-handlebars";
+
+const prods = new Productos();
 
 const router = express.Router();
 const __dirname = path.resolve();
@@ -33,7 +35,7 @@ server.on("error", (error) => {
 //listo todos los productos
 router.get('/productos/listar', (req, res) => {
     try {
-        const listProductos = productos.listarProductos();
+        const listProductos = prods.listarProductos();
         if (listProductos.length === 0) {
             res.send({ error: 'no hay productos cargados' });
             return;
@@ -47,7 +49,7 @@ router.get('/productos/listar', (req, res) => {
 //busco el producto por id y lo muestro
 router.get('/productos/listar/:id', (req, res) => {
     try {
-        const producto = productos.buscarProducto(req.params.id);
+        const producto = prods.buscarProducto(req.params.id);
         if (producto) {
             res.send(producto);
             return;
@@ -61,7 +63,7 @@ router.get('/productos/listar/:id', (req, res) => {
 
 //guardo un nuevo producto
 router.post('/productos/guardar', (req, res) => {
-    const producto = productos.agregarProducto(req.body.title, req.body.price, req.body.thumbnail);
+    const producto = prods.agregarProducto(req.body.title, req.body.price, req.body.thumbnail);
     //res.send(producto);
     res.sendFile(__dirname + "/index.html");
 });
@@ -69,7 +71,7 @@ router.post('/productos/guardar', (req, res) => {
 //busco un producto por id y lo borro
 router.delete('/productos/borrar/:id', (req, res) => {
     try {
-        const productoBorrado = productos.borrarProducto(req.params.id);
+        const productoBorrado = prods.borrarProducto(req.params.id);
         if (productoBorrado) {
             res.send(productoBorrado);
             return;
@@ -84,7 +86,7 @@ router.delete('/productos/borrar/:id', (req, res) => {
 // busco un producto por id y lo actualizo
 router.put('/productos/actualizar/:id', (req, res) => {
     try {
-        const prodAct = productos.actualizarProducto(req.body.title, req.body.price, req.body.thumbnail, req.params.id);
+        const prodAct = prods.actualizarProducto(req.body.title, req.body.price, req.body.thumbnail, req.params.id);
         if (prodAct) {
             res.send(prodAct);
             return;
@@ -99,20 +101,12 @@ router.put('/productos/actualizar/:id', (req, res) => {
 router.get("/", (req, res) => {
     res.sendFile(__dirname + "/index.html");
 });
-//
+
+// Muestro una lista de productos
 router.get('/productos/vista', (req, res) => {
-    const listaProductos = productos.listarProductos();
-    if (listaProductos.length == 0) {
-        res.render("main.hbs", {
-            listExists: false,
-            error: true,
-            mensaje: "No hay productos!"
-        });
-    } else {
-        res.render("main.hbs", {
-            listExists: true,
-            error: false,
-            listaProductos: listaProductos
-        });
-    }
+    const listaProductos = prods.listarProductos();
+    res.render("main.hbs", {
+        listaProductos: listaProductos,
+        mensaje: "No hay productos!"
+    });
 });

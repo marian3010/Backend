@@ -48,6 +48,4 @@ class Productos {
     };
 };
 
-const productos = new Productos();
-
-export default productos;
+export default Productos;

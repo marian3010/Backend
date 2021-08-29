@@ -1,5 +1,6 @@
- {{#if listExists}}
+ {{#if listaProductos}}
     <table class="table table-light">
+    <h2 class="mt-3 mb-3 pl-3">Lista de Productos</h2>
     <thead>
       <tr>
         <th scope="col" class="titulos">Title</th>
@@ -9,12 +10,20 @@
     </thead>
     <tbody>
     {{#each listaProductos}}
-      {{> tablaProds}}
+      <tr>
+        <td class="dato">{{title}}</td>
+        <td class="dato">${{price}}</td>
+        <td>
+          <img class="thumbnail" src={{thumbnail}} />
+        </td>
+      </tr>
     {{/each}}
     </tbody>
     </table>
-{{/if}}
+{{else}}  
+    <div class="alert alert-warning" role="alert">
+      <h3>{{mensaje}}</h3>
+    </div>  
+{{/if}} 
 
- {{#if error}}
-      {{> noProducts}}
-{{/if}}
+ 
