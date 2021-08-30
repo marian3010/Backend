@@ -1,7 +1,6 @@
 import express from "express";
 import path from "path";
 import Productos from "./productos.js";
-import handlebars from "express-handlebars";
 
 const prods = new Productos();
 
@@ -18,14 +17,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.static(`${__dirname}/public`));
 app.use('/api', router);
 
-const ENGINE_NAME = "hbs";
-app.engine(ENGINE_NAME, handlebars({
-    extname: ".hbs",
-    layoutsDir: __dirname + "/views/layouts",
-    partialsDir: __dirname + "/views/partials",
-    defaultLayout: "index.hbs",
-}));
-app.set("view engine", ENGINE_NAME);
+app.set("view engine", "pug");
 app.set("views", path.join(__dirname, 'views'));
 
 server.on("error", (error) => {
@@ -64,7 +56,6 @@ router.get('/productos/listar/:id', (req, res) => {
 //guardo un nuevo producto
 router.post('/productos/guardar', (req, res) => {
     const producto = prods.agregarProducto(req.body.title, req.body.price, req.body.thumbnail);
-    //res.send(producto);
     res.sendFile(__dirname + "/index.html");
 });
 
@@ -98,14 +89,15 @@ router.put('/productos/actualizar/:id', (req, res) => {
     }
 })
 
+//renderizo el form para cargar productos
 router.get("/", (req, res) => {
     res.sendFile(__dirname + "/index.html");
 });
 
-// Muestro una lista de productos
+// Muestro una lista de productos en el navegador
 router.get('/productos/vista', (req, res) => {
     const listaProductos = prods.listarProductos();
-    res.render("main.hbs", {
+    res.render("main.pug", {
         listaProductos: listaProductos
     });
 });

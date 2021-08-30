@@ -1,5 +1,5 @@
 {
-    "name": "Clase10",
+    "name": "Clase11",
     "version": "1.0.0",
     "description": "",
     "main": "server.js",
@@ -10,8 +10,8 @@
     "author": "",
     "license": "ISC",
     "dependencies": {
+        "ejs": "^3.1.6",
         "express": "^4.17.1",
-        "express-handlebars": "^5.3.3",
         "path": "^0.12.7"
     },
     "type": "module"
