@@ -75,11 +75,19 @@
         {{/if}} 
         </div>
         `)
-        socket.on('listarProductos', lista =>{
-            const html= hbsTemplate({lista: lista});
-            document.getElementById('tablaProductos').innerHTML=html;
+        socket.on('listarProductos', lista => {
+            const html = hbsTemplate({
+                lista: lista
+            });
+            document.getElementById('tablaProductos').innerHTML = html;
         })
-    </script>    
+        socket.on('listProdGlobal', lista => {
+            const html = hbsTemplate({
+                lista: lista
+            });
+            document.getElementById('tablaProductos').innerHTML = html;
+        })
+    </script>
 </body>
 
 </html>

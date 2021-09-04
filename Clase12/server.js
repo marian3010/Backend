@@ -40,9 +40,10 @@ server.on("error", (error) => {
 io.on('connection', socket => {
     socket.emit('listarProductos', prods.listarProductos())
     console.log("se conectó el back");
+    io.sockets.emit('listProdGlobal', prods.listarProductos());
 });
 
-///listo todos los productos
+//listo todos los productos
 router.get('/productos/listar', (req, res) => {
     try {
         const listProductos = prods.listarProductos();
@@ -74,8 +75,8 @@ router.get('/productos/listar/:id', (req, res) => {
 //guardo un nuevo producto
 router.post('/productos/guardar', (req, res) => {
     const producto = prods.agregarProducto(req.body.title, req.body.price, req.body.thumbnail);
-
-    res.sendFile(__dirname + "/index.html");
+    io.sockets.emit('listProdGlobal', prods.listarProductos());
+    res.redirect('/api');
 
 });
 
@@ -109,7 +110,7 @@ router.put('/productos/actualizar/:id', (req, res) => {
     }
 })
 
-router.get("/", (req, res) => {
+router.get('/', (req, res) => {
     res.sendFile(__dirname + "/index.html");
 });
 
