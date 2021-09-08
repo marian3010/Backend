@@ -5,6 +5,7 @@ import handlebars from "express-handlebars";
 import http from "http";
 import * as SocketIO from 'socket.io';
 import fs from "fs";
+import { Console } from "console";
 
 const prods = new Productos();
 
@@ -25,7 +26,7 @@ app.engine("hbs", handlebars({
     extname: ".hbs",
     layoutsDir: __dirname + "/views/layouts",
     partialsDir: __dirname + "/views/partials",
-    defaultLayout: "main.hbs",
+    defaultLayout: "index.hbs",
 }));
 
 const server = app.listen(port, () => {
@@ -37,7 +38,16 @@ const io = new SocketIO.Server(server);
 server.on("error", (error) => {
     console.error(error);
 });
-const messages = [];
+
+//verifico si hay mensajes guardados para mostrar
+let messages = [];
+fs.readFile("./mensajes.txt", "utf-8", (error, contenido) => {
+    if (error) {
+        "hubo un error leyendo el archivo de mensajes"
+        return
+    };
+    messages = JSON.parse(contenido);
+});
 
 io.on('connection', socket => {
     socket.emit('listarProductos', prods.listarProductos());
@@ -50,7 +60,7 @@ io.on('connection', socket => {
         io.sockets.emit("messages", messages);
         fs.writeFile("mensajes.txt", JSON.stringify(messages, null, "\t"), "utf-8", (error) => {
             if (error) {
-                "hubo un error en la escritura del archivo"
+                "hubo un error en la escritura del archivo de mensajes"
                 return
             };
         });
@@ -58,7 +68,7 @@ io.on('connection', socket => {
 
 });
 
-//listo todos los productos
+///listo todos los productos
 router.get('/productos/listar', (req, res) => {
     try {
         const listProductos = prods.listarProductos();
@@ -72,7 +82,7 @@ router.get('/productos/listar', (req, res) => {
     }
 })
 
-//busco el producto por id y lo muestro
+///busco el producto por id y lo muestro
 router.get('/productos/listar/:id', (req, res) => {
     try {
         const producto = prods.buscarProducto(req.params.id);
