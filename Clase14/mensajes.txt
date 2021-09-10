@@ -1,0 +1,12 @@
+[
+	{
+		"author": "mariana_hiba@hotmail.com",
+		"fecha": "08/09/2021, 01:25:48",
+		"text": "tenes escuadras en stock?"
+	},
+	{
+		"author": "julio@mail.com",
+		"fecha": "08/09/2021, 01:26:03",
+		"text": "si, me quedan"
+	}
+]
