@@ -1,25 +1,9 @@
-class Producto {
-    public id: number;
-    public title: string;
-    public price: number;
-    public thumbnail: string;
-  
-    constructor(id: number, title: string, price: number, thumbnail: string) {
-      this.id = id;
-      this.title = title;
-      this.price = price;
-      this.thumbnail = thumbnail;
-    }
-  }
-
 class Productos {
-    private productos: Producto[];
-  
     constructor() {
-      this.productos = new Array<Producto>();
+        this.productos = [];
     }
-  
-    public agregarProducto(title: string, price:number, thumbnail:string) {
+
+    agregarProducto(title, price, thumbnail) {
         let nuevoId = 1;
         if (this.productos.length !== 0) {
             nuevoId = this.productos[this.productos.length - 1].id + 1;
@@ -29,30 +13,30 @@ class Productos {
         return this.productos[this.productos.length - 1];
     };
 
-    public buscarProducto(id:number) {
-        for (let i:number = 0; i < this.productos.length; i++) {
+    buscarProducto(id) {
+        for (let i = 0; i < this.productos.length; i++) {
             if (this.productos[i].id == id) {
                 return this.productos[i];
             };
         };
     };
 
-    public listarProductos(): Producto[] {
+    listarProductos() {
         return this.productos;
     };
 
-    public borrarProducto(id:number) {
-        for (let i:number = 0; i < this.productos.length; i++) {
+    borrarProducto(id) {
+        for (let i = 0; i < this.productos.length; i++) {
             if (this.productos[i].id == id) {
                 const prodBorrado = this.productos[i];
-                this.productos.splice(i, 1);
+                this.productos.splice([i], 1);
                 return prodBorrado;
             };
         };
     };
 
-    public actualizarProducto(title:string, price:number, thumbnail:string, id:number) {
-        for (let i:number = 0; i < this.productos.length; i++) {
+    actualizarProducto(title, price, thumbnail, id) {
+        for (let i = 0; i < this.productos.length; i++) {
             if (this.productos[i].id == id) {
                 this.productos[i].title = title;
                 this.productos[i].price = price;

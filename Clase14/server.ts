@@ -38,12 +38,12 @@ server.on("error", (error) => {
 });
 
 //verifico si hay mensajes guardados para mostrar
-interface mensaje{
+interface Mensaje{
     author: string;
     fecha: Date;
     text: string;
   }
-let messages: mensaje[] = []
+let messages: Mensaje[] = []
 fs.readFile("./mensajes.txt", "utf-8", (error, contenido) => {
     if (error) {
         "hubo un error leyendo el archivo de mensajes"

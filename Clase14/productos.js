@@ -1,51 +1,69 @@
-class Productos {
-    constructor() {
-        this.productos = [];
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+var Producto = /** @class */ (function () {
+    function Producto(id, title, price, thumbnail) {
+        this.id = id;
+        this.title = title;
+        this.price = price;
+        this.thumbnail = thumbnail;
     }
-
-    agregarProducto(title, price, thumbnail) {
-        let nuevoId = 1;
+    return Producto;
+}());
+var Productos = /** @class */ (function () {
+    function Productos() {
+        this.productos = new Array();
+    }
+    Productos.prototype.agregarProducto = function (title, price, thumbnail) {
+        var nuevoId = 1;
         if (this.productos.length !== 0) {
             nuevoId = this.productos[this.productos.length - 1].id + 1;
         }
-        const producto = { title: title, price: price, thumbnail: thumbnail, id: nuevoId };
+        var producto = { title: title, price: price, thumbnail: thumbnail, id: nuevoId };
         this.productos.push(producto);
         return this.productos[this.productos.length - 1];
     };
-
-    buscarProducto(id) {
-        for (let i = 0; i < this.productos.length; i++) {
+    ;
+    Productos.prototype.buscarProducto = function (id) {
+        for (var i = 0; i < this.productos.length; i++) {
             if (this.productos[i].id == id) {
                 return this.productos[i];
-            };
-        };
+            }
+            ;
+        }
+        ;
     };
-
-    listarProductos() {
+    ;
+    Productos.prototype.listarProductos = function () {
         return this.productos;
     };
-
-    borrarProducto(id) {
-        for (let i = 0; i < this.productos.length; i++) {
+    ;
+    Productos.prototype.borrarProducto = function (id) {
+        for (var i = 0; i < this.productos.length; i++) {
             if (this.productos[i].id == id) {
-                const prodBorrado = this.productos[i];
-                this.productos.splice([i], 1);
+                var prodBorrado = this.productos[i];
+                this.productos.splice(i, 1);
                 return prodBorrado;
-            };
-        };
+            }
+            ;
+        }
+        ;
     };
-
-    actualizarProducto(title, price, thumbnail, id) {
-        for (let i = 0; i < this.productos.length; i++) {
+    ;
+    Productos.prototype.actualizarProducto = function (title, price, thumbnail, id) {
+        for (var i = 0; i < this.productos.length; i++) {
             if (this.productos[i].id == id) {
                 this.productos[i].title = title;
                 this.productos[i].price = price;
                 this.productos[i].thumbnail = thumbnail;
-                const prodActualizado = this.productos[i];
+                var prodActualizado = this.productos[i];
                 return prodActualizado;
-            };
-        };
+            }
+            ;
+        }
+        ;
     };
-};
-
-export default Productos;
+    ;
+    return Productos;
+}());
+;
+exports.default = Productos;

@@ -5,8 +5,12 @@
     "main": "server.js",
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1",
-        "start": "node server.js"
+        "start": "node server.js",
+        "ServerES6toJS5": "./node_modules/.bin/babel ./server.es6.js -o ./server.js -w",
+        "ProductosES6toJS5": "./node_modules/.bin/babel ./productos.es6.js -o ./productos.js -w",
+        "ServerTStoJS5": "./node_modules/.bin/tsc"
     },
+
     "author": "",
     "license": "ISC",
     "dependencies": {
@@ -19,7 +23,7 @@
         "socket.io": "^4.2.0",
         "typescript": "^4.4.2"
     },
-    "type": "module",
+
     "engines": {
         "node": ">=14.0.0",
         "npm": ">=6.0.0"
