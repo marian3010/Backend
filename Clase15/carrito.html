@@ -1,0 +1,85 @@
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-KyZXEAg3QhqLMpG8r+8fhAXLRk2vvoC2f3B09zVXn8CA5QIVfZOJ3BCsw2P0p/We" crossorigin="anonymous" />
+    <link rel="icon" href="https://image.flaticon.com/icons/png/512/3585/3585145.png" type="image" sizes="16x16" />
+    <title>Carrito</title>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.7.7/handlebars.min.js" integrity="sha512-RNLkV3d+aLtfcpEyFG8jRbnWHxUqVZozacROI4J2F1sTaDqo1dPQYs01OMi1t1w9Y2FdbSCDSQ2ZVdAC8bzgAg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js" integrity="sha512-qTXRIMyZIFb8iQcfjXWCO8+M5Tbc38Qi5WzdPOYZHIlZpzBHG3L3by84BBBOiRGiEb7KKtAOAs5qYdUiZiQNNQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+</head>
+
+<body>
+    <section class="container bg-light mt-3">
+        <span id="carrito"></span>
+        <script>
+            const socket = io();
+            const hbsTemplate = Handlebars.compile(`
+            <div class="container mb-3">
+            <h1 class="mb-3">Carrito</h1>
+            {{#if lista}}
+                <table class="table table-light table-hover align-middle">
+                    <thead>
+                        <tr>
+                            <th class="text-center fs-3 fw-normal">Código</th>
+                            <th class="text-center fs-3 fw-normal">Nombre</th>
+                            <th class="text-center fs-3 fw-normal">Descripción</th>
+                            <th class="text-center fs-3 fw-normal">Precio</th>
+                            <th class="text-center fs-3 fw-normal">Imagen</th>
+                            <th class="text-center fs-3 fw-normal">Stock</th>
+                            <th class="text-center fs-3 fw-normal">Fecha Alta</th>
+                            <th class="text-center fs-3 fw-normal">Fecha Actualización</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {{#each lista}}
+                            <tr>
+                                <td class="text-center fs-4">{{code}}</td>
+                                <td class="text-start fs-4">{{title}}</td>
+                                <td class="text-start fs-4">{{description}}</td>
+                                <td class="text-end fs-4">{{price}}</td>
+                                <td>
+                                    <img style="width:4rem; height:4rem" src={{thumbnail}} />
+                                </td>
+                                <td class="text-end fs-4">{{stock}}</td>
+                                <td class="text-center fs-4">{{fechaAlta}}</td>
+                                <td class="text-center fs-4">{{fechaActualizacion}}</td>
+                                <button class="btn btn-primary mt-3" onhandle="return /carrito/borrar/:">Eliminar</button>
+                            </tr>
+                        {{/each}}
+                    </tbody>
+                </table>
+            {{else}}  
+                <div class="fs-3 text-danger">
+                    <h3>"El carrito está vacío!"</h3>
+                </div>  
+            {{/if}} 
+            </div>
+            `);
+            socket.on('listCarrito', lista => {
+                const html = hbsTemplate({
+                    lista: lista
+                });
+                document.getElementById('carrito').innerHTML = html;
+            });
+
+            function eliminarProd() {
+                const message = {
+                    author: document.getElementById("usermail").value,
+                    fecha: moment().format('DD/MM/YYYY, hh:mm:ss'),
+                    text: document.getElementById("texto").value,
+                };
+                socket.emit("new-message", message);
+                return false;
+            };
+        </script>
+    </section>
+
+    <script src="./server.js "></script>
+
+</body>
+
+</html>

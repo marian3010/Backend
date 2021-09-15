@@ -105,7 +105,7 @@
                 document.getElementById("messages").innerHTML = data.map((entry) =>
                     `<div>
                       <strong style="color:blue">${entry.author}</strong>
-                      <normal style="color:brown"> ${moment().format('DD/MM/YYYY, hh:mm:ss')}</normal>
+                      <normal style="color:brown"> ${moment(entry.fecha).format('DD/MM/YYYY, hh:mm:ss')}</normal>
                       <em style="color:green">${entry.text}</em>
                   </div>`
                 ).join(" ");
