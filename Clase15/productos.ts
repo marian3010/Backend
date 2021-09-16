@@ -64,10 +64,11 @@ class Productos {
             this.productos = JSON.parse(contenido);
         });
         for (let i:number = 0; i < this.productos.length; i++) {
-            if (this.productos[i].id === id) {
+            if (this.productos[i].id == id) {
                 return this.productos[i];
             };
         };
+        return this.productos = [];
     };
 
     public listarProductos(): Producto[] {

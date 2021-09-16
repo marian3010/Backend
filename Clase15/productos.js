@@ -60,12 +60,13 @@ var Productos = /** @class */ (function () {
             _this.productos = JSON.parse(contenido);
         });
         for (var i = 0; i < this.productos.length; i++) {
-            if (this.productos[i].id === id) {
+            if (this.productos[i].id == id) {
                 return this.productos[i];
             }
             ;
         }
         ;
+        return this.productos = [];
     };
     ;
     Productos.prototype.listarProductos = function () {

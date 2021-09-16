@@ -92,8 +92,10 @@ productosRouter.get('/listar/:id?', function (req, res) {
             console.log(req.params.id);
             console.log(producto);
             if (producto) {
-                io.sockets.emit('listarProductos', producto);
-                res.sendFile(__dirname + "/listoProds.html");
+                io.sockets.emit('listarProductos', [producto]);
+                res.send();
+                //res.sendFile(__dirname + "/listoProds.html");
+                //res.send(producto);
                 return;
             }
             else {
@@ -121,7 +123,6 @@ productosRouter.get('/guardar', function (req, res) {
 productosRouter.post('/guardar', function (req, res) {
     if (admin) {
         var prod = prods.agregarProducto(req.body.code, req.body.title, req.body.description, req.body.price, req.body.thumbnail, req.body.stock);
-        //io.sockets.emit('listarProductos', prods.listarProductos());
         io.sockets.emit('listarProductos', prod);
         res.sendFile(__dirname + "/listoProds.html");
     }
@@ -135,8 +136,6 @@ productosRouter.delete('/borrar/:id', function (req, res) {
         try {
             var productoBorrado = prods.borrarProducto(parseInt(req.params.id));
             if (productoBorrado) {
-                //io.sockets.emit('listarProductos', prods.listarProductos());
-                //res.sendFile(__dirname + "/listoProds.html");
                 res.send(productoBorrado);
                 return;
             }
@@ -160,8 +159,6 @@ productosRouter.put('/actualizar/:id', function (req, res) {
         try {
             var prodAct = prods.actualizarProducto(req.body.code, req.body.title, req.body.description, req.body.price, req.body.thumbnail, req.body.stock, parseInt(req.params.id));
             if (prodAct) {
-                //io.sockets.emit('listarProductos', prods.listarProductos());
-                //res.sendFile(__dirname + "/listoProds.html");
                 res.send(prodAct);
                 return;
             }
@@ -178,9 +175,6 @@ productosRouter.put('/actualizar/:id', function (req, res) {
         res.send({ error: -3, descripcion: 'ruta productos método actualizar no autorizado' });
     }
 });
-//productosRouter.get('/', (req: express.Request, res: express.Response) => {
-//    res.sendFile(__dirname + "/index.html");
-//});
 //listar carrito
 carritoRouter.get('/listar/:id?', function (req, res) {
     fs_1.default.readFile("./carrito.txt", "utf-8", function (error, contenido) {

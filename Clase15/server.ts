@@ -78,8 +78,10 @@ productosRouter.get('/listar/:id?', (req: express.Request, res: express.Response
             console.log(req.params.id)
             console.log(producto)
             if (producto) {
-                io.sockets.emit('listarProductos', producto);
-                res.sendFile(__dirname + "/listoProds.html");
+                io.sockets.emit('listarProductos', [producto]);
+                res.send();
+                //res.sendFile(__dirname + "/listoProds.html");
+                //res.send(producto);
                 return;
             } else {
                 res.send({ error: 'producto no encontrado' });
