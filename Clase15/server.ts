@@ -14,19 +14,17 @@ const admin:boolean = true;
 const __dirname = path.resolve();
 const port = 8080;
 const app = express();
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(express.static(`${__dirname}/public`));
 
 const productosRouter = express.Router();
 app.use('/productos', productosRouter);
 const carritoRouter = express.Router();
 app.use('/carrito', carritoRouter);
 
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-app.use(express.static(`${__dirname}/public`));
-
 app.set("view engine", "hbs");
 app.set("views", path.join(__dirname, 'views'));
-
 app.engine("hbs", handlebars({
     extname: ".hbs",
     layoutsDir: __dirname + "/views/layouts",
@@ -66,11 +64,10 @@ io.on('connection', socket => {
         fs.writeFile("mensajes.txt", JSON.stringify(messages, null, "\t"), "utf-8", (error) => {
             if (error) {
                 "hubo un error en la escritura del archivo de mensajes"
-                return
+                return;
             };
         });
     });
-
 });
 
 ///busco el producto por id y lo muestro
@@ -78,6 +75,8 @@ productosRouter.get('/listar/:id?', (req: express.Request, res: express.Response
     if (req.params.id) {
         try {
             const producto = prods.buscarProducto(parseInt(req.params.id));
+            console.log(req.params.id)
+            console.log(producto)
             if (producto) {
                 io.sockets.emit('listarProductos', producto);
                 res.sendFile(__dirname + "/listoProds.html");
@@ -104,8 +103,8 @@ productosRouter.get('/guardar', (req: express.Request, res: express.Response) =>
 });
 productosRouter.post('/guardar', (req: express.Request, res: express.Response) => {
     if (admin) {
-        prods.agregarProducto(req.body.code, req.body.title, req.body.description, req.body.price, req.body.thumbnail, req.body.stock);
-        io.sockets.emit('listarProductos', prods.listarProductos());
+        const prod = prods.agregarProducto(req.body.code, req.body.title, req.body.description, req.body.price, req.body.thumbnail, req.body.stock);
+        io.sockets.emit('listarProductos', prod)
         res.sendFile(__dirname + "/listoProds.html");
     } else {
         res.send({ error: -1, descripcion: 'ruta productos método guardar no autorizado' });
@@ -118,8 +117,7 @@ productosRouter.delete('/borrar/:id', (req: express.Request, res: express.Respon
         try {
             const productoBorrado = prods.borrarProducto(parseInt(req.params.id));
             if (productoBorrado) {
-                io.sockets.emit('listarProductos', prods.listarProductos());
-                res.sendFile(__dirname + "/listoProds.html");
+                res.send(productoBorrado);
                 return;
             } else {
                 res.send({ error: 'producto no encontrado' });
@@ -138,8 +136,7 @@ productosRouter.put('/actualizar/:id', (req: express.Request, res: express.Respo
         try {
             const prodAct = prods.actualizarProducto(req.body.code, req.body.title, req.body.description, req.body.price, req.body.thumbnail, req.body.stock, parseInt(req.params.id));
             if (prodAct) {
-                io.sockets.emit('listarProductos', prods.listarProductos());
-                res.sendFile(__dirname + "/listoProds.html");
+                res.send(prodAct);
                 return;
             } else {
                 res.send({ error: 'producto no encontrado' });
@@ -152,12 +149,16 @@ productosRouter.put('/actualizar/:id', (req: express.Request, res: express.Respo
     }     
 });
 
-//productosRouter.get('/', (req: express.Request, res: express.Response) => {
-//    res.sendFile(__dirname + "/index.html");
-//});
 
 //listar carrito
 carritoRouter.get('/listar/:id?', (req: express.Request, res: express.Response) => {
+    fs.readFile("./carrito.txt", "utf-8", (error, contenido) => {
+        if (error) {
+            "hubo un error leyendo el archivo del carrito"
+            return
+        };
+        const miCarrito = JSON.parse(contenido);
+    });
     if (req.params.id) {
         try {
             const producto = miCarrito.buscarProducto(parseInt(req.params.id));
@@ -178,7 +179,7 @@ carritoRouter.get('/listar/:id?', (req: express.Request, res: express.Response) 
 
 //agrego producto al carrito
 carritoRouter.post('/agregar/:id_producto', (req: express.Request, res: express.Response) => {
-    const carrito = miCarrito.agregarProducto(req.body.code, req.body.title, req.body.description, req.body.price, req.body.thumbnail, req.body.stock);
+    miCarrito.agregarProducto(req.body.code, req.body.title, req.body.description, req.body.price, req.body.thumbnail, req.body.stock);
     io.sockets.emit('listCarrito', miCarrito.listarProductos());
     res.sendFile(__dirname + "/carrito.html");
 });

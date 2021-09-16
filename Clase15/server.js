@@ -35,13 +35,13 @@ var admin = true;
 var __dirname = path_1.default.resolve();
 var port = 8080;
 var app = (0, express_1.default)();
+app.use(express_1.default.json());
+app.use(express_1.default.urlencoded({ extended: true }));
+app.use(express_1.default.static(__dirname + "/public"));
 var productosRouter = express_1.default.Router();
 app.use('/productos', productosRouter);
 var carritoRouter = express_1.default.Router();
 app.use('/carrito', carritoRouter);
-app.use(express_1.default.json());
-app.use(express_1.default.urlencoded({ extended: true }));
-app.use(express_1.default.static(__dirname + "/public"));
 app.set("view engine", "hbs");
 app.set("views", path_1.default.join(__dirname, 'views'));
 app.engine("hbs", (0, express_handlebars_1.default)({
@@ -89,6 +89,8 @@ productosRouter.get('/listar/:id?', function (req, res) {
     if (req.params.id) {
         try {
             var producto = prods.buscarProducto(parseInt(req.params.id));
+            console.log(req.params.id);
+            console.log(producto);
             if (producto) {
                 io.sockets.emit('listarProductos', producto);
                 res.sendFile(__dirname + "/listoProds.html");
@@ -118,8 +120,9 @@ productosRouter.get('/guardar', function (req, res) {
 });
 productosRouter.post('/guardar', function (req, res) {
     if (admin) {
-        prods.agregarProducto(req.body.code, req.body.title, req.body.description, req.body.price, req.body.thumbnail, req.body.stock);
-        io.sockets.emit('listarProductos', prods.listarProductos());
+        var prod = prods.agregarProducto(req.body.code, req.body.title, req.body.description, req.body.price, req.body.thumbnail, req.body.stock);
+        //io.sockets.emit('listarProductos', prods.listarProductos());
+        io.sockets.emit('listarProductos', prod);
         res.sendFile(__dirname + "/listoProds.html");
     }
     else {
@@ -132,8 +135,9 @@ productosRouter.delete('/borrar/:id', function (req, res) {
         try {
             var productoBorrado = prods.borrarProducto(parseInt(req.params.id));
             if (productoBorrado) {
-                io.sockets.emit('listarProductos', prods.listarProductos());
-                res.sendFile(__dirname + "/listoProds.html");
+                //io.sockets.emit('listarProductos', prods.listarProductos());
+                //res.sendFile(__dirname + "/listoProds.html");
+                res.send(productoBorrado);
                 return;
             }
             else {
@@ -156,8 +160,9 @@ productosRouter.put('/actualizar/:id', function (req, res) {
         try {
             var prodAct = prods.actualizarProducto(req.body.code, req.body.title, req.body.description, req.body.price, req.body.thumbnail, req.body.stock, parseInt(req.params.id));
             if (prodAct) {
-                io.sockets.emit('listarProductos', prods.listarProductos());
-                res.sendFile(__dirname + "/listoProds.html");
+                //io.sockets.emit('listarProductos', prods.listarProductos());
+                //res.sendFile(__dirname + "/listoProds.html");
+                res.send(prodAct);
                 return;
             }
             else {
@@ -178,6 +183,14 @@ productosRouter.put('/actualizar/:id', function (req, res) {
 //});
 //listar carrito
 carritoRouter.get('/listar/:id?', function (req, res) {
+    fs_1.default.readFile("./carrito.txt", "utf-8", function (error, contenido) {
+        if (error) {
+            "hubo un error leyendo el archivo del carrito";
+            return;
+        }
+        ;
+        var miCarrito = JSON.parse(contenido);
+    });
     if (req.params.id) {
         try {
             var producto = miCarrito.buscarProducto(parseInt(req.params.id));
@@ -199,7 +212,7 @@ carritoRouter.get('/listar/:id?', function (req, res) {
 });
 //agrego producto al carrito
 carritoRouter.post('/agregar/:id_producto', function (req, res) {
-    var carrito = miCarrito.agregarProducto(req.body.code, req.body.title, req.body.description, req.body.price, req.body.thumbnail, req.body.stock);
+    miCarrito.agregarProducto(req.body.code, req.body.title, req.body.description, req.body.price, req.body.thumbnail, req.body.stock);
     io.sockets.emit('listCarrito', miCarrito.listarProductos());
     res.sendFile(__dirname + "/carrito.html");
 });
