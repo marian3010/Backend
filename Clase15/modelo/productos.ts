@@ -1,42 +1,28 @@
-import moment from "moment";
 import fs from "fs";
 
-class Producto {
-    public id: number;
-    public fechaAlta: any;
-    public fechaActualizacion: any;
-    public code: string;
-    public title: string;
-    public description: string;
-    public price: number;
-    public thumbnail: string;
-    public stock: number;
-  
-    constructor(id: number, fechaAlta: any, fechaActualizacion: any, code: string, title: string, description: string, price: number, thumbnail: string, stock:number) {
-      this.id = id;
-      this.fechaAlta = fechaAlta;
-      this.fechaActualizacion = fechaActualizacion;
-      this.code = code;
-      this.title = title;
-      this.description = description;
-      this.price = price;
-      this.thumbnail = thumbnail;
-      this.stock = stock;
-    }
-  }
-
+interface Producto {
+    id: number;
+    timestamp: number;
+    code: string;
+    title: string;
+    description: string;
+    price: number;
+    thumbnail: string;
+    stock: number;
+}  
+    
 class Productos {
     private productos: Producto[];
   
-    constructor() {
+    public constructor() {
       this.productos = new Array<Producto>();
     }
   
     public agregarProducto(code:string, title:string, description:string, price:number, thumbnail:string, stock:number) {
-        fs.readFile("./productos.txt", "utf-8", (error, contenido) => {
+        fs.readFile("./data/productos.txt", "utf-8", (error, contenido) => {
             if (error) {
                 "hubo un error leyendo el archivo de productos"
-                return
+                return;
             };
             this.productos = JSON.parse(contenido);
         });
@@ -44,19 +30,20 @@ class Productos {
         if (this.productos.length !== 0) {
             nuevoId = this.productos[this.productos.length - 1].id + 1;
         }
-        const producto = {code:code, title:title, description:description, price:price, thumbnail:thumbnail, stock:stock, id:nuevoId, fechaAlta:moment().format('DD/MM/YYYY, hh:mm:ss'), fechaActualizacion:moment().format('DD/MM/YYYY, hh:mm:ss') };
+       
+        const producto: Producto = {code:code, title:title, description:description, price:price, thumbnail:thumbnail, stock:stock, id:nuevoId, timestamp: Date.now()};
         this.productos.push(producto);
-        fs.writeFile("./productos.txt", JSON.stringify(this.productos, null, "\t"), "utf-8", (error) => {
+        fs.writeFile("./data/productos.txt", JSON.stringify(this.productos, null, "\t"), "utf-8", (error) => {
             if (error) {
                 "hubo un error en la escritura del archivo de productos"
-                return
+                return;
             };
         });
         return this.productos;
     };
 
     public buscarProducto(id:number) {
-        fs.readFile("./productos.txt", "utf-8", (error, contenido) => {
+        fs.readFile("./data/productos.txt", "utf-8", (error, contenido) => {
             if (error) {
                 "hubo un error leyendo el archivo de productos"
                 return
@@ -72,7 +59,7 @@ class Productos {
     };
 
     public listarProductos(): Producto[] {
-        fs.readFile("./productos.txt", "utf-8", (error, contenido) => {
+        fs.readFile("./data/productos.txt", "utf-8", (error, contenido) => {
             if (error) {
                 "hubo un error leyendo el archivo de productos"
                 return
@@ -83,7 +70,7 @@ class Productos {
     };
 
     public borrarProducto(id:number) {
-        fs.readFile("./productos.txt", "utf-8", (error, contenido) => {
+        fs.readFile("./data/productos.txt", "utf-8", (error, contenido) => {
             if (error) {
                 "hubo un error leyendo el archivo de productos"
                 return
@@ -94,7 +81,7 @@ class Productos {
             if (this.productos[i].id == id) {
                 const prodBorrado = this.productos[i];
                 this.productos.splice(i, 1);
-                fs.writeFile("./productos.txt", JSON.stringify(this.productos, null, "\t"), "utf-8", (error) => {
+                fs.writeFile("./data/productos.txt", JSON.stringify(this.productos, null, "\t"), "utf-8", (error) => {
                     if (error) {
                         "hubo un error en la escritura del archivo de productos"
                         return
@@ -106,7 +93,7 @@ class Productos {
     };
 
     public actualizarProducto(code:string, title:string, description:string, price:number, thumbnail:string, stock:number, id:number) {
-        fs.readFile("./productos.txt", "utf-8", (error, contenido) => {
+        fs.readFile("./data/productos.txt", "utf-8", (error, contenido) => {
             if (error) {
                 "hubo un error leyendo el archivo de productos"
                 return
@@ -121,9 +108,9 @@ class Productos {
                 this.productos[i].price = price;
                 this.productos[i].thumbnail = thumbnail;
                 this.productos[i].stock = stock;
-                this.productos[i].fechaActualizacion = moment().format('DD/MM/YYYY, hh:mm:ss');
+                this.productos[i].timestamp = Date.now();
                 const prodActualizado = this.productos[i];
-                fs.writeFile("./productos.txt", JSON.stringify(this.productos, null, "\t"), "utf-8", (error) => {
+                fs.writeFile("./data/productos.txt", JSON.stringify(this.productos, null, "\t"), "utf-8", (error) => {
                     if (error) {
                         "hubo un error en la escritura del archivo de productos"
                         return

@@ -16,7 +16,6 @@
     <section class="container bg-light mt-3">
         <span id="tablaProductos"></span>
         <script>
-            const socket = io();
             const hbsTemplate = Handlebars.compile(`
             <div class="container mb-3">
             <h1 class="mb-3">Lista de Productos</h1>
@@ -30,7 +29,6 @@
                             <th class="text-center fs-3 fw-normal">Precio</th>
                             <th class="text-center fs-3 fw-normal">Imagen</th>
                             <th class="text-center fs-3 fw-normal">Stock</th>
-                            <th class="text-center fs-3 fw-normal">Fecha Alta</th>
                             <th class="text-center fs-3 fw-normal">Fecha Actualización</th>
                         </tr>
                     </thead>
@@ -45,8 +43,7 @@
                                     <img style="width:4rem; height:4rem" src={{thumbnail}} />
                                 </td>
                                 <td class="text-end fs-4">{{stock}}</td>
-                                <td class="text-center fs-4">{{fechaAlta}}</td>
-                                <td class="text-center fs-4">{{fechaActualizacion}}</td>
+                                <td class="text-center fs-4">{{timestamp}}</td>
                                 
                             </tr>
                         {{/each}}
@@ -59,13 +56,27 @@
             {{/if}} 
             </div>
             `);
-            socket.on('listarProductos', lista => {
-                const html = hbsTemplate({
-                    lista: lista
-                });
-                document.getElementById('tablaProductos').innerHTML = "";
-                document.getElementById('tablaProductos').innerHTML = html;
-            });
+            // Primero hago el fetch para traer la data
+            fetch('http://localhost:8080/productos/listar', {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                })
+                // parseo mi data a json
+                .then(res => res.json())
+                // atajo cualquier error
+                .catch(error => console.error('Error:', error))
+                // Si todo sale bien tengo mi data y la uso
+                .then(miLista => {
+                    // aca tenggo mi handlebars.compile como antes
+                    // esta vez el dato en vez de recibirlo como parametro del socket, es el parametro miLista del fetch
+                    // se lo mando al template y lo asigno al html
+                    const html = hbsTemplate({
+                        lista: miLista
+                    });
+                    document.getElementById('tablaProductos').innerHTML = html;
+                })
         </script>
     </section>
     <section class="container bg-light mt-3">
@@ -85,6 +96,7 @@
             </form>
         </div>
         <script>
+            const socket = io();
             socket.on("messages", (data) => {
                 document.getElementById("messages").innerHTML = data.map((entry) =>
                     `<div>

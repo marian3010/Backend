@@ -5,10 +5,9 @@
 		"description": "Globo terráqueo para uso escolar",
 		"price": "750",
 		"thumbnail": "https://cdn3.iconfinder.com/data/icons/education-209/64/globe-earth-geograhy-planet-school-256.png",
-		"stock": "12",
+		"stock": "6",
 		"id": 1,
-		"fechaAlta": "15/09/2021, 11:05:49",
-		"fechaActualizacion": "15/09/2021, 11:05:49"
+		"timestamp": 1632092674312
 	},
 	{
 		"code": "A102",
@@ -16,9 +15,8 @@
 		"description": "Escuadra grande para uso educativo",
 		"price": "321",
 		"thumbnail": "https://cdn3.iconfinder.com/data/icons/education-209/64/ruler-triangle-stationary-school-256.png",
-		"stock": "22",
+		"stock": "12",
 		"id": 2,
-		"fechaAlta": "15/09/2021, 11:06:15",
-		"fechaActualizacion": "15/09/2021, 11:25:07"
+		"timestamp": 1632092699685
 	}
 ]

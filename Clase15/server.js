@@ -24,13 +24,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var express_1 = __importDefault(require("express"));
 var path_1 = __importDefault(require("path"));
-var productos_js_1 = __importDefault(require("./productos.js"));
-var carrito_js_1 = __importDefault(require("./carrito.js"));
+var productos_js_1 = __importDefault(require("./modelo/productos.js"));
 var express_handlebars_1 = __importDefault(require("express-handlebars"));
 var SocketIO = __importStar(require("socket.io"));
 var fs_1 = __importDefault(require("fs"));
 var prods = new productos_js_1.default();
-var miCarrito = new carrito_js_1.default(1, Date.now());
+//const miCarrito = new Carrito();
 var admin = true;
 var __dirname = path_1.default.resolve();
 var port = 8080;
@@ -59,7 +58,7 @@ server.on("error", function (error) {
 });
 //verifico si hay mensajes guardados para mostrar
 var messages = [];
-fs_1.default.readFile("./mensajes.txt", "utf-8", function (error, contenido) {
+fs_1.default.readFile("./data/mensajes.txt", "utf-8", function (error, contenido) {
     if (error) {
         "hubo un error leyendo el archivo de mensajes";
         return;
@@ -84,59 +83,50 @@ io.on('connection', function (socket) {
         });
     });
 });
+var error = new Error("No tiene autorización para esta ruta");
 ///busco el producto por id y lo muestro
 productosRouter.get('/listar/:id?', function (req, res) {
+    // creo una variable general para almacenar producto
+    var producto;
     if (req.params.id) {
-        try {
-            var producto = prods.buscarProducto(parseInt(req.params.id));
-            console.log(req.params.id);
-            console.log(producto);
-            if (producto) {
-                io.sockets.emit('listarProductos', [producto]);
-                res.send();
-                //res.sendFile(__dirname + "/listoProds.html");
-                //res.send(producto);
-                return;
-            }
-            else {
-                res.send({ error: 'producto no encontrado' });
-            }
-        }
-        catch (err) {
-            console.log("hubo un error", err);
-        }
+        // si hay id le asigno el producto que traiga
+        producto = [prods.buscarProducto(parseInt(req.params.id))];
     }
     else {
-        io.sockets.emit('listarProductos', prods.listarProductos());
-        res.sendFile(__dirname + "/listoProds.html");
+        // si no hay id traigo todos
+        producto = prods.listarProductos();
     }
+    // le devuelvo al fetch un json con lo que obtuve
+    res.json(producto);
+});
+productosRouter.get('/', function (req, res) {
+    res.sendFile(__dirname + "/public/listoProds.html");
 });
 //guardo un nuevo producto
-productosRouter.get('/guardar', function (req, res) {
+productosRouter.get('/guardar', function (req, res, next) {
     if (admin) {
-        res.sendFile(__dirname + "/agregoProd.html");
+        res.sendFile(__dirname + "/public/agregoProd.html");
     }
     else {
-        res.send({ error: -1, descripcion: 'ruta productos método guardar no autorizado' });
+        return next(error);
     }
 });
-productosRouter.post('/guardar', function (req, res) {
+productosRouter.post('/guardar', function (req, res, next) {
     if (admin) {
         var prod = prods.agregarProducto(req.body.code, req.body.title, req.body.description, req.body.price, req.body.thumbnail, req.body.stock);
-        io.sockets.emit('listarProductos', prod);
-        res.sendFile(__dirname + "/listoProds.html");
+        res.json(prod);
     }
     else {
-        res.send({ error: -1, descripcion: 'ruta productos método guardar no autorizado' });
+        return next(error);
     }
 });
 //busco un producto por id y lo borro
-productosRouter.delete('/borrar/:id', function (req, res) {
+productosRouter.delete('/borrar/:id', function (req, res, next) {
     if (admin) {
         try {
             var productoBorrado = prods.borrarProducto(parseInt(req.params.id));
             if (productoBorrado) {
-                res.send(productoBorrado);
+                res.json(productoBorrado);
                 return;
             }
             else {
@@ -150,16 +140,16 @@ productosRouter.delete('/borrar/:id', function (req, res) {
         ;
     }
     else {
-        res.send({ error: -2, descripcion: 'ruta productos método borrar no autorizado' });
+        return next(error);
     }
 });
 // busco un producto por id y lo actualizo
-productosRouter.put('/actualizar/:id', function (req, res) {
+productosRouter.put('/actualizar/:id', function (req, res, next) {
     if (admin) {
         try {
             var prodAct = prods.actualizarProducto(req.body.code, req.body.title, req.body.description, req.body.price, req.body.thumbnail, req.body.stock, parseInt(req.params.id));
             if (prodAct) {
-                res.send(prodAct);
+                res.json(prodAct);
                 return;
             }
             else {
@@ -172,60 +162,56 @@ productosRouter.put('/actualizar/:id', function (req, res) {
         }
     }
     else {
-        res.send({ error: -3, descripcion: 'ruta productos método actualizar no autorizado' });
+        return next(error);
     }
 });
 //listar carrito
-carritoRouter.get('/listar/:id?', function (req, res) {
-    fs_1.default.readFile("./carrito.txt", "utf-8", function (error, contenido) {
-        if (error) {
-            "hubo un error leyendo el archivo del carrito";
-            return;
-        }
-        ;
-        var miCarrito = JSON.parse(contenido);
-    });
-    if (req.params.id) {
-        try {
-            var producto = miCarrito.buscarProducto(parseInt(req.params.id));
+//carritoRouter.get('/listar/:id?', (req: express.Request, res: express.Response) => {
+//    fs.readFile("./data/carrito.txt", "utf-8", (error, contenido) => {
+//       if (error) {
+//           "hubo un error leyendo el archivo del carrito"
+//           return
+//        };
+//        const miCarrito = JSON.parse(contenido);
+//    });
+//    if (req.params.id) {
+//        try {
+/*            const producto = miCarrito.buscarProducto(parseInt(req.params.id));
             if (producto) {
                 io.sockets.emit('listCarrito', miCarrito.listarProductos());
-                res.sendFile(__dirname + "/carrito.html");
+                res.sendFile(__dirname + "/public/carrito.html");
                 return;
-            }
-            else {
+            } else {
                 res.send({ error: 'producto no encontrado' });
             }
-        }
-        catch (err) {
+        } catch (err) {
             console.log("hubo un error", err);
         }
-    }
-    else {
+    } else {
+
     }
 });
+
 //agrego producto al carrito
-carritoRouter.post('/agregar/:id_producto', function (req, res) {
+carritoRouter.post('/agregar/:id_producto', (req: express.Request, res: express.Response) => {
     miCarrito.agregarProducto(req.body.code, req.body.title, req.body.description, req.body.price, req.body.thumbnail, req.body.stock);
     io.sockets.emit('listCarrito', miCarrito.listarProductos());
-    res.sendFile(__dirname + "/carrito.html");
+    res.sendFile(__dirname + "/public/carrito.html");
 });
+
 //borro producto del carrito
-carritoRouter.delete('/borrar/:id', function (req, res) {
+carritoRouter.delete('/borrar/:id', (req: express.Request, res: express.Response) => {
     try {
-        var productoBorrado = miCarrito.borrarProducto(parseInt(req.params.id));
+        const productoBorrado = miCarrito.borrarProducto(parseInt(req.params.id));
         if (productoBorrado) {
             io.sockets.emit('listCarrito', miCarrito.listarProductos());
-            res.sendFile(__dirname + "/carrito.html");
+            res.sendFile(__dirname + "/public/carrito.html");
             return;
-        }
-        else {
+        } else {
             res.send({ error: 'producto no encontrado' });
-        }
-        ;
-    }
-    catch (err) {
+        };
+    } catch (err) {
         console.log("hubo un error", err);
-    }
-    ;
-});
+    };
+        
+});*/
