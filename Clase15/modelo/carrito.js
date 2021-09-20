@@ -21,14 +21,30 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var productos_js_1 = __importDefault(require("./productos.js"));
 var Carrito = /** @class */ (function (_super) {
     __extends(Carrito, _super);
-    function Carrito(id, fecha) {
+    function Carrito() {
         var _this = _super.call(this) || this;
-        _this.id = id;
-        _this.fecha = fecha;
+        _this.id = Carrito.contador;
+        Carrito.contador++;
+        _this.timestamp = Date.now();
         return _this;
     }
     ;
+    Carrito.prototype.getId = function () {
+        return this.id;
+    };
+    Carrito.prototype.getTimestamp = function () {
+        return this.timestamp;
+    };
+    Carrito.contador = 1;
     return Carrito;
 }(productos_js_1.default));
 ;
 exports.default = Carrito;
+var carrito1 = new Carrito();
+console.log("Carrito 1 ID: " + carrito1.getId());
+console.log("Carrito 1 Timestamp: " + carrito1.getTimestamp());
+console.log("Carrito 1 Timestamp: " + carrito1.getTimestamp());
+console.log("Carrito 1 Timestamp: " + carrito1.getTimestamp());
+var carrito2 = new Carrito();
+console.log("Carrito 2 ID: " + carrito2.getId());
+console.log("Carrito 2 Timestamp: " + carrito2.getTimestamp());
