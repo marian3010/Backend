@@ -3,7 +3,7 @@ import fs from "fs";
 const carritoRouter = express.Router();
 import Carrito from "../modelo/carrito.js";
 const miCarrito: Carrito = new Carrito();
-import {Producto} from "../modelo/productos.js";
+import Producto from "../modelo/productos.js";
 
 
 //listar carrito
@@ -30,27 +30,15 @@ carritoRouter.post('/agregar/:id_producto', (req: express.Request, res: express.
         };
         miCarrito.archivo = JSON.parse(contenido);
     });
-    fs.readFile('./data/productos.txt', "utf-8", (error, contenido) => {
+    const producto = [miCarrito.buscarProducto(parseInt(req.params.id))];
+    miCarrito.archivo.productos.push(producto);
+    fs.writeFile(miCarrito.fileLocation, JSON.stringify(miCarrito.archivo, null, "\t"), "utf-8", (error) => {
         if (error) {
-            "hubo un error leyendo el archivo de productos"
-            return;
-        };
-        let prodsArchivo = JSON.parse(contenido);
-        for (let i:number = 0; i < prodsArchivo.productos.length; i++) {
-            if (prodsArchivo.productos[i].id === parseInt(req.params.id_producto)) {
-                const prod: Producto = prodsArchivo.productos[i]
-                miCarrito.archivo.productos.push(prod);
-                fs.writeFile(miCarrito.fileLocation, JSON.stringify(miCarrito.archivo, null, "\t"), "utf-8", (error) => {
-                    if (error) {
-                        "hubo un error en la escritura del archivo de productos"
-                         return;
-                    };
-                });
-                res.json(miCarrito.archivo.productos);
-                return;
-            };
+            "hubo un error en la escritura del archivo de productos"
+             return;
         };
     });
+    res.json(miCarrito.archivo.productos);
 });
 
 //borro producto del carrito

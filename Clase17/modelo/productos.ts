@@ -1,6 +1,6 @@
 import fs from "fs";
 
-export interface Producto {
+interface Producto {
     id: number;
     timestamp: number;
     code: string;
@@ -21,7 +21,7 @@ interface AProductos {
     productos: Producto[];
 }
 
-export class Productos {
+class Productos {
     public archivo: AProductos | Cart
     public fileLocation: string;
   
@@ -55,7 +55,7 @@ export class Productos {
         return this.archivo.productos;
     };
 
-    public buscarProducto(id:number):Producto|null {
+    public buscarProducto(id:number) {
         fs.readFile(this.fileLocation, "utf-8", (error, contenido) => {
             if (error) {
                 "hubo un error leyendo el archivo de productos"
@@ -65,12 +65,10 @@ export class Productos {
         });
         for (let i:number = 0; i < this.archivo.productos.length; i++) {
             if (this.archivo.productos[i].id == id) {
-                //return this.archivo.productos[i];
-                const prod: Producto = this.archivo.productos[i]
-                return prod;
+                return this.archivo.productos[i];
             };
         };
-        return null;
+        return this.archivo.productos = [];
     };
 
     public listarProductos(): Producto[] {
@@ -137,4 +135,4 @@ export class Productos {
     };
 };
 
-
+export default Productos;

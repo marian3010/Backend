@@ -1,4 +1,4 @@
-import {Productos} from "./productos.js";
+import Productos from "./productos.js";
 
 class Carrito extends Productos{
   private static contador: number = 1;  

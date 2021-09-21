@@ -5,9 +5,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var express_1 = __importDefault(require("express"));
 var productosRouter = express_1.default.Router();
-var productos_js_1 = require("../modelo/productos.js");
+var productos_js_1 = __importDefault(require("../modelo/productos.js"));
 var authorization_js_1 = require("../middleware/authorization.js");
-var prods = new productos_js_1.Productos();
+var prods = new productos_js_1.default();
 var path_1 = __importDefault(require("path"));
 var __dirname = path_1.default.resolve();
 productosRouter.get('/', function (req, res) {

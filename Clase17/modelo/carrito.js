@@ -14,8 +14,11 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-var productos_js_1 = require("./productos.js");
+var productos_js_1 = __importDefault(require("./productos.js"));
 var Carrito = /** @class */ (function (_super) {
     __extends(Carrito, _super);
     function Carrito() {
@@ -32,6 +35,6 @@ var Carrito = /** @class */ (function (_super) {
     ;
     Carrito.contador = 1;
     return Carrito;
-}(productos_js_1.Productos));
+}(productos_js_1.default));
 ;
 exports.default = Carrito;

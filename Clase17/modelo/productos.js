@@ -3,7 +3,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Productos = void 0;
 var fs_1 = __importDefault(require("fs"));
 var Productos = /** @class */ (function () {
     function Productos() {
@@ -48,17 +47,14 @@ var Productos = /** @class */ (function () {
             ;
             _this.archivo = JSON.parse(contenido);
         });
-        console.log("file location", this.fileLocation);
         for (var i = 0; i < this.archivo.productos.length; i++) {
             if (this.archivo.productos[i].id == id) {
-                //return this.archivo.productos[i];
-                var prod = this.archivo.productos[i];
-                return prod;
+                return this.archivo.productos[i];
             }
             ;
         }
         ;
-        return null;
+        return this.archivo.productos = [];
     };
     ;
     Productos.prototype.listarProductos = function () {
@@ -70,7 +66,6 @@ var Productos = /** @class */ (function () {
             }
             ;
             _this.archivo = JSON.parse(contenido);
-            console.log("muestro el archivo", _this.fileLocation);
         });
         return this.archivo.productos;
     };
@@ -139,5 +134,5 @@ var Productos = /** @class */ (function () {
     ;
     return Productos;
 }());
-exports.Productos = Productos;
 ;
+exports.default = Productos;

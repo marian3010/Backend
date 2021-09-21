@@ -4,7 +4,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var express_1 = __importDefault(require("express"));
-var fs_1 = __importDefault(require("fs"));
 var carritoRouter = express_1.default.Router();
 var carrito_js_1 = __importDefault(require("../modelo/carrito.js"));
 var miCarrito = new carrito_js_1.default();
@@ -25,39 +24,8 @@ carritoRouter.get('/listar/:id?', function (req, res) {
 });
 //agrego producto al carrito
 carritoRouter.post('/agregar/:id_producto', function (req, res) {
-    fs_1.default.readFile(miCarrito.fileLocation, "utf-8", function (error, contenido) {
-        if (error) {
-            "hubo un error leyendo el archivo de productos";
-            return;
-        }
-        ;
-        miCarrito.archivo = JSON.parse(contenido);
-    });
-    fs_1.default.readFile('./data/productos.txt', "utf-8", function (error, contenido) {
-        if (error) {
-            "hubo un error leyendo el archivo de productos";
-            return;
-        }
-        ;
-        var prodsArchivo = JSON.parse(contenido);
-        for (var i = 0; i < prodsArchivo.productos.length; i++) {
-            if (prodsArchivo.productos[i].id === parseInt(req.params.id_producto)) {
-                var prod = prodsArchivo.productos[i];
-                miCarrito.archivo.productos.push(prod);
-                fs_1.default.writeFile(miCarrito.fileLocation, JSON.stringify(miCarrito.archivo, null, "\t"), "utf-8", function (error) {
-                    if (error) {
-                        "hubo un error en la escritura del archivo de productos";
-                        return;
-                    }
-                    ;
-                });
-                res.json(miCarrito.archivo.productos);
-                return;
-            }
-            ;
-        }
-        ;
-    });
+    var carrito = miCarrito.agregarProducto(req.body.code, req.body.title, req.body.description, req.body.price, req.body.thumbnail, req.body.stock);
+    res.json(carrito);
 });
 //borro producto del carrito
 carritoRouter.delete('/borrar/:id', function (req, res) {
