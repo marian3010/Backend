@@ -20,7 +20,7 @@ app.use(express.static(`${__dirname}/public`));
 
 app.use('/productos', productosRouter);
 app.use('/carrito', carritoRouter);
-app.use(notFoundMiddleware); 
+app.use(notFoundMiddleware()); 
 
 app.set("view engine", "hbs");
 app.set("views", path.join(__dirname, 'views'));

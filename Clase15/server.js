@@ -40,7 +40,7 @@ app.use(express_1.default.urlencoded({ extended: true }));
 app.use(express_1.default.static(__dirname + "/public"));
 app.use('/productos', products_1.default);
 app.use('/carrito', carts_1.default);
-app.use(notFoundMiddleware);
+app.use(notFoundMiddleware());
 app.set("view engine", "hbs");
 app.set("views", path_1.default.join(__dirname, 'views'));
 app.engine("hbs", (0, express_handlebars_1.default)({

@@ -48,7 +48,6 @@ var Productos = /** @class */ (function () {
             ;
             _this.archivo = JSON.parse(contenido);
         });
-        console.log("file location", this.fileLocation);
         for (var i = 0; i < this.archivo.productos.length; i++) {
             if (this.archivo.productos[i].id == id) {
                 //return this.archivo.productos[i];
@@ -70,7 +69,6 @@ var Productos = /** @class */ (function () {
             }
             ;
             _this.archivo = JSON.parse(contenido);
-            console.log("muestro el archivo", _this.fileLocation);
         });
         return this.archivo.productos;
     };
