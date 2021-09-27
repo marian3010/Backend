@@ -13,6 +13,8 @@ const port = 8080;
 const app = express();
 const error = new Error("La ruta no es válida");
 const notFoundMiddleware = () => (req: express.Request, _res: express.Response, next: express.NextFunction) => {return next(error);};
+const { options } = require("../db/SQLite3");
+const knex = require("knex")(options);
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -42,14 +44,17 @@ server.on("error", (error) => {
 });
 
 //verifico si hay mensajes guardados para mostrar
-let messages: Mensaje[] = []
-fs.readFile("./data/mensajes.txt", "utf-8", (error, contenido) => {
-    if (error) {
-        "hubo un error leyendo el archivo de mensajes"
-        return
-    };
-    messages = JSON.parse(contenido);
-});
+let messages: Mensaje[] = [];
+
+(async () => {
+    try {
+      messages = await knex.from("mensajes").select("*");
+    } catch(error) {
+      console.log (error);
+    } finally {
+      knex.destroy();
+    }
+  })();
 
 io.on('connection', socket => {
     //socket.emit('listarProductos', prods.listarProductos());
@@ -60,12 +65,8 @@ io.on('connection', socket => {
     socket.on("new-message", (data) => {
         messages.push(data);
         io.sockets.emit("messages", messages);
-        fs.writeFile("mensajes.txt", JSON.stringify(messages, null, "\t"), "utf-8", (error) => {
-            if (error) {
-                "hubo un error en la escritura del archivo de mensajes"
-                return;
-            };
-        });
+        knex.from("mensajes").insert(data);
+        knex.destroy();
     });
 });
 

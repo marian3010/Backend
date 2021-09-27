@@ -1,16 +1,16 @@
-import Productos from "./productos.js";
+import Producto from "./productos.js";
 
-class Carrito extends Productos{
+class Carrito {
   private static contador: number = 1;  
   public fileLocation: string;
+  public productos: Array<Producto>;
+  public id: number;
+  public timestamp: number;
        
     public constructor(){
-        super();
-        this.archivo = {
-          productos: [],
-          id: Carrito.contador,
-          timestamp: Date.now()
-        };
+        this.productos = [];
+        this.id = Carrito.contador;
+        this.timestamp = Date.now();
         Carrito.contador ++;
         this.fileLocation = "./data/carritos.txt"
     };

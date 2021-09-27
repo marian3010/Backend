@@ -1,138 +1,155 @@
-import fs from "fs";
 
-interface Producto {
-    id: number;
-    timestamp: number;
+const { options } = require("../db/mariaDB");
+const knex = require("knex")(options);
+
+export interface Producto {
+    
     code: string;
     title: string;
     description: string;
     price: number;
     thumbnail: string;
     stock: number;
-}  
-
-interface Cart {
-    id: number;
     timestamp: number;
-    productos: Producto[];
-}
-    
+} 
+
 interface AProductos {
     productos: Producto[];
 }
 
 class Productos {
-    public archivo: AProductos | Cart
-    public fileLocation: string;
-  
+    //public listaProductos: AProductos;
+    public ready:boolean;
     public constructor() {
-      this.archivo = {
-        productos: []
-      };
-      this.fileLocation = "./data/productos.txt"
+        //this.listaProductos = {
+        //    productos: []
+        //  };
+        
+        this.ready = false;
+        this.iniciarTabla();
     }
-  
-    public agregarProducto(code:string, title:string, description:string, price:number, thumbnail:string, stock:number) {
-        fs.readFile(this.fileLocation, "utf-8", (error, contenido) => {
-            if (error) {
-                "hubo un error leyendo el archivo de productos"
-                return;
+    
+    private async iniciarTabla() {
+        try {
+            const bd = await knex.schema.hasTable("productos");
+            if (!bd) {
+                await knex.schema.createTable("productos", (table:any) => {
+                    table.increments("id",{primaryKey:true})
+                    table.string("code");
+                    table.string("title").notNullable();
+                    table.string("description");
+                    table.integer("price").notNullable();
+                    table.string("thumbnail");
+                    table.integer("stock");
+                    table.integer("timestamp");
+                })
+                console.log("tabla creada");
+                this.ready = true;
             };
-            this.archivo = JSON.parse(contenido);
-        });
-        let nuevoId = 1;
-        if (this.archivo.productos.length !== 0) {
-            nuevoId = this.archivo.productos[this.archivo.productos.length - 1].id + 1;
+        } 
+        catch (error) {
+            console.log(error);
         }
-        const producto: Producto = {code:code, title:title, description:description, price:price, thumbnail:thumbnail, stock:stock, id:nuevoId, timestamp: Date.now()};
-        this.archivo.productos.push(producto);
-        fs.writeFile(this.fileLocation, JSON.stringify(this.archivo, null, "\t"), "utf-8", (error) => {
-            if (error) {
-                "hubo un error en la escritura del archivo de productos"
-                return;
-            };
-        });
-        return this.archivo.productos;
+        finally {
+           knex.destroy();
+        }
     };
 
-    public buscarProducto(id:number) {
-        fs.readFile(this.fileLocation, "utf-8", (error, contenido) => {
-            if (error) {
-                "hubo un error leyendo el archivo de productos"
-                return
-            };
-            this.archivo = JSON.parse(contenido);
-        });
-        for (let i:number = 0; i < this.archivo.productos.length; i++) {
-            if (this.archivo.productos[i].id == id) {
-                return this.archivo.productos[i];
-            };
-        };
-        return this.archivo.productos = [];
+    public async agregarProducto(code:string, title:string, description:string, price:number, thumbnail:string, stock:number, timestamp:number = Date.now()) {
+        try {
+            const producto: Producto = {
+                code,
+                title,
+                description,
+                price,
+                thumbnail,
+                stock,
+                timestamp 
+            }
+            const response = await knex.from("productos").insert(producto);
+            console.log("respuesta del insert", response)
+            return response;
+        }
+        catch (error) {
+            console.log(error);
+        }
+        finally {
+            knex.destroy();
+        }
     };
 
-    public listarProductos(): Producto[] {
-        fs.readFile(this.fileLocation, "utf-8", (error, contenido) => {
-            if (error) {
-                "hubo un error leyendo el archivo de productos"
-                return
-            };
-            this.archivo = JSON.parse(contenido);
-        });
-        return this.archivo.productos;
+    public async buscarProducto(id:number) {
+        try {
+            const response = await knex.from("productos").where("id", "=", id);
+            console.log("respuesta del insert", response)
+            return response;
+        } 
+        catch (error) {
+            console.log(error);
+        }
+        finally {
+            knex.destroy();
+        }
     };
 
-    public borrarProducto(id:number) {
-        fs.readFile(this.fileLocation, "utf-8", (error, contenido) => {
-            if (error) {
-                "hubo un error leyendo el archivo de productos"
-                return
-            };
-            this.archivo = JSON.parse(contenido);
-        });
-        for (let i:number = 0; i < this.archivo.productos.length; i++) {
-            if (this.archivo.productos[i].id == id) {
-                const prodBorrado = this.archivo.productos[i];
-                this.archivo.productos.splice(i, 1);
-                fs.writeFile(this.fileLocation, JSON.stringify(this.archivo, null, "\t"), "utf-8", (error) => {
-                    if (error) {
-                        "hubo un error en la escritura del archivo de productos"
-                        return
-                    };
-                });
-                return prodBorrado;
-            };
-        };
+    public async listarProductos() {
+        try {
+           const response = await knex.from("productos").select("*");
+           //let listaProductos = [];
+           //for (const prod of response) {
+           //     const producto: Producto[] = {
+           //         {prod["code"]},
+           //         {prod["title"]},
+           //         {prod["description"]},
+           //         {prod["price"]},
+           //         {prod["thumbnail"]},
+           //         {prod["stock"]},
+           //         {prod["timestamp"]} 
+           //     }
+           //     listaProductos.push(producto);
+           return response;
+        }
+        catch (error) {
+            console.log(error);
+        }
+        finally {
+            knex.destroy();
+        }    
+    };            
+
+    public async borrarProducto(id:number) {
+        try {
+            const response = await knex.from("productos").where("id", "=", id).del();
+            console.log("respuesta del delete", response)
+            return response;
+        } 
+        catch (error) {
+            console.log(error);
+        }
+        finally {
+            knex.destroy();
+        }
     };
 
-    public actualizarProducto(code:string, title:string, description:string, price:number, thumbnail:string, stock:number, id:number) {
-        fs.readFile(this.fileLocation, "utf-8", (error, contenido) => {
-            if (error) {
-                "hubo un error leyendo el archivo de productos"
-                return
-            };
-            this.archivo = JSON.parse(contenido);
-        });
-        for (let i:number = 0; i < this.archivo.productos.length; i++) {
-            if (this.archivo.productos[i].id == id) {
-                this.archivo.productos[i].code = code;
-                this.archivo.productos[i].title = title;
-                this.archivo.productos[i].description = description;
-                this.archivo.productos[i].price = price;
-                this.archivo.productos[i].thumbnail = thumbnail;
-                this.archivo.productos[i].stock = stock;
-                this.archivo.productos[i].timestamp = Date.now();
-                const prodActualizado = this.archivo.productos[i];
-                fs.writeFile(this.fileLocation, JSON.stringify(this.archivo, null, "\t"), "utf-8", (error) => {
-                    if (error) {
-                        "hubo un error en la escritura del archivo de productos"
-                        return
-                    };
-                });
-                return prodActualizado;
-            };
-        };
-    };
+    public async actualizarProducto(code:string, title:string, description:string, price:number, thumbnail:string, stock:number, id:number) {
+        try {
+            const response = await knex.from("productos").where("id","=",id)
+            .update("code", code)
+            .update("title", title)
+            .update("description", description)
+            .update("price", price)
+            .update("thumbnail", thumbnail)
+            .update("stock", stock)
+            .upadte("timestamp", Date.now())
+            return response;
+        } 
+        catch (error) {
+            console.log(error);
+        }
+        finally {
+            knex.destroy();
+        }
+    };        
 };
 
 export default Productos;

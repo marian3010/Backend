@@ -1,0 +1,10 @@
+[{code:"A101",title:"Globo Terráqueo",description:"Globo terráqueo para uso escolar",price:750,thumbnail:"https://cdn3.iconfinder.com/data/icons/education-209/64/globe-earth-geograhy-planet-school-256.png",stock: 11,timestamp: 1632172194034},
+{code:"A102",title:"Escuadra",description:"Escuadra grande para uso educativo",price:340,thumbnail:"https://cdn3.iconfinder.com/data/icons/education-209/64/ruler-triangle-stationary-school-256.png",stock:4,timestamp: 1632172209634},
+{code:"A103",title:"Teclado",description:"Teclado de computer",price:280,thumbnail:"www.teclado.com.ar",stock:23,timestamp:1632172254095},
+{code:"A104",title:"Cuaderno",description:"Cuaderno cuadriculado espiralado de 100 horas",price:170,thumbnail:"www.cuadernos.com.ar",stock:51,timestamp:1632172254095},
+{code:"A105",title:"Birome",description:"Birome Bic azul",price:130,thumbnail:"www.birome.com.ar",stock:85,timestamp:1632172254095},
+{code:"A106",title:"Mouse",description:"Mouse de computer",price:240,thumbnail:"www.mouse.com.ar",stock:7,timestamp:1632172254095},
+{code:"A107",title:"Lapicera",description:"Lapicera de pluma Lami",price:1250,thumbnail:"www.lami.com.ar",stock:18,timestamp:1632172254095},
+{code:"A108",title:"Monitor",description:"Monitor Samsung 21 pulgadas",price:2530,thumbnail:"www.monitor.com.ar",stock:14,timestamp:1632172254095},
+{code:"A109",title:"PC NUC",description:"Intel NUC",price:4990,thumbnail:"www.intel.com/NUC",stock:9,timestamp:1632172254095},
+{code:"A110",title:"Impresora",description:"Impresora HP deskjet",price:3300,thumbnail:"www.HP.com/deskjet",stock:14,timestamp:1632172254095}]
