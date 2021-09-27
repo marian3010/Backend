@@ -1,0 +1,62 @@
+show databases
+use ecommerce
+db.productos.insertMany([{"code" : "A107", "title" : "Lapicera", "description" : "Lapicera de pluma Lami", "price" : 1250, "thumbnail" : "www.lami.com.ar", "stock" : 100, "timestamp" : 1632172254095 },{ "code" : "A108", "title" : "Monitor", "description" : "Monitor Samsung 21 pulgadas", "price" : 2530, "thumbnail" : "www.monitor.com.ar", "stock" : 100, "timestamp" : 1632172254095 },{ "code" : "A109", "title" : "PC NUC", "description" : "Intel NUC", "price" : 4990, "thumbnail" : "www.intel.com/NUC", "stock" : 0, "timestamp" : 1632172254095 },{ "code" : "A110", "title" : "Impresora", "description" : "Impresora HP deskjet", "price" : 3300, "thumbnail" : "www.HP.com/deskjet", "stock" : 100, "timestamp" : 1632172254095 },{code:"A101",title:"Globo Terráqueo",description:"Globo terráqueo para uso escolar",price:750,thumbnail:"https://cdn3.iconfinder.com/data/icons/education-209/64/globe-earth-geograhy-planet-school-256.png",stock: 11,timestamp: 1632172194034},
+{code:"A102",title:"Escuadra",description:"Escuadra grande para uso educativo",price:340,thumbnail:"https://cdn3.iconfinder.com/data/icons/education-209/64/ruler-triangle-stationary-school-256.png",stock:4,timestamp: 1632172209634},
+{code:"A103",title:"Teclado",description:"Teclado de computer",price:280,thumbnail:"www.teclado.com.ar",stock:23,timestamp:1632172254095},
+{code:"A104",title:"Cuaderno",description:"Cuaderno cuadriculado espiralado de 100 horas",price:170,thumbnail:"www.cuadernos.com.ar",stock:51,timestamp:1632172254095},
+{code:"A105",title:"Birome",description:"Birome Bic azul",price:130,thumbnail:"www.birome.com.ar",stock:85,timestamp:1632172254095},
+{code:"A106",title:"Mouse",description:"Mouse de computer",price:240,thumbnail:"www.mouse.com.ar",stock:7,timestamp:1632172254095}])
+db.mensajes.insertMany([
+	{
+		"author": "mariana_hiba@hotmail.com",
+		"fecha": "08/09/2021, 01:25:48",
+		"text": "tenes escuadras en stock?"
+	},
+	{
+		"author": "julio@mail.com",
+		"fecha": "08/09/2021, 01:26:03",
+		"text": "si, me quedan"
+	},
+	{
+		"author": "mariana_hiba@hotmail.com",
+		"fecha": "10/09/2021, 09:22:09",
+		"text": "me guardas uno?"
+	},
+	{
+		"author": "julio@mail.com",
+		"fecha": "10/09/2021, 09:22:26",
+		"text": "ok, solo por un par de dias"
+	},
+	{
+		"author": "mariana_hiba@hotmail.com",
+		"fecha": "12/09/2021, 03:23:25",
+		"text": "hola! es domingo 12 hoy"
+	},
+	{
+		"author": "julio@mail.com",
+		"fecha": "12/09/2021, 03:24:42",
+		"text": "que buenoooo"
+	},
+	{
+		"author": "mariana_hiba@hotmail.com",
+		"fecha": "15/09/2021, 04:10:30",
+		"text": "buen dia"
+	}
+])
+db.mensajes.count()
+db.mensajes.find()
+db.productos.count()
+db.productos.find()
+db.productos.find({},{title:1,code:1,price:1, _id:0})
+db.productos.insert({"code":"A112","title":"Transportador","description":"Transportador de uso escolar","price":490,"thumbnail":"www.tranport.com.ar","stock":6,"timestamp":1632172254095})
+db.productos.find({"title":"Escuadra"},{code:1,title:1,price:1,stock:1,_id:0})
+db.productos.find({price:{$lt:1000}},{code:1,title:1,price:1,_id:0})
+db.productos.find({ $and: [{ price: { $gt: 1000 } }, { price: { $lt: 3000 } }] },{code:1,title:1,price:1,_id:0})
+db.productos.find({ price: { $gt: 3000 } },{code:1,title:1,price:1,_id:0})
+db.productos.find().sort({price: 1}).limit(1).skip(2)
+db.productos.updateMany({price:{$gt:0}},{$set:{stock:100}})
+db.productos.updateMany({price:{$gt:4000}},{$set:{stock:0}})
+db.productos.find({price:{$gt:4000}},{code:1,title:1,price:1,stock:1,_id:0})
+db.productos.deleteMany({price:{$lt:1000}})
+db.createUser({user:'pepe',pwd:"asd456",roles:[{role:'read',db:'ecommerce'}]})
+db.productos.insert({"code":"TTT","title":"hola"})
