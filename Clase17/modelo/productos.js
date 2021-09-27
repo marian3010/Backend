@@ -35,9 +35,26 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-exports.__esModule = true;
-var options = require("../db/mariaDB").options;
-var knex = require("knex")(options);
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+var options = {
+    client: "mysql",
+    connection: {
+        port: 3306,
+        host: "localhost",
+        user: "root",
+        password: "",
+        database: "test",
+    },
+    pool: {
+        min: 0,
+        max: 10,
+    }
+};
+var knex_1 = __importDefault(require("knex"));
+var knexo = (0, knex_1.default)(options);
 var Productos = /** @class */ (function () {
     function Productos() {
         //this.listaProductos = {
@@ -53,11 +70,11 @@ var Productos = /** @class */ (function () {
                 switch (_a.label) {
                     case 0:
                         _a.trys.push([0, 4, 5, 6]);
-                        return [4 /*yield*/, knex.schema.hasTable("productos")];
+                        return [4 /*yield*/, knexo.schema.hasTable("productos")];
                     case 1:
                         bd = _a.sent();
                         if (!!bd) return [3 /*break*/, 3];
-                        return [4 /*yield*/, knex.schema.createTable("productos", function (table) {
+                        return [4 /*yield*/, knexo.schema.createTable("productos", function (table) {
                                 table.increments("id", { primaryKey: true });
                                 table.string("code");
                                 table.string("title").notNullable();
@@ -80,7 +97,7 @@ var Productos = /** @class */ (function () {
                         console.log(error_1);
                         return [3 /*break*/, 6];
                     case 5:
-                        knex.destroy();
+                        knexo.destroy();
                         return [7 /*endfinally*/];
                     case 6: return [2 /*return*/];
                 }
@@ -105,7 +122,7 @@ var Productos = /** @class */ (function () {
                             stock: stock,
                             timestamp: timestamp
                         };
-                        return [4 /*yield*/, knex.from("productos").insert(producto)];
+                        return [4 /*yield*/, knexo.from("productos").insert(producto)];
                     case 1:
                         response = _a.sent();
                         console.log("respuesta del insert", response);
@@ -115,7 +132,7 @@ var Productos = /** @class */ (function () {
                         console.log(error_2);
                         return [3 /*break*/, 4];
                     case 3:
-                        knex.destroy();
+                        knexo.destroy();
                         return [7 /*endfinally*/];
                     case 4: return [2 /*return*/];
                 }
@@ -130,7 +147,7 @@ var Productos = /** @class */ (function () {
                 switch (_a.label) {
                     case 0:
                         _a.trys.push([0, 2, 3, 4]);
-                        return [4 /*yield*/, knex.from("productos").where("id", "=", id)];
+                        return [4 /*yield*/, knexo.from("productos").where("id", "=", id)];
                     case 1:
                         response = _a.sent();
                         console.log("respuesta del insert", response);
@@ -140,7 +157,7 @@ var Productos = /** @class */ (function () {
                         console.log(error_3);
                         return [3 /*break*/, 4];
                     case 3:
-                        knex.destroy();
+                        knexo.destroy();
                         return [7 /*endfinally*/];
                     case 4: return [2 /*return*/];
                 }
@@ -155,7 +172,7 @@ var Productos = /** @class */ (function () {
                 switch (_a.label) {
                     case 0:
                         _a.trys.push([0, 2, 3, 4]);
-                        return [4 /*yield*/, knex.from("productos").select("*")];
+                        return [4 /*yield*/, knexo.from("productos").select("*")];
                     case 1:
                         response = _a.sent();
                         //let listaProductos = [];
@@ -176,7 +193,7 @@ var Productos = /** @class */ (function () {
                         console.log(error_4);
                         return [3 /*break*/, 4];
                     case 3:
-                        knex.destroy();
+                        knexo.destroy();
                         return [7 /*endfinally*/];
                     case 4: return [2 /*return*/];
                 }
@@ -191,7 +208,7 @@ var Productos = /** @class */ (function () {
                 switch (_a.label) {
                     case 0:
                         _a.trys.push([0, 2, 3, 4]);
-                        return [4 /*yield*/, knex.from("productos").where("id", "=", id).del()];
+                        return [4 /*yield*/, knexo.from("productos").where("id", "=", id).del()];
                     case 1:
                         response = _a.sent();
                         console.log("respuesta del delete", response);
@@ -201,7 +218,7 @@ var Productos = /** @class */ (function () {
                         console.log(error_5);
                         return [3 /*break*/, 4];
                     case 3:
-                        knex.destroy();
+                        knexo.destroy();
                         return [7 /*endfinally*/];
                     case 4: return [2 /*return*/];
                 }
@@ -216,14 +233,14 @@ var Productos = /** @class */ (function () {
                 switch (_a.label) {
                     case 0:
                         _a.trys.push([0, 2, 3, 4]);
-                        return [4 /*yield*/, knex.from("productos").where("id", "=", id)
+                        return [4 /*yield*/, knexo.from("productos").where("id", "=", id)
                                 .update("code", code)
                                 .update("title", title)
                                 .update("description", description)
                                 .update("price", price)
                                 .update("thumbnail", thumbnail)
                                 .update("stock", stock)
-                                .upadte("timestamp", Date.now())];
+                                .update("timestamp", Date.now())];
                     case 1:
                         response = _a.sent();
                         return [2 /*return*/, response];
@@ -232,7 +249,7 @@ var Productos = /** @class */ (function () {
                         console.log(error_6);
                         return [3 /*break*/, 4];
                     case 3:
-                        knex.destroy();
+                        knexo.destroy();
                         return [7 /*endfinally*/];
                     case 4: return [2 /*return*/];
                 }
@@ -243,4 +260,4 @@ var Productos = /** @class */ (function () {
     return Productos;
 }());
 ;
-exports["default"] = Productos;
+exports.default = Productos;

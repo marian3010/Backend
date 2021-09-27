@@ -3,7 +3,6 @@ import path from "path";
 import Mensaje from "./modelo/mensaje.js";
 import handlebars from "express-handlebars";
 import * as SocketIO from 'socket.io';
-import fs from "fs";
 import productosRouter from './routes/products';
 import carritoRouter from './routes/carts';
 
@@ -13,8 +12,22 @@ const port = 8080;
 const app = express();
 const error = new Error("La ruta no es válida");
 const notFoundMiddleware = () => (req: express.Request, _res: express.Response, next: express.NextFunction) => {return next(error);};
-const { options } = require("../db/SQLite3");
-const knex = require("knex")(options);
+const options = {
+  client: "sqlite3",
+  connection: {
+      port: 3306,
+      host: "localhost",
+      user: "root",
+      password: "",
+      database: "test",
+  },
+  pool: {
+      min: 0,
+      max: 10,
+  }
+};
+import knex from "knex";
+const knexo = knex(options);
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -48,11 +61,11 @@ let messages: Mensaje[] = [];
 
 (async () => {
     try {
-      messages = await knex.from("mensajes").select("*");
+      messages = await knexo.from("mensajes").select("*");
     } catch(error) {
       console.log (error);
     } finally {
-      knex.destroy();
+      knexo.destroy();
     }
   })();
 
@@ -65,8 +78,8 @@ io.on('connection', socket => {
     socket.on("new-message", (data) => {
         messages.push(data);
         io.sockets.emit("messages", messages);
-        knex.from("mensajes").insert(data);
-        knex.destroy();
+        knexo.from("mensajes").insert(data);
+        knexo.destroy();
     });
 });
 

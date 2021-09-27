@@ -1,4 +1,4 @@
-const options = {
+export const options = {
     client: "mysql",
     connection: {
         port: 3306,
@@ -13,6 +13,6 @@ const options = {
     }
 };
 
-module.exports = {
-    options,
-};
+//module.exports = {
+//    options,
+//};

@@ -1,9 +1,23 @@
+const options = {
+    client: "mysql",
+    connection: {
+        port: 3306,
+        host: "localhost",
+        user: "root",
+        password: "",
+        database: "test",
+    },
+    pool: {
+        min: 0,
+        max: 10,
+    }
+};
+import knex from "knex";
+const knexo = knex(options);
 
-const { options } = require("../db/mariaDB");
-const knex = require("knex")(options);
 
 export interface Producto {
-    
+    id?: number;
     code: string;
     title: string;
     description: string;
@@ -19,7 +33,7 @@ interface AProductos {
 
 class Productos {
     //public listaProductos: AProductos;
-    public ready:boolean;
+    private ready:boolean;
     public constructor() {
         //this.listaProductos = {
         //    productos: []
@@ -31,9 +45,9 @@ class Productos {
     
     private async iniciarTabla() {
         try {
-            const bd = await knex.schema.hasTable("productos");
+            const bd = await knexo.schema.hasTable("productos");
             if (!bd) {
-                await knex.schema.createTable("productos", (table:any) => {
+                await knexo.schema.createTable("productos", (table:any) => {
                     table.increments("id",{primaryKey:true})
                     table.string("code");
                     table.string("title").notNullable();
@@ -51,7 +65,7 @@ class Productos {
             console.log(error);
         }
         finally {
-           knex.destroy();
+           knexo.destroy();
         }
     };
 
@@ -66,7 +80,7 @@ class Productos {
                 stock,
                 timestamp 
             }
-            const response = await knex.from("productos").insert(producto);
+            const response = await knexo.from("productos").insert(producto);
             console.log("respuesta del insert", response)
             return response;
         }
@@ -74,13 +88,13 @@ class Productos {
             console.log(error);
         }
         finally {
-            knex.destroy();
+            knexo.destroy();
         }
     };
 
     public async buscarProducto(id:number) {
         try {
-            const response = await knex.from("productos").where("id", "=", id);
+            const response = await knexo.from("productos").where("id", "=", id);
             console.log("respuesta del insert", response)
             return response;
         } 
@@ -88,13 +102,13 @@ class Productos {
             console.log(error);
         }
         finally {
-            knex.destroy();
+            knexo.destroy();
         }
     };
 
     public async listarProductos() {
         try {
-           const response = await knex.from("productos").select("*");
+           const response = await knexo.from("productos").select("*");
            //let listaProductos = [];
            //for (const prod of response) {
            //     const producto: Producto[] = {
@@ -113,13 +127,13 @@ class Productos {
             console.log(error);
         }
         finally {
-            knex.destroy();
+            knexo.destroy();
         }    
     };            
 
     public async borrarProducto(id:number) {
         try {
-            const response = await knex.from("productos").where("id", "=", id).del();
+            const response = await knexo.from("productos").where("id", "=", id).del();
             console.log("respuesta del delete", response)
             return response;
         } 
@@ -127,27 +141,27 @@ class Productos {
             console.log(error);
         }
         finally {
-            knex.destroy();
+            knexo.destroy();
         }
     };
 
     public async actualizarProducto(code:string, title:string, description:string, price:number, thumbnail:string, stock:number, id:number) {
         try {
-            const response = await knex.from("productos").where("id","=",id)
+            const response = await knexo.from("productos").where("id","=",id)
             .update("code", code)
             .update("title", title)
             .update("description", description)
             .update("price", price)
             .update("thumbnail", thumbnail)
             .update("stock", stock)
-            .upadte("timestamp", Date.now())
+            .update("timestamp", Date.now())
             return response;
         } 
         catch (error) {
             console.log(error);
         }
         finally {
-            knex.destroy();
+            knexo.destroy();
         }
     };        
 };

@@ -1,11 +1,11 @@
-import Producto from "./productos.js";
+import {Producto} from "./productos.js";
 
 class Carrito {
   private static contador: number = 1;  
   public fileLocation: string;
   public productos: Array<Producto>;
-  public id: number;
-  public timestamp: number;
+  private id: number;
+  private timestamp: number;
        
     public constructor(){
         this.productos = [];
