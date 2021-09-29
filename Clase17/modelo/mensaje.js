@@ -50,7 +50,7 @@ var Mensajes = /** @class */ (function () {
             if (!response) {
                 knexo.schema.createTable("mensajes", function (table) {
                     table.string("author");
-                    //table.integer("fecha")
+                    table.integer("fecha");
                     table.string("text");
                     table.increments("id");
                 })
@@ -75,8 +75,7 @@ var Mensajes = /** @class */ (function () {
                         response = _a.sent();
                         for (_i = 0, response_1 = response; _i < response_1.length; _i++) {
                             row = response_1[_i];
-                            //mensajesArray.push({author:row["author"],fecha:row["fecha"],text:row["text"]});
-                            mensajesArray.push({ author: row["author"], text: row["text"] });
+                            mensajesArray.push({ author: row["author"], fecha: row["fecha"], text: row["text"] });
                         }
                         return [2 /*return*/, mensajesArray];
                     case 2:
@@ -91,22 +90,27 @@ var Mensajes = /** @class */ (function () {
     ;
     Mensajes.prototype.guardarMensajes = function (mensaje) {
         return __awaiter(this, void 0, void 0, function () {
-            var response, error_2;
+            var error_2;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         _a.trys.push([0, 2, , 3]);
                         console.log("mensaje a guardar en tabla mensajes", mensaje);
-                        return [4 /*yield*/, (0, knex_1.default)("mensajes").insert(mensaje)];
+                        return [4 /*yield*/, (0, knex_1.default)("mensajes").insert(mensaje)
+                                .then(function (response) {
+                                console.log(response);
+                                return response;
+                            })];
                     case 1:
-                        response = _a.sent();
-                        console.log(response);
-                        return [2 /*return*/, response];
+                        _a.sent();
+                        return [3 /*break*/, 3];
                     case 2:
                         error_2 = _a.sent();
                         console.log(error_2);
                         return [3 /*break*/, 3];
-                    case 3: return [2 /*return*/];
+                    case 3:
+                        ;
+                        return [2 /*return*/];
                 }
             });
         });

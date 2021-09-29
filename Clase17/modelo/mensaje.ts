@@ -25,7 +25,7 @@ export class Mensajes {
                 console.log(error);
             })
           }
-        })
+        });
     };
 
   public async leerMensajes() {
@@ -45,13 +45,14 @@ export class Mensajes {
   public async guardarMensajes(mensaje: Mensaje) {
       try {
         console.log("mensaje a guardar en tabla mensajes", mensaje);
-        const response = await knex("mensajes").insert(mensaje);
-        console.log(response);
-        return response;
-         
+        await knex("mensajes").insert(mensaje)
+        .then((response) => {
+          console.log(response);
+          return response;
+        }) 
       } catch (error) {
           console.log(error);
-      } 
+      }; 
   };
 };
 

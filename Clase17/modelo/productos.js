@@ -106,7 +106,7 @@ var Productos = /** @class */ (function () {
                         _a.trys.push([0, 2, , 3]);
                         prodsArray_1 = [];
                         return [4 /*yield*/, knexo.from("productos")
-                                .select("code", "title", "description", "price", "thumbnail", "stock", "timestamp")
+                                .select("*")
                                 .where("id", "=", id)
                                 .then(function (rows) {
                                 for (var _i = 0, rows_1 = rows; _i < rows_1.length; _i++) {
@@ -114,6 +114,7 @@ var Productos = /** @class */ (function () {
                                     prodsArray_1.push({ code: row["code"], title: row["title"], description: row["description"], price: row["price"], thumbnail: row["thumbnail"], stock: row["stock"], timestamp: row["timestamp"] });
                                     console.log("producto encontrado", prodsArray_1);
                                 }
+                                console.log("muestro producto antes de devolver", prodsArray_1);
                                 return prodsArray_1;
                             })];
                     case 1:
@@ -143,7 +144,7 @@ var Productos = /** @class */ (function () {
                                 console.log("rows", rows);
                                 for (var _i = 0, rows_2 = rows; _i < rows_2.length; _i++) {
                                     var row = rows_2[_i];
-                                    listaProductos_1.push({ code: row["code"], title: row["title"], description: row["description"], price: row["price"], thumbnail: row["thumbnail"], stock: row["stock"], timestamp: row["timestamp"] });
+                                    listaProductos_1.push({ code: row["code"], title: row["title"], description: row["description"], price: row["price"], thumbnail: row["thumbnail"], stock: row["stock"], timestamp: row["timestamp"], id: row["id"] });
                                 }
                                 console.log("respuesta del knex", listaProductos_1);
                                 return listaProductos_1;

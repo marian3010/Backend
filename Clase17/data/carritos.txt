@@ -17,16 +17,6 @@
 			"price": "750",
 			"thumbnail": "https://cdn3.iconfinder.com/data/icons/education-209/64/globe-earth-geograhy-planet-school-256.png",
 			"stock": "11",
-			"id": 2,
-			"timestamp": 1632172639322
-		},
-		{
-			"code": "A101",
-			"title": "Globo Terráqueo",
-			"description": "Globo terráqueo para uso escolar",
-			"price": "750",
-			"thumbnail": "https://cdn3.iconfinder.com/data/icons/education-209/64/globe-earth-geograhy-planet-school-256.png",
-			"stock": "11",
 			"id": 3,
 			"timestamp": 1632172947368
 		}

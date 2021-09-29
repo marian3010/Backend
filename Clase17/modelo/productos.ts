@@ -65,13 +65,14 @@ class Productos {
         try {
             const prodsArray: Producto[] | undefined = [];
             await knexo.from("productos")
-            .select("code","title","description","price","thumbnail","stock","timestamp")
+            .select("*")
             .where("id", "=", id)
             .then((rows) => {
               for (const row of rows) {
                 prodsArray.push({code:row["code"],title:row["title"],description:row["description"],price:row["price"],thumbnail:row["thumbnail"],stock:row["stock"],timestamp:row["timestamp"]});
                 console.log("producto encontrado",prodsArray);
               }
+              console.log("muestro producto antes de devolver",prodsArray)
               return prodsArray;
             })
         } 
@@ -88,7 +89,7 @@ class Productos {
             .then((rows) => {
                 console.log("rows",rows)
                 for (const row of rows) {
-                    listaProductos.push({code:row["code"],title:row["title"],description:row["description"],price:row["price"],thumbnail:row["thumbnail"],stock:row["stock"],timestamp:row["timestamp"]});
+                    listaProductos.push({code:row["code"],title:row["title"],description:row["description"],price:row["price"],thumbnail:row["thumbnail"],stock:row["stock"],timestamp:row["timestamp"],id:row["id"]});
                 }
                 console.log("respuesta del knex",listaProductos);
                 return listaProductos;
