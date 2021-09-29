@@ -117,7 +117,7 @@
             function addMessage() {
                 const message = {
                     author: document.getElementById("usermail").value,
-                    fecha: moment().format('DD/MM/YYYY, hh:mm:ss'),
+                    fecha: Date.now(),
                     text: document.getElementById("texto").value,
                 };
                 socket.emit("new-message", message);

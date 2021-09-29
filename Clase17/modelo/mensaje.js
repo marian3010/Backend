@@ -39,51 +39,80 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var options = {
-    client: "sqlite3",
-    connection: {
-        port: 3306,
-        host: "localhost",
-        user: "root",
-        password: "",
-        database: "test",
-    },
-    pool: {
-        min: 0,
-        max: 10,
-    }
-};
+exports.Mensajes = void 0;
+var sqlite3_1 = __importDefault(require("../db/sqlite3"));
 var knex_1 = __importDefault(require("knex"));
-var knexo = (0, knex_1.default)(options);
-(function () { return __awaiter(void 0, void 0, void 0, function () {
-    var bd, error_1;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0:
-                _a.trys.push([0, 4, 5, 6]);
-                return [4 /*yield*/, knexo.schema.hasTable("mensajes")];
-            case 1:
-                bd = _a.sent();
-                if (!!bd) return [3 /*break*/, 3];
-                return [4 /*yield*/, knexo.schema.createTable("mensajes", function (table) {
-                        table.string("author").notNullable();
-                        table.number("fecha").notNullable();
-                        table.string("text").notNullable();
-                        table.increments("id", { primaryKey: true });
-                    })];
-            case 2:
-                _a.sent();
-                console.log("tabla creada");
-                _a.label = 3;
-            case 3: return [3 /*break*/, 6];
-            case 4:
-                error_1 = _a.sent();
-                console.log(error_1);
-                return [3 /*break*/, 6];
-            case 5:
-                knexo.destroy();
-                return [7 /*endfinally*/];
-            case 6: return [2 /*return*/];
-        }
-    });
-}); })();
+var knexo = (0, knex_1.default)(sqlite3_1.default);
+var Mensajes = /** @class */ (function () {
+    function Mensajes() {
+        knexo.schema.hasTable("mensajes")
+            .then(function (response) {
+            if (!response) {
+                knexo.schema.createTable("mensajes", function (table) {
+                    table.string("author");
+                    //table.integer("fecha")
+                    table.string("text");
+                    table.increments("id");
+                })
+                    .then(function () { return console.log("tabla mensajes creada"); })
+                    .catch(function (error) {
+                    console.log(error);
+                });
+            }
+        });
+    }
+    ;
+    Mensajes.prototype.leerMensajes = function () {
+        return __awaiter(this, void 0, void 0, function () {
+            var mensajesArray, response, _i, response_1, row, error_1;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        _a.trys.push([0, 2, , 3]);
+                        mensajesArray = [];
+                        return [4 /*yield*/, knexo.from("mensajes").select("*")];
+                    case 1:
+                        response = _a.sent();
+                        for (_i = 0, response_1 = response; _i < response_1.length; _i++) {
+                            row = response_1[_i];
+                            //mensajesArray.push({author:row["author"],fecha:row["fecha"],text:row["text"]});
+                            mensajesArray.push({ author: row["author"], text: row["text"] });
+                        }
+                        return [2 /*return*/, mensajesArray];
+                    case 2:
+                        error_1 = _a.sent();
+                        console.log(error_1);
+                        return [3 /*break*/, 3];
+                    case 3: return [2 /*return*/];
+                }
+            });
+        });
+    };
+    ;
+    Mensajes.prototype.guardarMensajes = function (mensaje) {
+        return __awaiter(this, void 0, void 0, function () {
+            var response, error_2;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        _a.trys.push([0, 2, , 3]);
+                        console.log("mensaje a guardar en tabla mensajes", mensaje);
+                        return [4 /*yield*/, (0, knex_1.default)("mensajes").insert(mensaje)];
+                    case 1:
+                        response = _a.sent();
+                        console.log(response);
+                        return [2 /*return*/, response];
+                    case 2:
+                        error_2 = _a.sent();
+                        console.log(error_2);
+                        return [3 /*break*/, 3];
+                    case 3: return [2 /*return*/];
+                }
+            });
+        });
+    };
+    ;
+    return Mensajes;
+}());
+exports.Mensajes = Mensajes;
+;

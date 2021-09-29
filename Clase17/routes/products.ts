@@ -11,33 +11,49 @@ productosRouter.get('/', (req: express.Request, res: express.Response) => {
     res.sendFile(__dirname + "/public/listoProds.html");
 });
 
-productosRouter.get('/listar/:id?', (req: express.Request, res: express.Response) => {
-    // creo una variable general para almacenar producto
-    let producto
+productosRouter.get('/listar/:id?', async (req: express.Request, res: express.Response) => {
     if (req.params.id) {
         // si hay id le asigno el producto que traiga
-        producto = [prods.buscarProducto(parseInt(req.params.id))]
+        try {
+            await prods.buscarProducto(parseInt(req.params.id))
+            .then((producto) => {
+                console.log("producto a mostrar", producto)
+                res.json(producto);
+            })
+        } catch (err) {
+            console.log(err)
+        }
     } else {
     // si no hay id traigo todo
-        producto = prods.listarProductos();
-    }
-    // le devuelvo al fetch un json con lo que obtuve
-    res.json(producto);
+        try {
+            await prods.listarProductos()
+            .then((productos) =>{
+                console.log("productos a listar", productos)
+                res.json(productos);
+            })
+        } catch(err) {
+            console.log(err)
+        }   
+    };
 });
 
 //guardo un nuevo producto
 productosRouter.get('/guardar', authorizationMiddleware(), (req: express.Request, res: express.Response) => {
     res.sendFile(__dirname + "/public/agregoProd.html");
 });
-productosRouter.post('/guardar', authorizationMiddleware(), (req: express.Request, res: express.Response) => {
-    const prod = prods.agregarProducto(req.body.code, req.body.title, req.body.description, req.body.price, req.body.thumbnail, req.body.stock);
-    res.json(prod);
+productosRouter.post('/guardar', authorizationMiddleware(), async (req: express.Request, res: express.Response) => {
+    try {
+        const prod = await prods.agregarProducto(req.body.code, req.body.title, req.body.description, req.body.price, req.body.thumbnail, req.body.stock);
+        res.json(prod);
+    } catch(err) {
+        console.log(err)
+    }    
 });
 
 //busco un producto por id y lo borro
-productosRouter.delete('/borrar/:id', authorizationMiddleware(), (req: express.Request, res: express.Response) => {
+productosRouter.delete('/borrar/:id', authorizationMiddleware(), async (req: express.Request, res: express.Response) => {
     try {
-        const productoBorrado = prods.borrarProducto(parseInt(req.params.id));
+        const productoBorrado = await prods.borrarProducto(parseInt(req.params.id));
         if (productoBorrado) {
             res.json(productoBorrado);
             return;
@@ -51,9 +67,9 @@ productosRouter.delete('/borrar/:id', authorizationMiddleware(), (req: express.R
 });
 
 // busco un producto por id y lo actualizo
-productosRouter.put('/actualizar/:id', authorizationMiddleware(), (req: express.Request, res: express.Response) => {
+productosRouter.put('/actualizar/:id', authorizationMiddleware(), async(req: express.Request, res: express.Response) => {
     try {
-        const prodAct = prods.actualizarProducto(req.body.code, req.body.title, req.body.description, req.body.price, req.body.thumbnail, req.body.stock, parseInt(req.params.id));
+        const prodAct = await prods.actualizarProducto(req.body.code, req.body.title, req.body.description, req.body.price, req.body.thumbnail, req.body.stock, parseInt(req.params.id));
         if (prodAct) {
             res.json(prodAct);
             return;

@@ -1,17 +1,4 @@
-const options = {
-    client: "mysql",
-    connection: {
-        port: 3306,
-        host: "localhost",
-        user: "root",
-        password: "",
-        database: "test",
-    },
-    pool: {
-        min: 0,
-        max: 10,
-    }
-};
+import options from '../db/mariaDB';
 import knex from "knex";
 const knexo = knex(options);
 
@@ -32,22 +19,11 @@ interface AProductos {
 }
 
 class Productos {
-    //public listaProductos: AProductos;
-    private ready:boolean;
     public constructor() {
-        //this.listaProductos = {
-        //    productos: []
-        //  };
-        
-        this.ready = false;
-        this.iniciarTabla();
-    }
-    
-    private async iniciarTabla() {
-        try {
-            const bd = await knexo.schema.hasTable("productos");
-            if (!bd) {
-                await knexo.schema.createTable("productos", (table:any) => {
+        knexo.schema.hasTable("productos")
+        .then(response => {
+            if(!response) {
+                knexo.schema.createTable("productos", (table:any) => {
                     table.increments("id",{primaryKey:true})
                     table.string("code");
                     table.string("title").notNullable();
@@ -57,18 +33,14 @@ class Productos {
                     table.integer("stock");
                     table.integer("timestamp");
                 })
-                console.log("tabla creada");
-                this.ready = true;
-            };
-        } 
-        catch (error) {
-            console.log(error);
-        }
-        finally {
-           knexo.destroy();
-        }
+                .then(() => console.log("tabla productos creada"))
+                .catch((error) => {
+                  console.log(error);
+                })
+            }
+        });
     };
-
+    
     public async agregarProducto(code:string, title:string, description:string, price:number, thumbnail:string, stock:number, timestamp:number = Date.now()) {
         try {
             const producto: Producto = {
@@ -80,68 +52,63 @@ class Productos {
                 stock,
                 timestamp 
             }
-            const response = await knexo.from("productos").insert(producto);
-            console.log("respuesta del insert", response)
-            return response;
+            const response = await knexo("productos").insert(producto);
+            console.log("Id del producto agregado", response)
+            return producto;
         }
         catch (error) {
             console.log(error);
-        }
-        finally {
-            knexo.destroy();
         }
     };
 
     public async buscarProducto(id:number) {
         try {
-            const response = await knexo.from("productos").where("id", "=", id);
-            console.log("respuesta del insert", response)
-            return response;
+            const prodsArray: Producto[] | undefined = [];
+            await knexo.from("productos")
+            .select("code","title","description","price","thumbnail","stock","timestamp")
+            .where("id", "=", id)
+            .then((rows) => {
+              for (const row of rows) {
+                prodsArray.push({code:row["code"],title:row["title"],description:row["description"],price:row["price"],thumbnail:row["thumbnail"],stock:row["stock"],timestamp:row["timestamp"]});
+                console.log("producto encontrado",prodsArray);
+              }
+              return prodsArray;
+            })
         } 
         catch (error) {
             console.log(error);
-        }
-        finally {
-            knexo.destroy();
         }
     };
 
     public async listarProductos() {
         try {
-           const response = await knexo.from("productos").select("*");
-           //let listaProductos = [];
-           //for (const prod of response) {
-           //     const producto: Producto[] = {
-           //         {prod["code"]},
-           //         {prod["title"]},
-           //         {prod["description"]},
-           //         {prod["price"]},
-           //         {prod["thumbnail"]},
-           //         {prod["stock"]},
-           //         {prod["timestamp"]} 
-           //     }
-           //     listaProductos.push(producto);
-           return response;
+            const listaProductos: Producto[] = [];
+            await knexo.from("productos")
+            .select("*")
+            .then((rows) => {
+                console.log("rows",rows)
+                for (const row of rows) {
+                    listaProductos.push({code:row["code"],title:row["title"],description:row["description"],price:row["price"],thumbnail:row["thumbnail"],stock:row["stock"],timestamp:row["timestamp"]});
+                }
+                console.log("respuesta del knex",listaProductos);
+                return listaProductos;
+            })
         }
         catch (error) {
             console.log(error);
         }
-        finally {
-            knexo.destroy();
-        }    
     };            
 
     public async borrarProducto(id:number) {
         try {
-            const response = await knexo.from("productos").where("id", "=", id).del();
+            const response = await knexo.from("productos")
+            .where("id", "=", id)
+            .del();
             console.log("respuesta del delete", response)
             return response;
         } 
         catch (error) {
             console.log(error);
-        }
-        finally {
-            knexo.destroy();
         }
     };
 
@@ -159,9 +126,6 @@ class Productos {
         } 
         catch (error) {
             console.log(error);
-        }
-        finally {
-            knexo.destroy();
         }
     };        
 };

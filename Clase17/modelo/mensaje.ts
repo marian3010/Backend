@@ -1,46 +1,58 @@
-const options = {
-  client: "sqlite3",
-  connection: {
-      port: 3306,
-      host: "localhost",
-      user: "root",
-      password: "",
-      database: "test",
-  },
-  pool: {
-      min: 0,
-      max: 10,
-  }
-};
+import options from '../db/sqlite3';
 import knex from "knex";
 const knexo = knex(options);
 
+export interface Mensaje {
+  id?: number;
+  author: string;
+  fecha: Date;
+  text: string;
+} 
 
-interface Mensaje {
-    author: string;
-    fecha: Date;
-    text: string;
-}
-
-(async () => {
-  try {
-    const bd = await knexo.schema.hasTable("mensajes")
-    if (!bd) {
-        await knexo.schema.createTable("mensajes", (table:any) => {
-            table.string("author").notNullable()
-            table.number("fecha").notNullable()
-            table.string("text").notNullable()
-            table.increments("id", { primaryKey: true })
+export class Mensajes {
+  constructor() {
+      knexo.schema.hasTable("mensajes")
+        .then(response => {
+          if(!response) {
+              knexo.schema.createTable("mensajes", (table:any) => {
+              table.string("author")
+              table.integer("fecha")
+              table.string("text")
+              table.increments("id")
+            })
+            .then(() => console.log("tabla mensajes creada"))
+            .catch((error) => {
+                console.log(error);
+            })
+          }
         })
-        console.log("tabla creada");
-    } else {
-      const mensajes = await knexo.from("mensajes").select("*");
-    }
-  } catch(error) {
-    console.log (error);
-  } finally {
-    knexo.destroy();
-  }
-})();
+    };
 
-export default Mensaje;
+  public async leerMensajes() {
+    try {
+      const mensajesArray: Mensaje[] | undefined = [];
+      const response = await knexo.from("mensajes").select("*");
+      for (const row of response) {
+        mensajesArray.push({author:row["author"],fecha:row["fecha"],text:row["text"]});
+        
+      }
+      return mensajesArray;
+    } catch (error) {
+        console.log(error);
+    } 
+  };
+
+  public async guardarMensajes(mensaje: Mensaje) {
+      try {
+        console.log("mensaje a guardar en tabla mensajes", mensaje);
+        const response = await knex("mensajes").insert(mensaje);
+        console.log(response);
+        return response;
+         
+      } catch (error) {
+          console.log(error);
+      } 
+  };
+};
+
+

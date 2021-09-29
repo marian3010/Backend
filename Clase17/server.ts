@@ -1,10 +1,11 @@
 import express from "express";
 import path from "path";
-import Mensaje from "./modelo/mensaje.js";
+import {Mensajes, Mensaje} from "./modelo/mensaje";
 import handlebars from "express-handlebars";
 import * as SocketIO from 'socket.io';
 import productosRouter from './routes/products';
 import carritoRouter from './routes/carts';
+import options from './db/sqlite3.js'
 
 const isAdmin:boolean = true;
 const __dirname = path.resolve();
@@ -12,20 +13,7 @@ const port = 8080;
 const app = express();
 const error = new Error("La ruta no es válida");
 const notFoundMiddleware = () => (req: express.Request, _res: express.Response, next: express.NextFunction) => {return next(error);};
-const options = {
-  client: "sqlite3",
-  connection: {
-      port: 3306,
-      host: "localhost",
-      user: "root",
-      password: "",
-      database: "test",
-  },
-  pool: {
-      min: 0,
-      max: 10,
-  }
-};
+
 import knex from "knex";
 const knexo = knex(options);
 
@@ -57,30 +45,24 @@ server.on("error", (error) => {
 });
 
 //verifico si hay mensajes guardados para mostrar
-let messages: Mensaje[] = [];
+const msgList = new Mensajes();
 
-(async () => {
-    try {
-      messages = await knexo.from("mensajes").select("*");
-    } catch(error) {
-      console.log (error);
-    } finally {
-      knexo.destroy();
-    }
-  })();
-
-io.on('connection', socket => {
-    //socket.emit('listarProductos', prods.listarProductos());
+io.on('connection', async socket => {
     console.log("se conectó el back");
-    //io.sockets.emit('listarProductos', prods.listarProductos());
+    try {
+      const messages: Mensaje[] | undefined = await msgList.leerMensajes();
+      if (messages) {
+        socket.emit("messages", messages);
+        socket.on("new-message", (data) => {
+          messages.push(data);
+          io.sockets.emit("messages", messages);
+          msgList.guardarMensajes(data);
+        })
+      }
+    } catch (err) {
+      console.log(err);
+    }  
 
-    socket.emit("messages", messages);
-    socket.on("new-message", (data) => {
-        messages.push(data);
-        io.sockets.emit("messages", messages);
-        knexo.from("mensajes").insert(data);
-        knexo.destroy();
-    });
 });
 
 

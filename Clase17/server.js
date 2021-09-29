@@ -60,32 +60,20 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var express_1 = __importDefault(require("express"));
 var path_1 = __importDefault(require("path"));
+var mensaje_1 = require("./modelo/mensaje");
 var express_handlebars_1 = __importDefault(require("express-handlebars"));
 var SocketIO = __importStar(require("socket.io"));
 var products_1 = __importDefault(require("./routes/products"));
 var carts_1 = __importDefault(require("./routes/carts"));
+var sqlite3_js_1 = __importDefault(require("./db/sqlite3.js"));
 var isAdmin = true;
 var __dirname = path_1.default.resolve();
 var port = 8080;
 var app = (0, express_1.default)();
 var error = new Error("La ruta no es válida");
 var notFoundMiddleware = function () { return function (req, _res, next) { return next(error); }; };
-var options = {
-    client: "sqlite3",
-    connection: {
-        port: 3306,
-        host: "localhost",
-        user: "root",
-        password: "",
-        database: "test",
-    },
-    pool: {
-        min: 0,
-        max: 10,
-    }
-};
 var knex_1 = __importDefault(require("knex"));
-var knexo = (0, knex_1.default)(options);
+var knexo = (0, knex_1.default)(sqlite3_js_1.default);
 app.use(express_1.default.json());
 app.use(express_1.default.urlencoded({ extended: true }));
 app.use(express_1.default.static(__dirname + "/public"));
@@ -108,38 +96,34 @@ server.on("error", function (error) {
     console.error(error);
 });
 //verifico si hay mensajes guardados para mostrar
-var messages = [];
-(function () { return __awaiter(void 0, void 0, void 0, function () {
-    var error_1;
+var msgList = new mensaje_1.Mensajes();
+io.on('connection', function (socket) { return __awaiter(void 0, void 0, void 0, function () {
+    var messages_1, err_1;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
-                _a.trys.push([0, 2, 3, 4]);
-                return [4 /*yield*/, knexo.from("mensajes").select("*")];
+                console.log("se conectó el back");
+                _a.label = 1;
             case 1:
-                messages = _a.sent();
-                return [3 /*break*/, 4];
+                _a.trys.push([1, 3, , 4]);
+                return [4 /*yield*/, msgList.leerMensajes()];
             case 2:
-                error_1 = _a.sent();
-                console.log(error_1);
+                messages_1 = _a.sent();
+                if (messages_1) {
+                    socket.emit("messages", messages_1);
+                    socket.on("new-message", function (data) {
+                        messages_1.push(data);
+                        io.sockets.emit("messages", messages_1);
+                        msgList.guardarMensajes(data);
+                    });
+                }
                 return [3 /*break*/, 4];
             case 3:
-                knexo.destroy();
-                return [7 /*endfinally*/];
+                err_1 = _a.sent();
+                console.log(err_1);
+                return [3 /*break*/, 4];
             case 4: return [2 /*return*/];
         }
     });
-}); })();
-io.on('connection', function (socket) {
-    //socket.emit('listarProductos', prods.listarProductos());
-    console.log("se conectó el back");
-    //io.sockets.emit('listarProductos', prods.listarProductos());
-    socket.emit("messages", messages);
-    socket.on("new-message", function (data) {
-        messages.push(data);
-        io.sockets.emit("messages", messages);
-        knexo.from("mensajes").insert(data);
-        knexo.destroy();
-    });
-});
+}); });
 exports.default = isAdmin;

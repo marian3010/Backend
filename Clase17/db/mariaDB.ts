@@ -1,6 +1,4 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-var options = {
+const options = {
     client: "mysql",
     connection: {
         port: 3306,
@@ -14,4 +12,5 @@ var options = {
         max: 10,
     }
 };
-exports.default = options;
+
+export default options;
