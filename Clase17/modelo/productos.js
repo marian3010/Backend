@@ -99,27 +99,23 @@ var Productos = /** @class */ (function () {
     ;
     Productos.prototype.buscarProducto = function (id) {
         return __awaiter(this, void 0, void 0, function () {
-            var prodsArray_1, error_2;
+            var prodsArray, rows, _i, rows_1, row, error_2;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         _a.trys.push([0, 2, , 3]);
-                        prodsArray_1 = [];
+                        prodsArray = [];
                         return [4 /*yield*/, knexo.from("productos")
                                 .select("*")
-                                .where("id", "=", id)
-                                .then(function (rows) {
-                                for (var _i = 0, rows_1 = rows; _i < rows_1.length; _i++) {
-                                    var row = rows_1[_i];
-                                    prodsArray_1.push({ code: row["code"], title: row["title"], description: row["description"], price: row["price"], thumbnail: row["thumbnail"], stock: row["stock"], timestamp: row["timestamp"] });
-                                    console.log("producto encontrado", prodsArray_1);
-                                }
-                                console.log("muestro producto antes de devolver", prodsArray_1);
-                                return prodsArray_1;
-                            })];
+                                .where("id", "=", id)];
                     case 1:
-                        _a.sent();
-                        return [3 /*break*/, 3];
+                        rows = _a.sent();
+                        for (_i = 0, rows_1 = rows; _i < rows_1.length; _i++) {
+                            row = rows_1[_i];
+                            prodsArray.push({ code: row["code"], title: row["title"], description: row["description"], price: row["price"], thumbnail: row["thumbnail"], stock: row["stock"], timestamp: row["timestamp"] });
+                            console.log("producto encontrado", prodsArray);
+                        }
+                        return [2 /*return*/, prodsArray];
                     case 2:
                         error_2 = _a.sent();
                         console.log(error_2);
@@ -132,26 +128,22 @@ var Productos = /** @class */ (function () {
     ;
     Productos.prototype.listarProductos = function () {
         return __awaiter(this, void 0, void 0, function () {
-            var listaProductos_1, error_3;
+            var listaProductos, rows, _i, rows_2, row, error_3;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         _a.trys.push([0, 2, , 3]);
-                        listaProductos_1 = [];
+                        listaProductos = [];
                         return [4 /*yield*/, knexo.from("productos")
-                                .select("*")
-                                .then(function (rows) {
-                                console.log("rows", rows);
-                                for (var _i = 0, rows_2 = rows; _i < rows_2.length; _i++) {
-                                    var row = rows_2[_i];
-                                    listaProductos_1.push({ code: row["code"], title: row["title"], description: row["description"], price: row["price"], thumbnail: row["thumbnail"], stock: row["stock"], timestamp: row["timestamp"], id: row["id"] });
-                                }
-                                console.log("respuesta del knex", listaProductos_1);
-                                return listaProductos_1;
-                            })];
+                                .select("*")];
                     case 1:
-                        _a.sent();
-                        return [3 /*break*/, 3];
+                        rows = _a.sent();
+                        for (_i = 0, rows_2 = rows; _i < rows_2.length; _i++) {
+                            row = rows_2[_i];
+                            listaProductos.push({ code: row["code"], title: row["title"], description: row["description"], price: row["price"], thumbnail: row["thumbnail"], stock: row["stock"], timestamp: row["timestamp"], id: row["id"] });
+                        }
+                        console.log("respuesta del knex", listaProductos);
+                        return [2 /*return*/, listaProductos];
                     case 2:
                         error_3 = _a.sent();
                         console.log(error_3);

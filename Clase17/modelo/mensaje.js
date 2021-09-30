@@ -90,20 +90,17 @@ var Mensajes = /** @class */ (function () {
     ;
     Mensajes.prototype.guardarMensajes = function (mensaje) {
         return __awaiter(this, void 0, void 0, function () {
-            var error_2;
+            var response, error_2;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         _a.trys.push([0, 2, , 3]);
                         console.log("mensaje a guardar en tabla mensajes", mensaje);
-                        return [4 /*yield*/, (0, knex_1.default)("mensajes").insert(mensaje)
-                                .then(function (response) {
-                                console.log(response);
-                                return response;
-                            })];
+                        return [4 /*yield*/, (0, knex_1.default)('mensajes').insert({ author: 'pepe@mail', fecha: 122, text: 'pepe 2' })];
                     case 1:
-                        _a.sent();
-                        return [3 /*break*/, 3];
+                        response = _a.sent();
+                        console.log(response);
+                        return [2 /*return*/, response];
                     case 2:
                         error_2 = _a.sent();
                         console.log(error_2);

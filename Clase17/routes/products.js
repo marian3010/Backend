@@ -50,23 +50,20 @@ productosRouter.get('/', function (req, res) {
     res.sendFile(__dirname + "/public/listoProds.html");
 });
 productosRouter.get('/listar/:id?', function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var err_1, err_2;
+    var producto, err_1, productos, err_2;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
-                console.log("parametro recibido", req.params.id);
                 if (!req.params.id) return [3 /*break*/, 5];
                 _a.label = 1;
             case 1:
                 _a.trys.push([1, 3, , 4]);
                 console.log("va a buscar productos por id");
-                return [4 /*yield*/, prods.buscarProducto(parseInt(req.params.id))
-                        .then(function (producto) {
-                        console.log("producto a mostrar", producto);
-                        res.json(producto);
-                    })];
+                return [4 /*yield*/, prods.buscarProducto(parseInt(req.params.id))];
             case 2:
-                _a.sent();
+                producto = _a.sent();
+                console.log("producto a mostrar", producto);
+                res.json(producto);
                 return [3 /*break*/, 4];
             case 3:
                 err_1 = _a.sent();
@@ -76,13 +73,11 @@ productosRouter.get('/listar/:id?', function (req, res) { return __awaiter(void 
             case 5:
                 _a.trys.push([5, 7, , 8]);
                 console.log("va a buscar productos sin parametro");
-                return [4 /*yield*/, prods.listarProductos()
-                        .then(function (productos) {
-                        console.log("productos a listar", productos);
-                        res.json(productos);
-                    })];
+                return [4 /*yield*/, prods.listarProductos()];
             case 6:
-                _a.sent();
+                productos = _a.sent();
+                console.log("productos a listar", productos);
+                res.json(productos);
                 return [3 /*break*/, 8];
             case 7:
                 err_2 = _a.sent();

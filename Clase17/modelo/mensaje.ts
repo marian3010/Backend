@@ -5,7 +5,7 @@ const knexo = knex(options);
 export interface Mensaje {
   id?: number;
   author: string;
-  fecha: Date;
+  fecha: number;
   text: string;
 } 
 
@@ -45,11 +45,10 @@ export class Mensajes {
   public async guardarMensajes(mensaje: Mensaje) {
       try {
         console.log("mensaje a guardar en tabla mensajes", mensaje);
-        await knex("mensajes").insert(mensaje)
-        .then((response) => {
-          console.log(response);
-          return response;
-        }) 
+        //const response = await knex("mensajes").insert(mensaje)
+        const response = await knex('mensajes').insert({author: 'pepe@mail', fecha: 122, text: 'pepe 2'})
+        console.log(response);
+        return response;
       } catch (error) {
           console.log(error);
       }; 

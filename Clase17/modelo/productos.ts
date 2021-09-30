@@ -64,18 +64,15 @@ class Productos {
     public async buscarProducto(id:number) {
         try {
             const prodsArray: Producto[] | undefined = [];
-            await knexo.from("productos")
+            const rows = await knexo.from("productos")
             .select("*")
             .where("id", "=", id)
-            .then((rows) => {
-              for (const row of rows) {
+                for (const row of rows) {
                 prodsArray.push({code:row["code"],title:row["title"],description:row["description"],price:row["price"],thumbnail:row["thumbnail"],stock:row["stock"],timestamp:row["timestamp"]});
                 console.log("producto encontrado",prodsArray);
               }
-              console.log("muestro producto antes de devolver",prodsArray)
-              return prodsArray;
-            })
-        } 
+             return prodsArray;
+        }
         catch (error) {
             console.log(error);
         }
@@ -84,16 +81,13 @@ class Productos {
     public async listarProductos() {
         try {
             const listaProductos: Producto[] = [];
-            await knexo.from("productos")
+            const rows = await knexo.from("productos")
             .select("*")
-            .then((rows) => {
-                console.log("rows",rows)
-                for (const row of rows) {
-                    listaProductos.push({code:row["code"],title:row["title"],description:row["description"],price:row["price"],thumbnail:row["thumbnail"],stock:row["stock"],timestamp:row["timestamp"],id:row["id"]});
-                }
-                console.log("respuesta del knex",listaProductos);
-                return listaProductos;
-            })
+            for (const row of rows) {
+                listaProductos.push({code:row["code"],title:row["title"],description:row["description"],price:row["price"],thumbnail:row["thumbnail"],stock:row["stock"],timestamp:row["timestamp"],id:row["id"]});
+            }
+            console.log("respuesta del knex",listaProductos);
+            return listaProductos;
         }
         catch (error) {
             console.log(error);

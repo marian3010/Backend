@@ -12,26 +12,22 @@ productosRouter.get('/', (req: express.Request, res: express.Response) => {
 });
 
 productosRouter.get('/listar/:id?', async (req: express.Request, res: express.Response) => {
-    console.log("parametro recibido", req.params.id);
     if (req.params.id) {
         try {
             console.log("va a buscar productos por id")
-            await prods.buscarProducto(parseInt(req.params.id))
-            .then((producto) => {
-                console.log("producto a mostrar", producto)
-                res.json(producto);
-            })
+            const producto = await prods.buscarProducto(parseInt(req.params.id))
+            console.log("producto a mostrar", producto)
+            res.json(producto);
+           
         } catch (err) {
             console.log(err)
         }
     } else {
         try {
             console.log("va a buscar productos sin parametro")
-            await prods.listarProductos()
-            .then((productos) =>{
-                console.log("productos a listar", productos)
-                res.json(productos);
-            })
+            const productos = await prods.listarProductos()
+            console.log("productos a listar", productos)
+            res.json(productos);
         } catch(err) {
             console.log(err)
         }   
