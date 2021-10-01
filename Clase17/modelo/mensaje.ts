@@ -45,8 +45,8 @@ export class Mensajes {
   public async guardarMensajes(mensaje: Mensaje) {
       try {
         console.log("mensaje a guardar en tabla mensajes", mensaje);
-        //const response = await knex("mensajes").insert(mensaje)
-        const response = await knex('mensajes').insert({author: 'pepe@mail', fecha: 122, text: 'pepe 2'})
+        const response = await knexo("mensajes").insert(mensaje)
+        //const response = await knexo('mensajes').insert({author: 'pepe@mail', fecha: 122, text: 'pepe 2'})
         console.log(response);
         return response;
       } catch (error) {

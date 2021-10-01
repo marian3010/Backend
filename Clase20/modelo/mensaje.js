@@ -96,12 +96,9 @@ var Mensajes = /** @class */ (function () {
                     case 0:
                         _a.trys.push([0, 2, , 3]);
                         console.log("mensaje a guardar en tabla mensajes", mensaje);
-                        return [4 /*yield*/, knexo("mensajes").insert(mensaje)
-                            //const response = await knexo('mensajes').insert({author: 'pepe@mail', fecha: 122, text: 'pepe 2'})
-                        ];
+                        return [4 /*yield*/, (0, knex_1.default)('mensajes').insert({ author: 'pepe@mail', fecha: 122, text: 'pepe 2' })];
                     case 1:
                         response = _a.sent();
-                        //const response = await knexo('mensajes').insert({author: 'pepe@mail', fecha: 122, text: 'pepe 2'})
                         console.log(response);
                         return [2 /*return*/, response];
                     case 2:
