@@ -35,82 +35,65 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Mensajes = void 0;
-var sqlite3_1 = __importDefault(require("../db/sqlite3"));
-var knex_1 = __importDefault(require("knex"));
-var knexo = (0, knex_1.default)(sqlite3_1.default);
+var mongoose = require("mongoose");
+var model = require("../model/messages.js");
+console.log("Modelo", model);
 var Mensajes = /** @class */ (function () {
     function Mensajes() {
-        knexo.schema.hasTable("mensajes")
-            .then(function (response) {
-            if (!response) {
-                knexo.schema.createTable("mensajes", function (table) {
-                    table.string("author");
-                    table.integer("fecha");
-                    table.string("text");
-                    table.increments("id");
-                })
-                    .then(function () { return console.log("tabla mensajes creada"); })
-                    .catch(function (error) {
-                    console.log(error);
-                });
-            }
-        });
     }
     ;
     Mensajes.prototype.leerMensajes = function () {
-        return __awaiter(this, void 0, void 0, function () {
-            var mensajesArray, response, _i, response_1, row, error_1;
-            return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0:
-                        _a.trys.push([0, 2, , 3]);
-                        mensajesArray = [];
-                        return [4 /*yield*/, knexo.from("mensajes").select("*")];
-                    case 1:
-                        response = _a.sent();
-                        for (_i = 0, response_1 = response; _i < response_1.length; _i++) {
-                            row = response_1[_i];
-                            mensajesArray.push({ author: row["author"], fecha: row["fecha"], text: row["text"] });
-                        }
-                        return [2 /*return*/, mensajesArray];
-                    case 2:
-                        error_1 = _a.sent();
-                        console.log(error_1);
-                        return [3 /*break*/, 3];
-                    case 3: return [2 /*return*/];
-                }
+        var _this = this;
+        var mensajesArray = [];
+        try {
+            mongoose.connect("mongodb://localhost:27017/ecommerce", function () { return __awaiter(_this, void 0, void 0, function () {
+                var docs;
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0:
+                            console.log("Base de datos conectada");
+                            console.log("model.mensajes", model.mensajes);
+                            return [4 /*yield*/, model.mensajes
+                                    .find()
+                                    .sort({ fecha: 1 })];
+                        case 1:
+                            docs = _a.sent();
+                            console.log("mensajes leidos", docs);
+                            mensajesArray = docs;
+                            return [2 /*return*/, mensajesArray];
+                    }
+                });
+            }); });
+        }
+        catch (error) {
+            console.log(error);
+        }
+        finally {
+            mongoose.disconnect().then(function () {
+                console.log("Base de datos desconectada");
             });
-        });
+            return mensajesArray;
+        }
+        ;
     };
     ;
     Mensajes.prototype.guardarMensajes = function (mensaje) {
-        return __awaiter(this, void 0, void 0, function () {
-            var response, error_2;
-            return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0:
-                        _a.trys.push([0, 2, , 3]);
-                        console.log("mensaje a guardar en tabla mensajes", mensaje);
-                        return [4 /*yield*/, (0, knex_1.default)('mensajes').insert({ author: 'pepe@mail', fecha: 122, text: 'pepe 2' })];
-                    case 1:
-                        response = _a.sent();
-                        console.log(response);
-                        return [2 /*return*/, response];
-                    case 2:
-                        error_2 = _a.sent();
-                        console.log(error_2);
-                        return [3 /*break*/, 3];
-                    case 3:
-                        ;
-                        return [2 /*return*/];
+        console.log("mensaje a insertar en db", mensaje);
+        mongoose.connect("mongodb://localhost:27017/ecommerce"), function () {
+            console.log("Base de datos conectada");
+            model.mensajes.insertMany(mensaje, function (error, docs) {
+                if (error) {
+                    console.log(error);
+                    throw new Error(error);
                 }
+                console.log("docs", docs);
+                mongoose.disconnect(function () {
+                    console.log("Base de datos desconectada");
+                });
             });
-        });
+        };
     };
     ;
     return Mensajes;

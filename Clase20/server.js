@@ -95,7 +95,6 @@ var io = new SocketIO.Server(server);
 server.on("error", function (error) {
     console.error(error);
 });
-//verifico si hay mensajes guardados para mostrar
 var msgList = new mensaje_1.Mensajes();
 io.on('connection', function (socket) { return __awaiter(void 0, void 0, void 0, function () {
     var messages_1, err_1;
@@ -114,6 +113,8 @@ io.on('connection', function (socket) { return __awaiter(void 0, void 0, void 0,
                     socket.on("new-message", function (data) {
                         messages_1.push(data);
                         io.sockets.emit("messages", messages_1);
+                        console.log("mensajes", messages_1);
+                        console.log("mensaje a guardar - data", data);
                         msgList.guardarMensajes(data);
                     });
                 }

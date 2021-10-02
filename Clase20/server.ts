@@ -44,18 +44,20 @@ server.on("error", (error) => {
     console.error(error);
 });
 
-//verifico si hay mensajes guardados para mostrar
+
 const msgList = new Mensajes();
 
 io.on('connection', async socket => {
     console.log("se conectó el back");
     try {
-      const messages: Mensaje[] | undefined = await msgList.leerMensajes()
-      if (messages) {
+     const messages = await msgList.leerMensajes();
+        if (messages) {
         socket.emit("messages", messages);
         socket.on("new-message", (data) => {
           messages.push(data);
           io.sockets.emit("messages", messages);
+          console.log("mensajes", messages);
+          console.log("mensaje a guardar - data", data);
           msgList.guardarMensajes(data);
         })
       }

@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const model = require("../model/messages.js");
+console.log ("Modelo", model);
 
 export interface Mensaje {
   author: string;
@@ -12,45 +13,45 @@ export class Mensajes {
   };
 
   public leerMensajes() {
-    const mensajesArray: Mensajes[] = []
-    mongoose.connect("mongodb://localhost:27017/ecommerce").then(() => {
-      console.log("Base de datos conectada");
-      model.mensajes
-     .find()
-     .sort({ fecha: 1 })
-     .then((response:[]) => {
-        console.log("mensajes leidos",response);
-      //for (const row of response) {
-      //  mensajesArray.push({author:row["author"],fecha:row["fecha"],text:row["text"]});
+    let mensajesArray: Mensaje[] | undefined = []
+    try {
+      mongoose.connect("mongodb://localhost:27017/ecommerce", async()=> {
+        console.log("Base de datos conectada");
+        console.log("model.mensajes", model.mensajes);
         
-      //}
-        return mensajesArray;
+          const docs:Mensaje[] = await model.mensajes
+          .find()
+          .sort({ fecha: 1 })
+           console.log("mensajes leidos",docs);
+           mensajesArray = docs
+           return mensajesArray
       }) 
-    .catch((error:string) => {
-      console.log(error);
-    })
-    .finally(() => {
-      mongoose.disconnect().then(() => {
-        console.log("Base de datos desconectada");
-      });
-    });
-  });
-}; 
-  
-public guardarMensajes(mensaje: Mensaje) {
-    mongoose.connect("mongodb://localhost:27017/ecommerce", () => {
+    }
+    catch(error) {
+         console.log(error);
+    } finally {
+         mongoose.disconnect().then(() => {
+           console.log("Base de datos desconectada");
+         });
+         return mensajesArray;
+    };
+  };
+      
+  public guardarMensajes(mensaje: Mensaje) {
+    console.log("mensaje a insertar en db", mensaje);
+    mongoose.connect("mongodb://localhost:27017/ecommerce"),() => {
       console.log("Base de datos conectada");
       model.mensajes.insertMany(mensaje, (error:string, docs:[]) => {
         if (error) {
-          throw new Error();
+          console.log(error)
+          throw new Error(error);
         }
-        console.log(docs);
+        console.log("docs",docs);
         mongoose.disconnect(() => {
           console.log("Base de datos desconectada");
         });
       });
-    });
+    } 
   };
 };
-
 

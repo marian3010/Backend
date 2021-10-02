@@ -4,18 +4,20 @@ const messageSchema = new mongoose.Schema({
   author: {
     type: String,
     require: true,
-    max: 100,
+    
   },
   fecha: {
     type: Number,
     require: true,
-    max: 100,
+    
   },
-  texto: {
+  text: {
     type: String,
     require: true,
-    max: 300,
+    
   },
 });
 
-export const model = mongoose.model("mensajes", messageSchema);
+ const model = mongoose.model("mensajes", messageSchema);
+
+ export default model;

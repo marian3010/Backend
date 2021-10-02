@@ -62,7 +62,6 @@ productosRouter.get('/listar/:id?', function (req, res) { return __awaiter(void 
                 return [4 /*yield*/, prods.buscarProducto(parseInt(req.params.id))];
             case 2:
                 producto = _a.sent();
-                console.log("producto a mostrar", producto);
                 res.json(producto);
                 return [3 /*break*/, 4];
             case 3:
@@ -76,7 +75,6 @@ productosRouter.get('/listar/:id?', function (req, res) { return __awaiter(void 
                 return [4 /*yield*/, prods.listarProductos()];
             case 6:
                 productos = _a.sent();
-                console.log("productos a listar", productos);
                 res.json(productos);
                 return [3 /*break*/, 8];
             case 7:

@@ -86,7 +86,6 @@ class Productos {
             for (const row of rows) {
                 listaProductos.push({code:row["code"],title:row["title"],description:row["description"],price:row["price"],thumbnail:row["thumbnail"],stock:row["stock"],timestamp:row["timestamp"],id:row["id"]});
             }
-            console.log("respuesta del knex",listaProductos);
             return listaProductos;
         }
         catch (error) {

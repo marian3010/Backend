@@ -142,7 +142,6 @@ var Productos = /** @class */ (function () {
                             row = rows_2[_i];
                             listaProductos.push({ code: row["code"], title: row["title"], description: row["description"], price: row["price"], thumbnail: row["thumbnail"], stock: row["stock"], timestamp: row["timestamp"], id: row["id"] });
                         }
-                        console.log("respuesta del knex", listaProductos);
                         return [2 /*return*/, listaProductos];
                     case 2:
                         error_3 = _a.sent();
