@@ -18,5 +18,5 @@ var messageSchema = new mongoose_1.default.Schema({
         require: true,
     },
 });
-var model = mongoose_1.default.model("mensajes", messageSchema);
-exports.default = model;
+var modelMensajes = mongoose_1.default.model("mensajes", messageSchema);
+exports.default = modelMensajes;

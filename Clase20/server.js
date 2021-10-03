@@ -110,13 +110,21 @@ io.on('connection', function (socket) { return __awaiter(void 0, void 0, void 0,
                 messages_1 = _a.sent();
                 if (messages_1) {
                     socket.emit("messages", messages_1);
-                    socket.on("new-message", function (data) {
-                        messages_1.push(data);
-                        io.sockets.emit("messages", messages_1);
-                        console.log("mensajes", messages_1);
-                        console.log("mensaje a guardar - data", data);
-                        msgList.guardarMensajes(data);
-                    });
+                    socket.on("new-message", function (data) { return __awaiter(void 0, void 0, void 0, function () {
+                        return __generator(this, function (_a) {
+                            switch (_a.label) {
+                                case 0:
+                                    messages_1.push(data);
+                                    io.sockets.emit("messages", messages_1);
+                                    console.log("mensajes", messages_1);
+                                    console.log("mensaje a guardar - data", data);
+                                    return [4 /*yield*/, msgList.guardarMensajes(data)];
+                                case 1:
+                                    _a.sent();
+                                    return [2 /*return*/];
+                            }
+                        });
+                    }); });
                 }
                 return [3 /*break*/, 4];
             case 3:

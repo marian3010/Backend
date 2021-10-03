@@ -53,12 +53,12 @@ io.on('connection', async socket => {
      const messages = await msgList.leerMensajes();
         if (messages) {
         socket.emit("messages", messages);
-        socket.on("new-message", (data) => {
+        socket.on("new-message", async (data) => {
           messages.push(data);
           io.sockets.emit("messages", messages);
           console.log("mensajes", messages);
           console.log("mensaje a guardar - data", data);
-          msgList.guardarMensajes(data);
+          await msgList.guardarMensajes(data);
         })
       }
     } catch (err) {

@@ -38,64 +38,73 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Mensajes = void 0;
 var mongoose = require("mongoose");
-var model = require("../model/messages.js");
-console.log("Modelo", model);
+var modelMensajes = require("../model/messages.js");
 var Mensajes = /** @class */ (function () {
     function Mensajes() {
     }
     ;
     Mensajes.prototype.leerMensajes = function () {
-        var _this = this;
-        var mensajesArray = [];
-        try {
-            mongoose.connect("mongodb://localhost:27017/ecommerce", function () { return __awaiter(_this, void 0, void 0, function () {
-                var docs;
-                return __generator(this, function (_a) {
-                    switch (_a.label) {
-                        case 0:
-                            console.log("Base de datos conectada");
-                            console.log("model.mensajes", model.mensajes);
-                            return [4 /*yield*/, model.mensajes
-                                    .find()
-                                    .sort({ fecha: 1 })];
-                        case 1:
-                            docs = _a.sent();
-                            console.log("mensajes leidos", docs);
-                            mensajesArray = docs;
-                            return [2 /*return*/, mensajesArray];
-                    }
-                });
-            }); });
-        }
-        catch (error) {
-            console.log(error);
-        }
-        finally {
-            mongoose.disconnect().then(function () {
-                console.log("Base de datos desconectada");
+        return __awaiter(this, void 0, void 0, function () {
+            var mensajesArray, error_1;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        mensajesArray = [];
+                        _a.label = 1;
+                    case 1:
+                        _a.trys.push([1, 4, 5, 6]);
+                        return [4 /*yield*/, mongoose.connect("mongodb://localhost:27017/ecommerce")];
+                    case 2:
+                        _a.sent();
+                        console.log("Base de datos conectada");
+                        return [4 /*yield*/, modelMensajes.default.find()];
+                    case 3:
+                        mensajesArray = _a.sent();
+                        return [3 /*break*/, 6];
+                    case 4:
+                        error_1 = _a.sent();
+                        console.log(error_1);
+                        return [3 /*break*/, 6];
+                    case 5:
+                        mongoose.disconnect().then(function () {
+                            console.log("Base de datos desconectada");
+                        });
+                        return [2 /*return*/, mensajesArray];
+                    case 6:
+                        ;
+                        return [2 /*return*/];
+                }
             });
-            return mensajesArray;
-        }
-        ;
+        });
     };
     ;
     Mensajes.prototype.guardarMensajes = function (mensaje) {
-        console.log("mensaje a insertar en db", mensaje);
-        mongoose.connect("mongodb://localhost:27017/ecommerce"), function () {
-            console.log("Base de datos conectada");
-            model.mensajes.insertMany(mensaje, function (error, docs) {
-                if (error) {
-                    console.log(error);
-                    throw new Error(error);
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        console.log("mensaje a insertar en db", mensaje);
+                        return [4 /*yield*/, mongoose.connect("mongodb://localhost:27017/ecommerce")];
+                    case 1:
+                        _a.sent();
+                        console.log("Base de datos conectada");
+                        return [4 /*yield*/, modelMensajes.default.insertMany(mensaje, function (error, docs) {
+                                if (error) {
+                                    console.log(error);
+                                    throw new Error(error);
+                                }
+                                console.log("docs", docs);
+                                mongoose.disconnect(function () {
+                                    console.log("Base de datos desconectada");
+                                });
+                            })];
+                    case 2:
+                        _a.sent();
+                        return [2 /*return*/];
                 }
-                console.log("docs", docs);
-                mongoose.disconnect(function () {
-                    console.log("Base de datos desconectada");
-                });
             });
-        };
+        });
     };
-    ;
     return Mensajes;
 }());
 exports.Mensajes = Mensajes;
