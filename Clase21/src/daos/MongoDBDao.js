@@ -192,7 +192,7 @@ var MongoDBDao = /** @class */ (function () {
                         _a.label = 1;
                     case 1:
                         _a.trys.push([1, 3, 4, 5]);
-                        return [4 /*yield*/, prodModel.default.findByIdAndUpdate(id, producto, function () { console.log("error"); })
+                        return [4 /*yield*/, prodModel.default.findByIdAndUpdate(id, producto, function () { console.log("algo"); })
                             //await prodModel.default.findOneAndReplace({ _id: id }, producto, ()=>{console.log("error")})
                         ];
                     case 2:

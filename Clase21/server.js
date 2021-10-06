@@ -67,6 +67,7 @@ var SocketIO = __importStar(require("socket.io"));
 var products_1 = __importDefault(require("./routes/products"));
 var carts_1 = __importDefault(require("./routes/carts"));
 var sqlite3_js_1 = __importDefault(require("./db/sqlite3.js"));
+var DaoFactory_1 = require("./src/DaoFactory");
 var isAdmin = true;
 var __dirname = path_1.default.resolve();
 var port = 8080;
@@ -96,14 +97,8 @@ var io = new SocketIO.Server(server);
 server.on("error", function (error) {
     console.error(error);
 });
-//OPCIONES DE PERSISTENCIA EN BASE DE DATOS
-var memory = 0;
-var fileSys = 1;
-var mariaDB = 2;
-var sqlite = 3;
-var mongo = 4;
 // Defino la opción de Base de Datos
-exports.opcionCapa = mongo;
+exports.opcionCapa = DaoFactory_1.capaPersistencia.mariaDB;
 console.log("opcion capa en server", exports.opcionCapa);
 var msgList = new mensaje_1.Mensajes();
 io.on('connection', function (socket) { return __awaiter(void 0, void 0, void 0, function () {

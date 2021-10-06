@@ -5,8 +5,8 @@ import Sqlite3Dao from '../src/daos/Sqlite3Dao';
 import { opcionCapa } from "../server"
 
 console.log("opcion capa en productos", opcionCapa);
-const daoFact = new DaoFactory();
-const dao: MongoDBDao | Sqlite3Dao | MariaDBDao = daoFact.elegirBD(4)
+const daoFact = new DaoFactory(opcionCapa);
+const dao: MongoDBDao | Sqlite3Dao | MariaDBDao = daoFact.elegirBD()
 console.log("Dao", dao);
 
 export interface Producto {
@@ -19,11 +19,9 @@ export interface Producto {
     stock: number;
     timestamp: number;
 } 
-
-interface AProductos {
+/*interface AProductos {
     productos: Producto[];
-}
-
+}*/
 class Productos {
     public constructor() {
         

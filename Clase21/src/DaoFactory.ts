@@ -5,14 +5,25 @@ import MariaDBDao from "./daos/MariaDBDao";
 import Sqlite3Dao from "./daos/Sqlite3Dao";
 import MongoDBDao from "./daos/MongoDBDao";
 
+const capa = {
+    memory: 0,
+    fileSys: 1,
+    mariaDB: 2,
+    sqlite: 3,
+    mongo: 4
+ }
+export const capaPersistencia = capa;
 
 class DaoFactory {
-    constructor () {
-    };
+    private tipo:number
 
-    elegirBD(tipo: number): Operaciones {
-        console.log("tipo de BD", tipo)
-        switch (tipo) {
+    constructor(tipo:number) {
+        this.tipo = tipo
+    }
+
+    elegirBD(): Operaciones {
+        console.log("tipo de BD", this.tipo)
+        switch (this.tipo) {
            // case 0:
             //    return new MemoryDao()
             //case 1:
@@ -29,4 +40,4 @@ class DaoFactory {
     }
 }    
 
-export default DaoFactory;
+export default DaoFactory

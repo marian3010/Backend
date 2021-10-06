@@ -3,18 +3,27 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.capaPersistencia = void 0;
 //import { MemoryDao } from "./daos/memoryDao";
 //import { FsDao } from "./daos/fsDao";
 var MariaDBDao_1 = __importDefault(require("./daos/MariaDBDao"));
 var Sqlite3Dao_1 = __importDefault(require("./daos/Sqlite3Dao"));
 var MongoDBDao_1 = __importDefault(require("./daos/MongoDBDao"));
+var capa = {
+    memory: 0,
+    fileSys: 1,
+    mariaDB: 2,
+    sqlite: 3,
+    mongo: 4
+};
+exports.capaPersistencia = capa;
 var DaoFactory = /** @class */ (function () {
-    function DaoFactory() {
+    function DaoFactory(tipo) {
+        this.tipo = tipo;
     }
-    ;
-    DaoFactory.prototype.elegirBD = function (tipo) {
-        console.log("tipo de BD", tipo);
-        switch (tipo) {
+    DaoFactory.prototype.elegirBD = function () {
+        console.log("tipo de BD", this.tipo);
+        switch (this.tipo) {
             // case 0:
             //    return new MemoryDao()
             //case 1:

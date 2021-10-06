@@ -5,7 +5,8 @@ import handlebars from "express-handlebars";
 import * as SocketIO from 'socket.io';
 import productosRouter from './routes/products';
 import carritoRouter from './routes/carts';
-import options from './db/sqlite3.js'
+import options from './db/sqlite3.js';
+import {capaPersistencia} from './src/DaoFactory';
 
 const isAdmin:boolean = true;
 const __dirname = path.resolve();
@@ -44,15 +45,8 @@ server.on("error", (error) => {
     console.error(error);
 });
 
-//OPCIONES DE PERSISTENCIA EN BASE DE DATOS
-const memory: number = 0;
-const fileSys: number = 1;
-const mariaDB: number = 2;
-const sqlite: number = 3;
-const mongo: number = 4;
-
 // Defino la opción de Base de Datos
-export const opcionCapa:number = mongo;
+export const opcionCapa:number = capaPersistencia.mariaDB;
 console.log("opcion capa en server", opcionCapa);
 
 const msgList = new Mensajes();
