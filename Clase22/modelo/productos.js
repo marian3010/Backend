@@ -39,15 +39,15 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var sqlite3_1 = __importDefault(require("../../db/sqlite3"));
+var mariaDB_1 = __importDefault(require("../db/mariaDB"));
 var knex_1 = __importDefault(require("knex"));
-var knexSQLite3 = (0, knex_1.default)(sqlite3_1.default);
-var Sqlite3Dao = /** @class */ (function () {
-    function Sqlite3Dao() {
-        knexSQLite3.schema.hasTable("productos")
+var knexo = (0, knex_1.default)(mariaDB_1.default);
+var Productos = /** @class */ (function () {
+    function Productos() {
+        knexo.schema.hasTable("productos")
             .then(function (response) {
             if (!response) {
-                knexSQLite3.schema.createTable("productos", function (table) {
+                knexo.schema.createTable("productos", function (table) {
                     table.increments("id", { primaryKey: true });
                     table.string("code");
                     table.string("title").notNullable();
@@ -57,54 +57,65 @@ var Sqlite3Dao = /** @class */ (function () {
                     table.integer("stock");
                     table.integer("timestamp");
                 })
-                    .then(function () { return console.log("tabla productos creada en SQLite3"); })
+                    .then(function () { return console.log("tabla productos creada"); })
                     .catch(function (error) {
                     console.log(error);
                 });
             }
         });
     }
-    Sqlite3Dao.prototype.agregarProducto = function (producto) {
+    ;
+    Productos.prototype.agregarProducto = function (code, title, description, price, thumbnail, stock, timestamp) {
+        if (timestamp === void 0) { timestamp = Date.now(); }
         return __awaiter(this, void 0, void 0, function () {
-            var resultado, response, error_1;
-            return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0:
-                        resultado = true;
-                        _a.label = 1;
-                    case 1:
-                        _a.trys.push([1, 3, , 4]);
-                        console.log('agregar por SQLite3');
-                        return [4 /*yield*/, knexSQLite3("productos").insert(producto)];
-                    case 2:
-                        response = _a.sent();
-                        console.log("Id del producto agregado", response);
-                        return [3 /*break*/, 4];
-                    case 3:
-                        error_1 = _a.sent();
-                        resultado = false;
-                        console.log(error_1);
-                        return [3 /*break*/, 4];
-                    case 4: return [2 /*return*/, resultado];
-                }
-            });
-        });
-    };
-    Sqlite3Dao.prototype.buscarProducto = function (id) {
-        return __awaiter(this, void 0, void 0, function () {
-            var producto, error_2;
+            var producto, response, error_1;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         _a.trys.push([0, 2, , 3]);
-                        console.log('buscar por SQLite3');
-                        return [4 /*yield*/, knexSQLite3.from("productos")
-                                .select("*")
-                                .where("id", "=", parseInt(id))];
+                        producto = {
+                            code: code,
+                            title: title,
+                            description: description,
+                            price: price,
+                            thumbnail: thumbnail,
+                            stock: stock,
+                            timestamp: timestamp
+                        };
+                        return [4 /*yield*/, knexo("productos").insert(producto)];
                     case 1:
-                        producto = _a.sent();
-                        console.log("productos encontrados", producto);
+                        response = _a.sent();
+                        console.log("Id del producto agregado", response);
                         return [2 /*return*/, producto];
+                    case 2:
+                        error_1 = _a.sent();
+                        console.log(error_1);
+                        return [3 /*break*/, 3];
+                    case 3: return [2 /*return*/];
+                }
+            });
+        });
+    };
+    ;
+    Productos.prototype.buscarProducto = function (id) {
+        return __awaiter(this, void 0, void 0, function () {
+            var prodsArray, rows, _i, rows_1, row, error_2;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        _a.trys.push([0, 2, , 3]);
+                        prodsArray = [];
+                        return [4 /*yield*/, knexo.from("productos")
+                                .select("*")
+                                .where("id", "=", id)];
+                    case 1:
+                        rows = _a.sent();
+                        for (_i = 0, rows_1 = rows; _i < rows_1.length; _i++) {
+                            row = rows_1[_i];
+                            prodsArray.push({ code: row["code"], title: row["title"], description: row["description"], price: row["price"], thumbnail: row["thumbnail"], stock: row["stock"], timestamp: row["timestamp"] });
+                            console.log("producto encontrado", prodsArray);
+                        }
+                        return [2 /*return*/, prodsArray];
                     case 2:
                         error_2 = _a.sent();
                         console.log(error_2);
@@ -114,20 +125,24 @@ var Sqlite3Dao = /** @class */ (function () {
             });
         });
     };
-    Sqlite3Dao.prototype.listarProductos = function () {
+    ;
+    Productos.prototype.listarProductos = function () {
         return __awaiter(this, void 0, void 0, function () {
-            var rows, error_3;
+            var listaProductos, rows, _i, rows_2, row, error_3;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         _a.trys.push([0, 2, , 3]);
-                        console.log("listar productos por SQLite3");
-                        return [4 /*yield*/, knexSQLite3.from("productos")
+                        listaProductos = [];
+                        return [4 /*yield*/, knexo.from("productos")
                                 .select("*")];
                     case 1:
                         rows = _a.sent();
-                        console.log("productos encontrados", rows);
-                        return [2 /*return*/, rows];
+                        for (_i = 0, rows_2 = rows; _i < rows_2.length; _i++) {
+                            row = rows_2[_i];
+                            listaProductos.push({ code: row["code"], title: row["title"], description: row["description"], price: row["price"], thumbnail: row["thumbnail"], stock: row["stock"], timestamp: row["timestamp"], id: row["id"] });
+                        }
+                        return [2 /*return*/, listaProductos];
                     case 2:
                         error_3 = _a.sent();
                         console.log(error_3);
@@ -137,59 +152,60 @@ var Sqlite3Dao = /** @class */ (function () {
             });
         });
     };
-    Sqlite3Dao.prototype.borrarProducto = function (id) {
+    ;
+    Productos.prototype.borrarProducto = function (id) {
         return __awaiter(this, void 0, void 0, function () {
-            var resultado, response, error_4;
+            var response, error_4;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        resultado = true;
-                        _a.label = 1;
-                    case 1:
-                        _a.trys.push([1, 3, , 4]);
-                        return [4 /*yield*/, knexSQLite3.from("productos")
-                                .where("id", "=", parseInt(id))
+                        _a.trys.push([0, 2, , 3]);
+                        return [4 /*yield*/, knexo.from("productos")
+                                .where("id", "=", id)
                                 .del()];
-                    case 2:
+                    case 1:
                         response = _a.sent();
                         console.log("respuesta del delete", response);
-                        return [3 /*break*/, 4];
-                    case 3:
+                        return [2 /*return*/, response];
+                    case 2:
                         error_4 = _a.sent();
                         console.log(error_4);
-                        resultado = false;
-                        return [3 /*break*/, 4];
-                    case 4: return [2 /*return*/, resultado];
+                        return [3 /*break*/, 3];
+                    case 3: return [2 /*return*/];
                 }
             });
         });
     };
-    Sqlite3Dao.prototype.actualizarProducto = function (id, producto) {
+    ;
+    Productos.prototype.actualizarProducto = function (code, title, description, price, thumbnail, stock, id) {
         return __awaiter(this, void 0, void 0, function () {
-            var resultado, response, error_5;
+            var response, error_5;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        resultado = true;
-                        _a.label = 1;
+                        _a.trys.push([0, 2, , 3]);
+                        return [4 /*yield*/, knexo.from("productos").where("id", "=", id)
+                                .update("code", code)
+                                .update("title", title)
+                                .update("description", description)
+                                .update("price", price)
+                                .update("thumbnail", thumbnail)
+                                .update("stock", stock)
+                                .update("timestamp", Date.now())];
                     case 1:
-                        _a.trys.push([1, 3, , 4]);
-                        return [4 /*yield*/, knexSQLite3.from("productos").where("id", "=", parseInt(id))
-                                .update(producto)];
-                    case 2:
                         response = _a.sent();
-                        console.log("producto actualizado", response);
-                        return [3 /*break*/, 4];
-                    case 3:
+                        return [2 /*return*/, response];
+                    case 2:
                         error_5 = _a.sent();
                         console.log(error_5);
-                        resultado = false;
-                        return [3 /*break*/, 4];
-                    case 4: return [2 /*return*/, resultado];
+                        return [3 /*break*/, 3];
+                    case 3: return [2 /*return*/];
                 }
             });
         });
     };
-    return Sqlite3Dao;
+    ;
+    return Productos;
 }());
-exports.default = Sqlite3Dao;
+;
+exports.default = Productos;

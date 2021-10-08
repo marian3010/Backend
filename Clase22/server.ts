@@ -3,14 +3,9 @@ import path from "path";
 import {Mensajes, Mensaje} from "./modelo/mensaje";
 import handlebars from "express-handlebars";
 import * as SocketIO from 'socket.io';
-
-// Defino la opción de Base de Datos
-import {capaPersistencia} from './src/DaoFactory';
-export const opcionCapa:number = capaPersistencia.firebase;
-
 import productosRouter from './routes/products';
 import carritoRouter from './routes/carts';
-import options from './db/sqlite3.js';
+import options from './db/sqlite3.js'
 
 const isAdmin:boolean = true;
 const __dirname = path.resolve();
@@ -48,6 +43,7 @@ const io = new SocketIO.Server(server);
 server.on("error", (error) => {
     console.error(error);
 });
+
 
 const msgList = new Mensajes();
 

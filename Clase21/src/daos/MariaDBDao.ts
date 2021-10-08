@@ -102,5 +102,4 @@ class MariaDBDao implements Operaciones {
         return response;
     }
 }
-
 export default MariaDBDao;

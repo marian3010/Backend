@@ -9,14 +9,16 @@ exports.capaPersistencia = void 0;
 var MariaDBDao_1 = __importDefault(require("./daos/MariaDBDao"));
 var Sqlite3Dao_1 = __importDefault(require("./daos/Sqlite3Dao"));
 var MongoDBDao_1 = __importDefault(require("./daos/MongoDBDao"));
-var capa = {
+var FirebaseDao_1 = __importDefault(require("./daos/FirebaseDao"));
+exports.capaPersistencia = {
     memory: 0,
     fileSys: 1,
     mariaDB: 2,
     sqlite: 3,
-    mongo: 4
+    mongoLocal: 4,
+    mongoAtlas: 5,
+    firebase: 6
 };
-exports.capaPersistencia = capa;
 var DaoFactory = /** @class */ (function () {
     function DaoFactory(tipo) {
         this.tipo = tipo;
@@ -34,6 +36,10 @@ var DaoFactory = /** @class */ (function () {
                 return new Sqlite3Dao_1.default();
             case 4:
                 return new MongoDBDao_1.default();
+            case 5:
+                return new MongoDBDao_1.default();
+            case 6:
+                return new FirebaseDao_1.default();
             default:
                 throw new Error("DAO no encontrado");
         }

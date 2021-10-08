@@ -35,161 +35,185 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-var sqlite3_1 = __importDefault(require("../../db/sqlite3"));
-var knex_1 = __importDefault(require("knex"));
-var knexSQLite3 = (0, knex_1.default)(sqlite3_1.default);
-var Sqlite3Dao = /** @class */ (function () {
-    function Sqlite3Dao() {
-        knexSQLite3.schema.hasTable("productos")
-            .then(function (response) {
-            if (!response) {
-                knexSQLite3.schema.createTable("productos", function (table) {
-                    table.increments("id", { primaryKey: true });
-                    table.string("code");
-                    table.string("title").notNullable();
-                    table.string("description");
-                    table.integer("price").notNullable();
-                    table.string("thumbnail");
-                    table.integer("stock");
-                    table.integer("timestamp");
-                })
-                    .then(function () { return console.log("tabla productos creada en SQLite3"); })
-                    .catch(function (error) {
-                    console.log(error);
-                });
-            }
+var admin = require("firebase-admin");
+var serviceAccount = require("../../data/ecommerce-43372-firebase-adminsdk-sakea-fd16d38086.json");
+var FirebaseDao = /** @class */ (function () {
+    function FirebaseDao() {
+        admin.initializeApp({
+            credential: admin.credential.cert(serviceAccount),
+            databaseURL: "https://ecommerce-43372.firebaseio.com",
         });
+        console.log("Base de datos conectada");
     }
-    Sqlite3Dao.prototype.agregarProducto = function (producto) {
+    ;
+    FirebaseDao.prototype.agregarProducto = function (producto) {
         return __awaiter(this, void 0, void 0, function () {
-            var resultado, response, error_1;
+            var resultado, firestoreAdmin, collection, error_1;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         resultado = true;
+                        firestoreAdmin = admin.firestore();
+                        collection = firestoreAdmin.collection("productos");
                         _a.label = 1;
                     case 1:
-                        _a.trys.push([1, 3, , 4]);
-                        console.log('agregar por SQLite3');
-                        return [4 /*yield*/, knexSQLite3("productos").insert(producto)];
+                        _a.trys.push([1, 3, 4, 5]);
+                        console.log("agregar por firebase");
+                        return [4 /*yield*/, collection.doc().create(producto)];
                     case 2:
-                        response = _a.sent();
-                        console.log("Id del producto agregado", response);
-                        return [3 /*break*/, 4];
+                        _a.sent();
+                        return [3 /*break*/, 5];
                     case 3:
                         error_1 = _a.sent();
-                        resultado = false;
                         console.log(error_1);
-                        return [3 /*break*/, 4];
+                        resultado = false;
+                        return [3 /*break*/, 5];
                     case 4: return [2 /*return*/, resultado];
+                    case 5:
+                        ;
+                        return [2 /*return*/];
                 }
             });
         });
     };
-    Sqlite3Dao.prototype.buscarProducto = function (id) {
+    ;
+    FirebaseDao.prototype.buscarProducto = function (id) {
         return __awaiter(this, void 0, void 0, function () {
-            var producto, error_2;
+            var firestoreAdmin, collection, doc, item, response, error_2;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        _a.trys.push([0, 2, , 3]);
-                        console.log('buscar por SQLite3');
-                        return [4 /*yield*/, knexSQLite3.from("productos")
-                                .select("*")
-                                .where("id", "=", parseInt(id))];
+                        firestoreAdmin = admin.firestore();
+                        collection = firestoreAdmin.collection("productos");
+                        _a.label = 1;
                     case 1:
-                        producto = _a.sent();
-                        console.log("productos encontrados", producto);
-                        return [2 /*return*/, producto];
+                        _a.trys.push([1, 3, , 4]);
+                        doc = collection.doc("" + id);
+                        return [4 /*yield*/, doc.get()];
                     case 2:
+                        item = _a.sent();
+                        response = item.data;
+                        console.log("resultado query", response);
+                        return [2 /*return*/, response];
+                    case 3:
                         error_2 = _a.sent();
                         console.log(error_2);
-                        return [3 /*break*/, 3];
-                    case 3: return [2 /*return*/];
+                        return [3 /*break*/, 4];
+                    case 4:
+                        ;
+                        return [2 /*return*/];
                 }
             });
         });
     };
-    Sqlite3Dao.prototype.listarProductos = function () {
+    ;
+    FirebaseDao.prototype.listarProductos = function () {
         return __awaiter(this, void 0, void 0, function () {
-            var rows, error_3;
+            var productosArray, firestoreAdmin, collection, query, response_1, error_3;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        _a.trys.push([0, 2, , 3]);
-                        console.log("listar productos por SQLite3");
-                        return [4 /*yield*/, knexSQLite3.from("productos")
-                                .select("*")];
+                        productosArray = [];
+                        firestoreAdmin = admin.firestore();
+                        collection = firestoreAdmin.collection("productos");
+                        _a.label = 1;
                     case 1:
-                        rows = _a.sent();
-                        console.log("productos encontrados", rows);
-                        return [2 /*return*/, rows];
+                        _a.trys.push([1, 3, , 4]);
+                        return [4 /*yield*/, collection.get()];
                     case 2:
+                        query = _a.sent();
+                        response_1 = query.docs.map(function (doc) {
+                            var data = doc.data();
+                            console.log(response_1);
+                            var producto = {
+                                id: doc.id,
+                                code: data.code,
+                                title: data.title,
+                                description: data.description,
+                                price: data.price,
+                                thumbnail: data.thumbnail,
+                                stock: data.stock,
+                                timestamp: data.timestamp
+                            };
+                            productosArray.push(producto);
+                        });
+                        return [2 /*return*/, productosArray];
+                    case 3:
                         error_3 = _a.sent();
                         console.log(error_3);
-                        return [3 /*break*/, 3];
-                    case 3: return [2 /*return*/];
+                        return [3 /*break*/, 4];
+                    case 4:
+                        ;
+                        return [2 /*return*/];
                 }
             });
         });
     };
-    Sqlite3Dao.prototype.borrarProducto = function (id) {
+    ;
+    FirebaseDao.prototype.borrarProducto = function (id) {
         return __awaiter(this, void 0, void 0, function () {
-            var resultado, response, error_4;
+            var resultado, firestoreAdmin, collection, doc, error_4;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         resultado = true;
+                        firestoreAdmin = admin.firestore();
+                        collection = firestoreAdmin.collection("productos");
                         _a.label = 1;
                     case 1:
-                        _a.trys.push([1, 3, , 4]);
-                        return [4 /*yield*/, knexSQLite3.from("productos")
-                                .where("id", "=", parseInt(id))
-                                .del()];
+                        _a.trys.push([1, 3, 4, 5]);
+                        return [4 /*yield*/, collection.doc(id).delete()];
                     case 2:
-                        response = _a.sent();
-                        console.log("respuesta del delete", response);
-                        return [3 /*break*/, 4];
+                        doc = _a.sent();
+                        console.log("producto borrado", doc);
+                        return [3 /*break*/, 5];
                     case 3:
                         error_4 = _a.sent();
                         console.log(error_4);
                         resultado = false;
-                        return [3 /*break*/, 4];
+                        return [3 /*break*/, 5];
                     case 4: return [2 /*return*/, resultado];
+                    case 5:
+                        ;
+                        return [2 /*return*/];
                 }
             });
         });
     };
-    Sqlite3Dao.prototype.actualizarProducto = function (id, producto) {
+    ;
+    FirebaseDao.prototype.actualizarProducto = function (id, producto) {
         return __awaiter(this, void 0, void 0, function () {
-            var resultado, response, error_5;
+            var resultado, firestoreAdmin, collection, doc, error_5;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         resultado = true;
+                        firestoreAdmin = admin.firestore();
+                        collection = firestoreAdmin.collection("productos");
                         _a.label = 1;
                     case 1:
-                        _a.trys.push([1, 3, , 4]);
-                        return [4 /*yield*/, knexSQLite3.from("productos").where("id", "=", parseInt(id))
-                                .update(producto)];
+                        _a.trys.push([1, 3, 4, 5]);
+                        return [4 /*yield*/, collection.doc(id).update(producto)];
                     case 2:
-                        response = _a.sent();
-                        console.log("producto actualizado", response);
-                        return [3 /*break*/, 4];
+                        doc = _a.sent();
+                        console.log("producto actualizado", doc);
+                        return [3 /*break*/, 5];
                     case 3:
                         error_5 = _a.sent();
                         console.log(error_5);
                         resultado = false;
-                        return [3 /*break*/, 4];
+                        return [3 /*break*/, 5];
                     case 4: return [2 /*return*/, resultado];
+                    case 5:
+                        ;
+                        return [2 /*return*/];
                 }
             });
         });
     };
-    return Sqlite3Dao;
+    ;
+    return FirebaseDao;
 }());
-exports.default = Sqlite3Dao;
+;
+exports.default = FirebaseDao;

@@ -4,7 +4,6 @@ import MongoDBDao from '../src/daos/MongoDBDao';
 import Sqlite3Dao from '../src/daos/Sqlite3Dao';
 import { opcionCapa } from "../server"
 
-console.log("opcion capa en productos", opcionCapa);
 const daoFact = new DaoFactory(opcionCapa);
 const dao: MongoDBDao | Sqlite3Dao | MariaDBDao = daoFact.elegirBD()
 console.log("Dao", dao);
@@ -19,12 +18,9 @@ export interface Producto {
     stock: number;
     timestamp: number;
 } 
-/*interface AProductos {
-    productos: Producto[];
-}*/
+
 class Productos {
     public constructor() {
-        
     };
     
     public async agregarProducto(code:string, title:string, description:string, price:number, thumbnail:string, stock:number, timestamp:number = Date.now()) {
@@ -94,7 +90,6 @@ class Productos {
                 stock,
                 timestamp: Date.now()
             }
-            //const response = await dao.actualizarProducto(code, title, description, price, thumbnail, stock, id)
             const response = await dao.actualizarProducto(id,producto);
             return response;
         } 

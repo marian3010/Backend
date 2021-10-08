@@ -4,15 +4,17 @@ import { Operaciones } from "./interfaces/Operaciones";
 import MariaDBDao from "./daos/MariaDBDao";
 import Sqlite3Dao from "./daos/Sqlite3Dao";
 import MongoDBDao from "./daos/MongoDBDao";
+import FirebaseDao from "./daos/FirebaseDao";
 
-const capa = {
+export const capaPersistencia = {
     memory: 0,
     fileSys: 1,
     mariaDB: 2,
     sqlite: 3,
-    mongo: 4
+    mongoLocal: 4,
+    mongoAtlas: 5,
+    firebase: 6
  }
-export const capaPersistencia = capa;
 
 class DaoFactory {
     private tipo:number
@@ -34,6 +36,10 @@ class DaoFactory {
                 return new Sqlite3Dao()
             case 4:
                 return new MongoDBDao()
+            case 5:
+                return new MongoDBDao()  
+            case 6:
+                return new FirebaseDao()      
             default:
                 throw new Error("DAO no encontrado");           
         }

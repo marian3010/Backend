@@ -89,12 +89,6 @@ class Sqlite3Dao implements Operaciones {
         try {
             const response = await knexSQLite3.from("productos").where("id","=",parseInt(id))
             .update(producto)
-           /* .update("title", title)
-            .update("description", description)
-            .update("price", price)
-            .update("thumbnail", thumbnail)
-            .update("stock", stock)
-            .update("timestamp", Date.now())*/
             console.log("producto actualizado", response)
         }
         catch (error) {

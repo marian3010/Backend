@@ -41,7 +41,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var DaoFactory_1 = __importDefault(require("../src/DaoFactory"));
 var server_1 = require("../server");
-console.log("opcion capa en productos", server_1.opcionCapa);
 var daoFact = new DaoFactory_1.default(server_1.opcionCapa);
 var dao = daoFact.elegirBD();
 console.log("Dao", dao);
