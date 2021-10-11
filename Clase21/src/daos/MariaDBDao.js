@@ -46,6 +46,7 @@ var MariaDBDao = /** @class */ (function () {
     function MariaDBDao() {
         knexMariaDB.schema.hasTable("productos")
             .then(function (response) {
+            console.log("respuesta al create table productos", response);
             if (!response) {
                 knexMariaDB.schema.createTable("productos", function (table) {
                     table.increments("id", { primaryKey: true });
@@ -58,6 +59,21 @@ var MariaDBDao = /** @class */ (function () {
                     table.integer("timestamp");
                 })
                     .then(function () { return console.log("tabla productos creada en mariaDB"); })
+                    .catch(function (error) {
+                    console.log(error);
+                });
+            }
+        });
+        knexMariaDB.schema.hasTable("mensajes")
+            .then(function (res) {
+            console.log("respuesta al create table mensajes", res);
+            if (!res) {
+                knexMariaDB.schema.createTable("mensajes", function (table) {
+                    table.string("author");
+                    table.string("fecha");
+                    table.string("text");
+                })
+                    .then(function () { return console.log("tabla mensajes creada en mariaDB"); })
                     .catch(function (error) {
                     console.log(error);
                 });
@@ -173,22 +189,9 @@ var MariaDBDao = /** @class */ (function () {
                     case 1:
                         _a.trys.push([1, 3, , 4]);
                         return [4 /*yield*/, knexMariaDB.from("productos").where("id", "=", parseInt(id))
-                                .update(producto)
-                            /* .update("title", title)
-                             .update("description", description)
-                             .update("price", price)
-                             .update("thumbnail", thumbnail)
-                             .update("stock", stock)
-                             .update("timestamp", Date.now())*/
-                        ];
+                                .update(producto)];
                     case 2:
                         response_1 = _a.sent();
-                        /* .update("title", title)
-                         .update("description", description)
-                         .update("price", price)
-                         .update("thumbnail", thumbnail)
-                         .update("stock", stock)
-                         .update("timestamp", Date.now())*/
                         console.log("producto actualizado", response_1);
                         return [3 /*break*/, 4];
                     case 3:
@@ -201,6 +204,55 @@ var MariaDBDao = /** @class */ (function () {
             });
         });
     };
+    MariaDBDao.prototype.leerMensajes = function () {
+        return __awaiter(this, void 0, void 0, function () {
+            var rows, error_6;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        _a.trys.push([0, 2, , 3]);
+                        return [4 /*yield*/, knexMariaDB.from("mensajes")
+                                .select("*")];
+                    case 1:
+                        rows = _a.sent();
+                        console.log("mensajes encontrados", rows);
+                        return [2 /*return*/, rows];
+                    case 2:
+                        error_6 = _a.sent();
+                        console.log(error_6);
+                        return [3 /*break*/, 3];
+                    case 3: return [2 /*return*/];
+                }
+            });
+        });
+    };
+    ;
+    MariaDBDao.prototype.guardarMensajes = function (mensaje) {
+        return __awaiter(this, void 0, void 0, function () {
+            var response, error_7;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        response = true;
+                        _a.label = 1;
+                    case 1:
+                        _a.trys.push([1, 3, , 4]);
+                        console.log('agregar mensaje por mariaDB');
+                        return [4 /*yield*/, knexMariaDB("mensajes").insert(mensaje)];
+                    case 2:
+                        _a.sent();
+                        return [3 /*break*/, 4];
+                    case 3:
+                        error_7 = _a.sent();
+                        console.log(error_7);
+                        response = false;
+                        return [3 /*break*/, 4];
+                    case 4: return [2 /*return*/, response];
+                }
+            });
+        });
+    };
+    ;
     return MariaDBDao;
 }());
 exports.default = MariaDBDao;

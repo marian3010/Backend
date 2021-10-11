@@ -1,7 +1,6 @@
 import {Operaciones} from "../interfaces/Operaciones";
 import { Producto } from "../../modelo/productos";
-import productosRouter from "../../routes/products";
-import { database } from "firebase-admin";
+import { Mensaje } from "../../modelo/mensaje";
 
 const admin = require("firebase-admin");
 const serviceAccount = require("../../data/ecommerce-43372-firebase-adminsdk-sakea-fd16d38086.json");
@@ -97,6 +96,46 @@ class FirebaseDao implements Operaciones {
         try {
             let doc = await collection.doc(id).update(producto);
             console.log("producto actualizado", doc);
+        }
+        catch (error) {
+            console.log(error);
+            resultado = false;
+        } finally {
+            return resultado;
+        };
+    };
+
+    async leerMensajes() {
+        let mensajesArray: Mensaje[] = []
+        const firestoreAdmin = admin.firestore();
+        const collection = firestoreAdmin.collection("mensajes");
+        try {
+            const query = await collection.get();
+            const response = query.docs.map((doc:any) => {
+                const data = doc.data();
+                console.log(response);
+                const mensaje = {
+                  id: doc.id,
+                  author: data.author,
+                  fecha: data.fecha,
+                  text: data.text
+                };
+                mensajesArray.push(mensaje);
+              });
+            return mensajesArray;
+        }
+        catch(error) {
+             console.log(error);
+        };
+    };   
+
+    async guardarMensajes(mensaje: Mensaje): Promise<boolean> {
+        let resultado = true;
+        const firestoreAdmin = admin.firestore();
+        const collection = firestoreAdmin.collection("mensajes");
+        try {
+            console.log("agregar por firebase");
+            await collection.doc().create(mensaje);
         }
         catch (error) {
             console.log(error);

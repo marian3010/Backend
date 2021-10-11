@@ -1,5 +1,6 @@
 import {Operaciones} from "../interfaces/Operaciones";
 import { Producto } from "../../modelo/productos";
+import { Mensaje } from "../../modelo/mensaje";
 import options from '../../db/mariaDB';
 import knex from "knex";
 const knexMariaDB = knex(options);
@@ -9,6 +10,7 @@ class MariaDBDao implements Operaciones {
     constructor() {
         knexMariaDB.schema.hasTable("productos")
         .then(response => {
+            console.log("respuesta al create table productos",response)
             if(!response) {
                 knexMariaDB.schema.createTable("productos", (table:any) => {
                     table.increments("id",{primaryKey:true})
@@ -21,6 +23,21 @@ class MariaDBDao implements Operaciones {
                     table.integer("timestamp");
                 })
                 .then(() => console.log("tabla productos creada en mariaDB"))
+                .catch((error) => {
+                  console.log(error);
+                })
+            }
+        });
+        knexMariaDB.schema.hasTable("mensajes")
+        .then(res => {
+            console.log("respuesta al create table mensajes",res)
+            if(!res) {
+                knexMariaDB.schema.createTable("mensajes", (table:any) => {
+                    table.string("author");
+                    table.string("fecha");
+                    table.string("text");
+                })
+                .then(() => console.log("tabla mensajes creada en mariaDB"))
                 .catch((error) => {
                   console.log(error);
                 })
@@ -87,12 +104,6 @@ class MariaDBDao implements Operaciones {
         try {
             const response = await knexMariaDB.from("productos").where("id","=",parseInt(id))
             .update(producto)
-           /* .update("title", title)
-            .update("description", description)
-            .update("price", price)
-            .update("thumbnail", thumbnail)
-            .update("stock", stock)
-            .update("timestamp", Date.now())*/
             console.log("producto actualizado", response)
         }
         catch (error) {
@@ -101,5 +112,31 @@ class MariaDBDao implements Operaciones {
         }
         return response;
     }
+
+    async leerMensajes() {
+        try {
+            const rows = await knexMariaDB.from("mensajes")
+            .select("*")
+            console.log("mensajes encontrados", rows)
+            return rows;
+        }
+        catch(error) {
+             console.log(error);
+        } 
+    };   
+
+    async guardarMensajes(mensaje: Mensaje): Promise<boolean> {
+        let response = true;
+        try {
+            console.log('agregar mensaje por mariaDB')
+            await knexMariaDB("mensajes").insert(mensaje);
+        }
+        catch (error) {
+            console.log(error);
+            response = false;
+        }
+        return response;
+    };
+        
 }
 export default MariaDBDao;

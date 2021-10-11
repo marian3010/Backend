@@ -1,4 +1,5 @@
 import { Producto } from "../../modelo/productos";
+import { Mensaje } from "../../modelo/mensaje";
 
 
 export interface Operaciones {
@@ -7,8 +8,8 @@ export interface Operaciones {
     listarProductos(): any
     borrarProducto(id:any): Promise<boolean>
     actualizarProducto(id:any, producto:Producto): Promise<boolean>
-    //leerMensajes():void
-    //guardarMensajes():void
+    leerMensajes():any
+    guardarMensajes(mensaje: Mensaje): Promise<boolean>
     //listarProdsCarrito():void
     //agregarProdsCarrito():void
     //borrarProdsCarrito():void

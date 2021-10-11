@@ -213,6 +213,76 @@ var FirebaseDao = /** @class */ (function () {
         });
     };
     ;
+    FirebaseDao.prototype.leerMensajes = function () {
+        return __awaiter(this, void 0, void 0, function () {
+            var mensajesArray, firestoreAdmin, collection, query, response_2, error_6;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        mensajesArray = [];
+                        firestoreAdmin = admin.firestore();
+                        collection = firestoreAdmin.collection("mensajes");
+                        _a.label = 1;
+                    case 1:
+                        _a.trys.push([1, 3, , 4]);
+                        return [4 /*yield*/, collection.get()];
+                    case 2:
+                        query = _a.sent();
+                        response_2 = query.docs.map(function (doc) {
+                            var data = doc.data();
+                            console.log(response_2);
+                            var mensaje = {
+                                id: doc.id,
+                                author: data.author,
+                                fecha: data.fecha,
+                                text: data.text
+                            };
+                            mensajesArray.push(mensaje);
+                        });
+                        return [2 /*return*/, mensajesArray];
+                    case 3:
+                        error_6 = _a.sent();
+                        console.log(error_6);
+                        return [3 /*break*/, 4];
+                    case 4:
+                        ;
+                        return [2 /*return*/];
+                }
+            });
+        });
+    };
+    ;
+    FirebaseDao.prototype.guardarMensajes = function (mensaje) {
+        return __awaiter(this, void 0, void 0, function () {
+            var resultado, firestoreAdmin, collection, error_7;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        resultado = true;
+                        firestoreAdmin = admin.firestore();
+                        collection = firestoreAdmin.collection("mensajes");
+                        _a.label = 1;
+                    case 1:
+                        _a.trys.push([1, 3, 4, 5]);
+                        console.log("agregar por firebase");
+                        return [4 /*yield*/, collection.doc().create(mensaje)];
+                    case 2:
+                        _a.sent();
+                        return [3 /*break*/, 5];
+                    case 3:
+                        error_7 = _a.sent();
+                        console.log(error_7);
+                        resultado = false;
+                        return [3 /*break*/, 5];
+                    case 4: return [2 /*return*/, resultado];
+                    case 5:
+                        ;
+                        return [2 /*return*/];
+                }
+            });
+        });
+    };
+    ;
     return FirebaseDao;
 }());
 ;

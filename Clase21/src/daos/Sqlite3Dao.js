@@ -46,6 +46,7 @@ var Sqlite3Dao = /** @class */ (function () {
     function Sqlite3Dao() {
         knexSQLite3.schema.hasTable("productos")
             .then(function (response) {
+            console.log("console log al crear tabla productos", response);
             if (!response) {
                 knexSQLite3.schema.createTable("productos", function (table) {
                     table.increments("id", { primaryKey: true });
@@ -58,6 +59,21 @@ var Sqlite3Dao = /** @class */ (function () {
                     table.integer("timestamp");
                 })
                     .then(function () { return console.log("tabla productos creada en SQLite3"); })
+                    .catch(function (error) {
+                    console.log(error);
+                });
+            }
+        });
+        knexSQLite3.schema.hasTable("mensajes")
+            .then(function (res) {
+            console.log("respuesta al crear tabla mensajes", res);
+            if (!res) {
+                knexSQLite3.schema.createTable("mensajes", function (table) {
+                    table.string("author");
+                    table.string("fecha");
+                    table.string("text");
+                })
+                    .then(function () { return console.log("tabla mensajes creada en SQLite3"); })
                     .catch(function (error) {
                     console.log(error);
                 });
@@ -190,6 +206,55 @@ var Sqlite3Dao = /** @class */ (function () {
             });
         });
     };
+    Sqlite3Dao.prototype.leerMensajes = function () {
+        return __awaiter(this, void 0, void 0, function () {
+            var rows, error_6;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        _a.trys.push([0, 2, , 3]);
+                        return [4 /*yield*/, knexSQLite3.from("mensajes")
+                                .select("*")];
+                    case 1:
+                        rows = _a.sent();
+                        console.log("mensajes encontrados", rows);
+                        return [2 /*return*/, rows];
+                    case 2:
+                        error_6 = _a.sent();
+                        console.log(error_6);
+                        return [3 /*break*/, 3];
+                    case 3: return [2 /*return*/];
+                }
+            });
+        });
+    };
+    ;
+    Sqlite3Dao.prototype.guardarMensajes = function (mensaje) {
+        return __awaiter(this, void 0, void 0, function () {
+            var response, error_7;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        response = true;
+                        _a.label = 1;
+                    case 1:
+                        _a.trys.push([1, 3, , 4]);
+                        console.log('agregar mensaje por mariaDB');
+                        return [4 /*yield*/, knexSQLite3("mensajes").insert(mensaje)];
+                    case 2:
+                        _a.sent();
+                        return [3 /*break*/, 4];
+                    case 3:
+                        error_7 = _a.sent();
+                        console.log(error_7);
+                        response = false;
+                        return [3 /*break*/, 4];
+                    case 4: return [2 /*return*/, response];
+                }
+            });
+        });
+    };
+    ;
     return Sqlite3Dao;
 }());
 exports.default = Sqlite3Dao;

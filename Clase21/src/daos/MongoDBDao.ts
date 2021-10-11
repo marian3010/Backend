@@ -1,8 +1,10 @@
 import {Operaciones} from "../interfaces/Operaciones";
 import { Producto } from "../../modelo/productos";
+import { Mensaje, Mensajes } from "../../modelo/mensaje";
 import { opcionCapa } from "../../server";
 const mongoose = require("mongoose");
 const prodModel = require("../../model/prods");
+const modelMensajes = require("../../model/messages.js");
 
 
 class MongoDBDao implements Operaciones {
@@ -10,10 +12,10 @@ class MongoDBDao implements Operaciones {
         let resultado = true;
         try {
             if (opcionCapa == 4) {
-                console.log('agregar por mongoDB')
+                console.log('agregar producto por mongoDB')
                 await mongoose.connect("mongodb://localhost:27017/ecommerce")
             } else {
-                console.log("agregar por mongoAtlas");
+                console.log("agregar producto por mongoAtlas");
                 const dbname = 'ecommerce'
                 const password = '12345'
                 const user = 'admin'
@@ -38,10 +40,10 @@ class MongoDBDao implements Operaciones {
         let producto: Producto[] = []
         try {
             if (opcionCapa == 4) {
-                console.log('agregar por mongoDB')
+                console.log('buscar producto por mongoDB')
                 await mongoose.connect("mongodb://localhost:27017/ecommerce")
             } else {
-                console.log("agregar por mongoAtlas");
+                console.log("buscar producto por mongoAtlas");
                 const dbname = 'ecommerce'
                 const password = '12345'
                 const user = 'admin'
@@ -64,10 +66,10 @@ class MongoDBDao implements Operaciones {
         let productosArray: Producto[] = []
         try {
             if (opcionCapa == 4) {
-                console.log('agregar por mongoDB')
+                console.log('listar productos por mongoDB')
                 await mongoose.connect("mongodb://localhost:27017/ecommerce")
             } else {
-                console.log("agregar por mongoAtlas");
+                console.log("listar productos por mongoAtlas");
                 const dbname = 'ecommerce'
                 const password = '12345'
                 const user = 'admin'
@@ -91,10 +93,10 @@ class MongoDBDao implements Operaciones {
         let resultado = true;
         try {
             if (opcionCapa == 4) {
-                console.log('agregar por mongoDB')
+                console.log('borrar producto por mongoDB')
                 await mongoose.connect("mongodb://localhost:27017/ecommerce")
             } else {
-                console.log("agregar por mongoAtlas");
+                console.log("borrar producto por mongoAtlas");
                 const dbname = 'ecommerce'
                 const password = '12345'
                 const user = 'admin'
@@ -118,10 +120,10 @@ class MongoDBDao implements Operaciones {
         let resultado = true;
         try {
             if (opcionCapa == 4) {
-                console.log('agregar por mongoDB')
+                console.log('actualizar producto por mongoDB')
                 await mongoose.connect("mongodb://localhost:27017/ecommerce")
             } else {
-                console.log("agregar por mongoAtlas");
+                console.log("actualizar producto por mongoAtlas");
                 const dbname = 'ecommerce'
                 const password = '12345'
                 const user = 'admin'
@@ -139,8 +141,62 @@ class MongoDBDao implements Operaciones {
                 console.log("Base de datos desconectada");
             });
             return resultado;
+        };
+    };
+
+    async leerMensajes() {
+        let mensajesArray: Mensajes[] = []
+        try {
+            if (opcionCapa == 4) {
+                console.log('listar mensajes por mongoDB')
+                await mongoose.connect("mongodb://localhost:27017/ecommerce")
+            } else {
+                console.log("listar mensajes por mongoAtlas");
+                const dbname = 'ecommerce'
+                const password = '12345'
+                const user = 'admin'
+                await mongoose.connect(`mongodb+srv://${user}:${password}@cluster0.jbzno.mongodb.net/${dbname}?retryWrites=true&w=majority`)
+            }
+            console.log("Base de datos conectada");
+            mensajesArray = await modelMensajes.default.find();
+            return mensajesArray;
         }
-    }
+        catch(error) {
+             console.log(error);
+        } finally {
+            mongoose.disconnect().then(() => {
+              console.log("Base de datos desconectada");
+            });
+        };
+    };   
+    async guardarMensajes(mensaje: Mensaje): Promise<boolean> {
+        let resultado = true;
+        try {
+            if (opcionCapa == 4) {
+                console.log('listar mensajes por mongoDB')
+                await mongoose.connect("mongodb://localhost:27017/ecommerce")
+            } else {
+                console.log("listar mensajes por mongoAtlas");
+                const dbname = 'ecommerce'
+                const password = '12345'
+                const user = 'admin'
+                await mongoose.connect(`mongodb+srv://${user}:${password}@cluster0.jbzno.mongodb.net/${dbname}?retryWrites=true&w=majority`)
+            }
+            console.log("mensaje a insertar en Mongodb", mensaje);
+            await modelMensajes.default.insertMany(mensaje) 
+        }
+        catch(error) {
+             console.log(error);
+             resultado = false;
+        } finally {
+            mongoose.disconnect().then(() => {
+              console.log("Base de datos desconectada");
+            });
+            return resultado;
+        };
+    };   
+
+
 }
 
 export default MongoDBDao;

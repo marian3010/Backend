@@ -1,6 +1,6 @@
 import { Operaciones } from "./interfaces/Operaciones";
-//import { MemoryDao } from "./daos/memoryDao";
-//import { FsDao } from "./daos/fsDao";
+import MemoryDao from "./daos/MemoryDao";
+import FsDao from "./daos/FsDao";
 import MariaDBDao from "./daos/MariaDBDao";
 import Sqlite3Dao from "./daos/Sqlite3Dao";
 import MongoDBDao from "./daos/MongoDBDao";
@@ -26,10 +26,10 @@ class DaoFactory {
     elegirBD(): Operaciones {
         console.log("tipo de BD", this.tipo)
         switch (this.tipo) {
-           // case 0:
-            //    return new MemoryDao()
-            //case 1:
-            //    return new FsDao()
+            case 0:
+                return new MemoryDao()
+            case 1:
+                return new FsDao()
             case 2:
                 return new MariaDBDao()
             case 3:

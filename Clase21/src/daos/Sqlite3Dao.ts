@@ -1,5 +1,6 @@
 import {Operaciones} from "../interfaces/Operaciones";
 import { Producto } from "../../modelo/productos";
+import { Mensaje } from "../../modelo/mensaje";
 import options from '../../db/sqlite3';
 import knex from "knex";
 const knexSQLite3 = knex(options);
@@ -9,6 +10,7 @@ class Sqlite3Dao implements Operaciones {
     constructor() {
         knexSQLite3.schema.hasTable("productos")
         .then(response => {
+            console.log("console log al crear tabla productos", response);
             if(!response) {
                 knexSQLite3.schema.createTable("productos", (table:any) => {
                     table.increments("id",{primaryKey:true})
@@ -21,6 +23,21 @@ class Sqlite3Dao implements Operaciones {
                     table.integer("timestamp");
                 })
                 .then(() => console.log("tabla productos creada en SQLite3"))
+                .catch((error) => {
+                  console.log(error);
+                })
+            }
+        });
+        knexSQLite3.schema.hasTable("mensajes")
+        .then(res => {
+            console.log("respuesta al crear tabla mensajes", res)
+            if(!res) {
+                knexSQLite3.schema.createTable("mensajes", (table:any) => {
+                    table.string("author");
+                    table.string("fecha");
+                    table.string("text");
+                })
+                .then(() => console.log("tabla mensajes creada en SQLite3"))
                 .catch((error) => {
                   console.log(error);
                 })
@@ -97,5 +114,30 @@ class Sqlite3Dao implements Operaciones {
         }
         return resultado;
     }
+
+    async leerMensajes() {
+        try {
+            const rows = await knexSQLite3.from("mensajes")
+            .select("*")
+            console.log("mensajes encontrados", rows)
+            return rows;
+        }
+        catch(error) {
+             console.log(error);
+        } 
+    };   
+
+    async guardarMensajes(mensaje: Mensaje): Promise<boolean> {
+        let response = true;
+        try {
+            console.log('agregar mensaje por mariaDB')
+            await knexSQLite3("mensajes").insert(mensaje);
+        }
+        catch (error) {
+            console.log(error);
+            response = false;
+        }
+        return response;
+    };
 }
 export default Sqlite3Dao;

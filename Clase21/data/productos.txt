@@ -7,28 +7,18 @@
 			"price": "750",
 			"thumbnail": "https://cdn3.iconfinder.com/data/icons/education-209/64/globe-earth-geograhy-planet-school-256.png",
 			"stock": "11",
-			"id": 1,
-			"timestamp": 1632172194034
+			"timestamp": 1633927280536,
+			"id": 1
 		},
 		{
 			"code": "A102",
 			"title": "Escuadra",
 			"description": "Escuadra grande para uso educativo",
-			"price": "340",
+			"price": "123",
 			"thumbnail": "https://cdn3.iconfinder.com/data/icons/education-209/64/ruler-triangle-stationary-school-256.png",
-			"stock": "4",
-			"id": 2,
-			"timestamp": 1632172209634
-		},
-		{
-			"code": "A103",
-			"title": "Teclado",
-			"description": "Teclado de computer",
-			"price": "280",
-			"thumbnail": "www.teclado.com.ar",
-			"stock": "23",
-			"id": 3,
-			"timestamp": 1632172254095
+			"stock": "3",
+			"timestamp": 1633927293014,
+			"id": 2
 		}
 	]
 }

@@ -39,6 +39,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var server_1 = require("../../server");
 var mongoose = require("mongoose");
 var prodModel = require("../../model/prods");
+var modelMensajes = require("../../model/messages.js");
 var MongoDBDao = /** @class */ (function () {
     function MongoDBDao() {
     }
@@ -53,13 +54,13 @@ var MongoDBDao = /** @class */ (function () {
                     case 1:
                         _a.trys.push([1, 7, 8, 9]);
                         if (!(server_1.opcionCapa == 4)) return [3 /*break*/, 3];
-                        console.log('agregar por mongoDB');
+                        console.log('agregar producto por mongoDB');
                         return [4 /*yield*/, mongoose.connect("mongodb://localhost:27017/ecommerce")];
                     case 2:
                         _a.sent();
                         return [3 /*break*/, 5];
                     case 3:
-                        console.log("agregar por mongoAtlas");
+                        console.log("agregar producto por mongoAtlas");
                         dbname = 'ecommerce';
                         password = '12345';
                         user = 'admin';
@@ -99,13 +100,13 @@ var MongoDBDao = /** @class */ (function () {
                     case 1:
                         _a.trys.push([1, 7, 8, 9]);
                         if (!(server_1.opcionCapa == 4)) return [3 /*break*/, 3];
-                        console.log('agregar por mongoDB');
+                        console.log('buscar producto por mongoDB');
                         return [4 /*yield*/, mongoose.connect("mongodb://localhost:27017/ecommerce")];
                     case 2:
                         _a.sent();
                         return [3 /*break*/, 5];
                     case 3:
-                        console.log("agregar por mongoAtlas");
+                        console.log("buscar producto por mongoAtlas");
                         dbname = 'ecommerce';
                         password = '12345';
                         user = 'admin';
@@ -146,13 +147,13 @@ var MongoDBDao = /** @class */ (function () {
                     case 1:
                         _a.trys.push([1, 7, 8, 9]);
                         if (!(server_1.opcionCapa == 4)) return [3 /*break*/, 3];
-                        console.log('agregar por mongoDB');
+                        console.log('listar productos por mongoDB');
                         return [4 /*yield*/, mongoose.connect("mongodb://localhost:27017/ecommerce")];
                     case 2:
                         _a.sent();
                         return [3 /*break*/, 5];
                     case 3:
-                        console.log("agregar por mongoAtlas");
+                        console.log("listar productos por mongoAtlas");
                         dbname = 'ecommerce';
                         password = '12345';
                         user = 'admin';
@@ -193,13 +194,13 @@ var MongoDBDao = /** @class */ (function () {
                     case 1:
                         _a.trys.push([1, 7, 8, 9]);
                         if (!(server_1.opcionCapa == 4)) return [3 /*break*/, 3];
-                        console.log('agregar por mongoDB');
+                        console.log('borrar producto por mongoDB');
                         return [4 /*yield*/, mongoose.connect("mongodb://localhost:27017/ecommerce")];
                     case 2:
                         _a.sent();
                         return [3 /*break*/, 5];
                     case 3:
-                        console.log("agregar por mongoAtlas");
+                        console.log("borrar producto por mongoAtlas");
                         dbname = 'ecommerce';
                         password = '12345';
                         user = 'admin';
@@ -241,13 +242,13 @@ var MongoDBDao = /** @class */ (function () {
                     case 1:
                         _a.trys.push([1, 7, 8, 9]);
                         if (!(server_1.opcionCapa == 4)) return [3 /*break*/, 3];
-                        console.log('agregar por mongoDB');
+                        console.log('actualizar producto por mongoDB');
                         return [4 /*yield*/, mongoose.connect("mongodb://localhost:27017/ecommerce")];
                     case 2:
                         _a.sent();
                         return [3 /*break*/, 5];
                     case 3:
-                        console.log("agregar por mongoAtlas");
+                        console.log("actualizar producto por mongoAtlas");
                         dbname = 'ecommerce';
                         password = '12345';
                         user = 'admin';
@@ -272,11 +273,111 @@ var MongoDBDao = /** @class */ (function () {
                             console.log("Base de datos desconectada");
                         });
                         return [2 /*return*/, resultado];
-                    case 9: return [2 /*return*/];
+                    case 9:
+                        ;
+                        return [2 /*return*/];
                 }
             });
         });
     };
+    ;
+    MongoDBDao.prototype.leerMensajes = function () {
+        return __awaiter(this, void 0, void 0, function () {
+            var mensajesArray, dbname, password, user, error_6;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        mensajesArray = [];
+                        _a.label = 1;
+                    case 1:
+                        _a.trys.push([1, 7, 8, 9]);
+                        if (!(server_1.opcionCapa == 4)) return [3 /*break*/, 3];
+                        console.log('listar mensajes por mongoDB');
+                        return [4 /*yield*/, mongoose.connect("mongodb://localhost:27017/ecommerce")];
+                    case 2:
+                        _a.sent();
+                        return [3 /*break*/, 5];
+                    case 3:
+                        console.log("listar mensajes por mongoAtlas");
+                        dbname = 'ecommerce';
+                        password = '12345';
+                        user = 'admin';
+                        return [4 /*yield*/, mongoose.connect("mongodb+srv://" + user + ":" + password + "@cluster0.jbzno.mongodb.net/" + dbname + "?retryWrites=true&w=majority")];
+                    case 4:
+                        _a.sent();
+                        _a.label = 5;
+                    case 5:
+                        console.log("Base de datos conectada");
+                        return [4 /*yield*/, modelMensajes.default.find()];
+                    case 6:
+                        mensajesArray = _a.sent();
+                        return [2 /*return*/, mensajesArray];
+                    case 7:
+                        error_6 = _a.sent();
+                        console.log(error_6);
+                        return [3 /*break*/, 9];
+                    case 8:
+                        mongoose.disconnect().then(function () {
+                            console.log("Base de datos desconectada");
+                        });
+                        return [7 /*endfinally*/];
+                    case 9:
+                        ;
+                        return [2 /*return*/];
+                }
+            });
+        });
+    };
+    ;
+    MongoDBDao.prototype.guardarMensajes = function (mensaje) {
+        return __awaiter(this, void 0, void 0, function () {
+            var resultado, dbname, password, user, error_7;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        resultado = true;
+                        _a.label = 1;
+                    case 1:
+                        _a.trys.push([1, 7, 8, 9]);
+                        if (!(server_1.opcionCapa == 4)) return [3 /*break*/, 3];
+                        console.log('listar mensajes por mongoDB');
+                        return [4 /*yield*/, mongoose.connect("mongodb://localhost:27017/ecommerce")];
+                    case 2:
+                        _a.sent();
+                        return [3 /*break*/, 5];
+                    case 3:
+                        console.log("listar mensajes por mongoAtlas");
+                        dbname = 'ecommerce';
+                        password = '12345';
+                        user = 'admin';
+                        return [4 /*yield*/, mongoose.connect("mongodb+srv://" + user + ":" + password + "@cluster0.jbzno.mongodb.net/" + dbname + "?retryWrites=true&w=majority")];
+                    case 4:
+                        _a.sent();
+                        _a.label = 5;
+                    case 5:
+                        console.log("mensaje a insertar en Mongodb", mensaje);
+                        return [4 /*yield*/, modelMensajes.default.insertMany(mensaje)];
+                    case 6:
+                        _a.sent();
+                        return [3 /*break*/, 9];
+                    case 7:
+                        error_7 = _a.sent();
+                        console.log(error_7);
+                        resultado = false;
+                        return [3 /*break*/, 9];
+                    case 8:
+                        mongoose.disconnect().then(function () {
+                            console.log("Base de datos desconectada");
+                        });
+                        return [2 /*return*/, resultado];
+                    case 9:
+                        ;
+                        return [2 /*return*/];
+                }
+            });
+        });
+    };
+    ;
     return MongoDBDao;
 }());
 exports.default = MongoDBDao;
