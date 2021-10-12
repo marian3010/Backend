@@ -46,6 +46,8 @@ var authorization_js_1 = require("../middleware/authorization.js");
 var prods = new productos_js_1.default();
 var path_1 = __importDefault(require("path"));
 var __dirname = path_1.default.resolve();
+var faker = require('faker');
+faker.locale = "es";
 productosRouter.get('/', function (req, res) {
     res.sendFile(__dirname + "/public/listoProds.html");
 });
@@ -166,4 +168,20 @@ productosRouter.put('/actualizar/:id', (0, authorization_js_1.authorizationMiddl
         }
     });
 }); });
+// genero mock de productos con faker
+var id = 0;
+productosRouter.get('/vista-test/:cant?', function (req, res) {
+    var array = [];
+    var cant = Number(req.params.cant);
+    var cantidadAGenerar = isNaN(cant) ? 10 : cant;
+    for (var index = 0; index < cantidadAGenerar; index++) {
+        array.push({
+            id: ++id,
+            nombre: faker.commerce.productName(),
+            precio: faker.commerce.price(),
+            foto: faker.image.image(),
+        });
+    }
+    res.json(array);
+});
 exports.default = productosRouter;

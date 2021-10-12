@@ -1,17 +1,20 @@
 import { Producto } from "../../modelo/productos";
 import { Mensaje } from "../../modelo/mensaje";
+import Carrito from "../../modelo/carrito";
 
 class MemoryDao {
     public productos:Producto[];
     public nuevoId: number;
     public messages: Mensaje[];
     public messageNuevoId: number;
+    public carrito: Carrito[];
 
     constructor() {
         this.productos = [];
         this.nuevoId = 0;
         this.messages = [];
         this.messageNuevoId = 0;
+        this.carrito = [];
     }
 
     async agregarProducto(producto: Producto): Promise<boolean> {
@@ -88,6 +91,71 @@ class MemoryDao {
             id: this.messageNuevoId
         };
         this.messages.push(message);
+        return response;
+    };
+
+    async agregarProdsCarrito(id:any): Promise<boolean> {
+        let response = true;
+        try {
+           for (let i:number = 0; i < this.productos.length; i++) {
+                if (this.productos[i].id == id) {
+                    const prod: Producto = {
+                        code: this.productos[i].code,
+                        title:this.productos[i].title,
+                        description: this.productos[i].description,
+                        price:this.productos[i].price,
+                        thumbnail: this.productos[i].thumbnail,
+                        stock: this.productos[i].stock,
+                        timestamp: this.productos[i].timestamp,
+                        id: this.productos[i].id
+                    }
+                    this.carrito.productos.push(prod);
+                    console.log("producto agregado al carrito", prod);
+                };
+            };
+            response = false;
+            console.log ("producto no encontrado");
+        } catch (error){
+            console.log(error);
+            response = false;
+        }
+        return response;
+    };
+    
+    async buscarProdCarrito(id:any) {
+        let producto
+        for (const prod of this.carrito.productos) {
+            if (prod.id === parseInt(id)) {
+                producto = prod;
+            }
+        } 
+        return(producto);
+    }; 
+    
+    async listarProdsCarrito() {
+        try {
+           return this.carrito.productos;
+        } 
+        catch (error) {
+            console.log(error)
+            return false;
+        }
+    };
+
+    async borrarProdsCarrito(id:any): Promise<boolean> {
+        let response = true;
+        try {
+            for (let i:number = 0; i < this.carrito.productos.length; i++) {
+                if (this.carrito.productos[i].id == parseInt(id)) {
+                    this.carrito.productos.splice(i, 1);
+                    
+                };
+            };
+        }
+        catch (error){
+            console.log(error);
+            response = false;
+        }
         return response;
     };
 };

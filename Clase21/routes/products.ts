@@ -15,7 +15,6 @@ productosRouter.get('/listar/:id?', async (req: express.Request, res: express.Re
     if (req.params.id) {
         try {
             console.log("va a buscar productos por id")
-            //const producto = await prods.buscarProducto(parseInt(req.params.id))
             const producto = await prods.buscarProducto(req.params.id)
             res.json(producto);
            

@@ -5,6 +5,8 @@ import { authorizationMiddleware } from "../middleware/authorization.js";
 const prods = new Productos();
 import path from "path";
 const __dirname = path.resolve();
+const faker = require('faker');
+faker.locale = "es";
 
 
 productosRouter.get('/', (req: express.Request, res: express.Response) => {
@@ -75,5 +77,24 @@ productosRouter.put('/actualizar/:id', authorizationMiddleware(), async(req: exp
         console.log("hubo un error", err);
     }
 });
+
+// genero mock de productos con faker
+let id = 0;
+productosRouter.get('/vista-test/:cant?', (req: express.Request, res: express.Response) => {
+    const prodsArray = [];
+    const cant = Number(req.params.cant);
+    const cantGenerar = isNaN(cant) ? 10 : cant;
+
+    for (let i = 0; i < cantGenerar; i++) {
+        prodsArray.push({
+            id: ++id,
+            nombre: faker.commerce.productName(),
+            precio: faker.commerce.price(),
+            foto: faker.image.image(),
+        });
+    }
+    res.json(prodsArray);
+});
+
 
 export default productosRouter;

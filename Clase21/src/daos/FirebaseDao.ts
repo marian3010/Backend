@@ -4,19 +4,17 @@ import { Mensaje } from "../../modelo/mensaje";
 
 const admin = require("firebase-admin");
 const serviceAccount = require("../../data/ecommerce-43372-firebase-adminsdk-sakea-fd16d38086.json");
+admin.initializeApp({
+    credential: admin.credential.cert(serviceAccount),
+    databaseURL: "https://ecommerce-43372.firebaseio.com",
+  });
+console.log("Base de datos conectada");
+const firestoreAdmin = admin.firestore();
 
 class FirebaseDao implements Operaciones {
-    constructor () {
-        admin.initializeApp({
-            credential: admin.credential.cert(serviceAccount),
-            databaseURL: "https://ecommerce-43372.firebaseio.com",
-          });
-          console.log("Base de datos conectada");
-    };
-
+    
     async agregarProducto(producto: Producto): Promise<boolean> {
         let resultado = true;
-        const firestoreAdmin = admin.firestore();
         const collection = firestoreAdmin.collection("productos");
         try {
             console.log("agregar por firebase");
@@ -31,7 +29,6 @@ class FirebaseDao implements Operaciones {
     };
 
     async buscarProducto(id:any) {
-        const firestoreAdmin = admin.firestore();
         const collection = firestoreAdmin.collection("productos");
         try {
             const doc = collection.doc(`${id}`)
@@ -47,7 +44,6 @@ class FirebaseDao implements Operaciones {
 
     async listarProductos() {
         let productosArray: Producto[] = []
-        const firestoreAdmin = admin.firestore();
         const collection = firestoreAdmin.collection("productos");
         try {
             const query = await collection.get();
@@ -75,7 +71,6 @@ class FirebaseDao implements Operaciones {
     
     async borrarProducto(id:any): Promise<boolean> {
         let resultado = true;
-        const firestoreAdmin = admin.firestore();
         const collection = firestoreAdmin.collection("productos");
         try {
             let doc = await collection.doc(id).delete();
@@ -91,7 +86,6 @@ class FirebaseDao implements Operaciones {
 
     async actualizarProducto(id:any, producto:Producto): Promise<boolean> {
         let resultado = true;
-        const firestoreAdmin = admin.firestore();
         const collection = firestoreAdmin.collection("productos");
         try {
             let doc = await collection.doc(id).update(producto);
@@ -107,7 +101,6 @@ class FirebaseDao implements Operaciones {
 
     async leerMensajes() {
         let mensajesArray: Mensaje[] = []
-        const firestoreAdmin = admin.firestore();
         const collection = firestoreAdmin.collection("mensajes");
         try {
             const query = await collection.get();
@@ -131,7 +124,6 @@ class FirebaseDao implements Operaciones {
 
     async guardarMensajes(mensaje: Mensaje): Promise<boolean> {
         let resultado = true;
-        const firestoreAdmin = admin.firestore();
         const collection = firestoreAdmin.collection("mensajes");
         try {
             console.log("agregar por firebase");

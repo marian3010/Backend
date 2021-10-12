@@ -1,24 +1,26 @@
 import {Operaciones} from "../interfaces/Operaciones";
 import Productos, { Producto } from "../../modelo/productos";
+import Carrito from "../../modelo/carrito";
 import { Mensaje } from "../../modelo/mensaje";
 import fs from "fs";
 
 
-//interface Cart {
-//    id: number;
-//    timestamp: number;
-//    productos: Producto[];
-//}
+interface Cart {
+    id: number;
+    timestamp: number;
+    productos: Producto[];
+}
     
 interface AProductos {
     productos: Producto[];
 }
 const fileProductos = "./data/productos.txt";
 const fileMensajes = "./data/mensajes.txt";
+const fileCarrito = "./data/carritos.txt"
 
 class FsDao implements Operaciones {
-    //public archivo: AProductos | Cart
-    public archivo: AProductos
+    public archivo: AProductos | Cart
+    //public archivo: AProductos
     public nuevoId: number
     
     constructor() {
@@ -36,7 +38,6 @@ class FsDao implements Operaciones {
         }
         catch (error) {
             console.log(error);
-            //response = false;
         } 
         this.nuevoId ++
         let prod = {
@@ -174,5 +175,80 @@ class FsDao implements Operaciones {
         };
         return response;
     };
-}
+
+    async agregarProdsCarrito(id:any): Promise<boolean> {
+        let response = true;
+        try {
+            const carrito = JSON.parse(await fs.promises.readFile(fileCarrito, "utf-8"))
+            this.archivo = JSON.parse(await fs.promises.readFile(fileProductos, "utf-8"))
+            for (let i:number = 0; i < this.archivo.productos.length; i++) {
+                if (this.archivo.productos[i].id == id) {
+                    const prod: Producto = {
+                        code: this.archivo.productos[i].code,
+                        title:this.archivo.productos[i].title,
+                        description: this.archivo.productos[i].description,
+                        price:this.archivo.productos[i].price,
+                        thumbnail: this.archivo.productos[i].thumbnail,
+                        stock: this.archivo.productos[i].stock,
+                        timestamp: this.archivo.productos[i].timestamp,
+                        id: this.archivo.productos[i].id
+                    }
+                    carrito.productos.push(prod);
+                    await fs.promises.writeFile(fileCarrito, JSON.stringify(carrito, null, "\t"), "utf-8")
+                    console.log("producto agregado al carrito", prod);
+                };
+            };
+            response = false;
+            console.log ("producto no encontrado");
+        } catch (error){
+            console.log(error);
+            response = false;
+        }
+        return response;
+    };
+    
+    async buscarProdCarrito(id:any) {
+        const carrito = JSON.parse(await fs.promises.readFile(fileCarrito, "utf-8"))
+        const listaProductos = carrito.productos
+        let producto
+        for (const prod of listaProductos) {
+            if (prod.id === parseInt(id)) {
+                producto = prod;
+            }
+        } 
+        return(producto);
+    }; 
+    
+    async listarProdsCarrito() {
+        try {
+            console.log("listar productos del carrito desde carrito.txt")
+            this.archivo = JSON.parse(await fs.promises.readFile(fileCarrito, "utf-8"))
+                console.log("productos encontrados", this.archivo.productos)
+                return this.archivo.productos;
+        } 
+        catch (error) {
+            console.log(error)
+            return false;
+        }
+    };
+
+    async borrarProdsCarrito(id:any): Promise<boolean> {
+        let response = true;
+        try {
+            this.archivo = JSON.parse(await fs.promises.readFile(fileCarrito, "utf-8"))
+            for (let i:number = 0; i < this.archivo.productos.length; i++) {
+                if (this.archivo.productos[i].id == parseInt(id)) {
+                    this.archivo.productos.splice(i, 1);
+                    await fs.promises.writeFile(fileCarrito, JSON.stringify(this.archivo, null, "\t"), "utf-8");
+                };
+            };
+        }
+        catch (error){
+            console.log(error);
+            response = false;
+        }
+        return response;
+    };
+                 
+};
 export default FsDao;

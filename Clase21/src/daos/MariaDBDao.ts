@@ -43,6 +43,35 @@ class MariaDBDao implements Operaciones {
                 })
             }
         });
+        knexMariaDB.schema.hasTable("carrito")
+        .then(resp => {
+            console.log("respuesta al create table carrito",resp)
+            if(!resp) {
+                knexMariaDB.schema.createTable("carrito", (table:any) => {
+                    table.increments("id",{primaryKey:true});
+                    table.integer("timestamp");
+                })
+                .then(() => console.log("tabla carrito creada en mariaDB"))
+                .catch((error) => {
+                  console.log(error);
+                })
+            }
+        });
+        knexMariaDB.schema.hasTable("carrito_producto")
+        .then(respo => {
+            console.log("respuesta al create table carrito_producto",respo)
+            if(!respo) {
+                knexMariaDB.schema.createTable("carrito_producto", (table:any) => {
+                    table.increments("id",{primaryKey:true});
+                    table.integer("idProd");
+                    table.integer("idCarrito");
+                })
+                .then(() => console.log("tabla carrito creada en mariaDB"))
+                .catch((error) => {
+                  console.log(error);
+                })
+            }
+        });
     }
 
     async agregarProducto(producto: Producto): Promise<boolean> {
