@@ -1,6 +1,5 @@
 import { Producto } from "../../modelo/productos";
 import { Mensaje } from "../../modelo/mensaje";
-import  Carrito  from "../../modelo/carrito";
 
 
 export interface Operaciones {
@@ -11,9 +10,9 @@ export interface Operaciones {
     actualizarProducto(id:any, producto:Producto): Promise<boolean>
     leerMensajes():any
     guardarMensajes(mensaje: Mensaje): Promise<boolean>
-    //listarProdsCarrito(): any
-    //buscarProdCarrito(id:any): any
-    //agregarProdsCarrito(id:any): Promise<boolean>
-    //borrarProdsCarrito(id:any): Promise<boolean>
+    listarProdsCarrito(): any
+    buscarProdCarrito(id:any): any
+    agregarProdsCarrito(id:any): Promise<boolean>
+    borrarProdsCarrito(id:any): Promise<boolean>
 }
 

@@ -14,8 +14,8 @@ console.log("Dao", dao);
 class Carrito {
   private static contador: number = 1;  
   public productos: Array<Producto>;
-  private id: number;
-  private timestamp: number;
+  public id: number;
+  public timestamp: number;
        
     public constructor(){
         this.productos = [];

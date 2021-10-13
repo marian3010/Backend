@@ -5,6 +5,7 @@ import options from '../../db/mariaDB';
 import knex from "knex";
 const knexMariaDB = knex(options);
 
+
 class MariaDBDao implements Operaciones {
 
     constructor() {
@@ -57,16 +58,19 @@ class MariaDBDao implements Operaciones {
                 })
             }
         });
-        knexMariaDB.schema.hasTable("carrito_producto")
+        knexMariaDB.schema.hasTable("productosCarrito")
         .then(respo => {
-            console.log("respuesta al create table carrito_producto",respo)
+            console.log("respuesta al create table productosCarrito",respo)
             if(!respo) {
-                knexMariaDB.schema.createTable("carrito_producto", (table:any) => {
+                knexMariaDB.schema.createTable("productosCarrito", (table:any) => {
                     table.increments("id",{primaryKey:true});
-                    table.integer("idProd");
-                    table.integer("idCarrito");
+                    table.integer('idCarrito').notNullable();
+                    table.integer('idProducto').notNullable();
+
+                    table.foreign('idCarrito').references('id').inTable('carrito');
+                    table.foreign('idProducto').references('id').inTable('productos');
                 })
-                .then(() => console.log("tabla carrito creada en mariaDB"))
+                .then(() => console.log("tabla productosCarrito creada en mariaDB"))
                 .catch((error) => {
                   console.log(error);
                 })
@@ -161,6 +165,72 @@ class MariaDBDao implements Operaciones {
             await knexMariaDB("mensajes").insert(mensaje);
         }
         catch (error) {
+            console.log(error);
+            response = false;
+        }
+        return response;
+    };
+
+    async agregarProdsCarrito(id:any): Promise<boolean> {
+        let response = true;
+        try {
+            const prodAgregar = await knexMariaDB("productos").select("id").where("id", "=", parseInt(id));
+            if (!prodAgregar){
+                console.log("producto no encontrado")
+                response = false;
+                return response;
+            }
+            let carritoID = await knexMariaDB("carrito").select("id")
+            if (!carritoID) {
+                await knexMariaDB("carrito").insert({timestamp: Date.now()});
+                carritoID = await knexMariaDB("carrito").select("id")
+            }
+            const producto = {
+                idCarrito: carritoID,
+                idProd: id
+            }
+            await knexMariaDB("productosCarrito").insert(producto)
+        } catch (error){
+            console.log(error);
+            response = false;
+        }
+        return response;
+    };
+    
+    async buscarProdCarrito(id:any) {
+        try {
+            const producto = await knexMariaDB.from("productosCarrito")
+            .select("*")
+            .where("idProducto", "=", parseInt(id))
+            console.log("producto encontrado", producto)
+            return producto;
+        }
+        catch (error) {
+            console.log(error);
+        }
+    }; 
+    
+    async listarProdsCarrito() {
+        try {
+            console.log("listar productos carrito por mariaDB")
+            const rows = await knexMariaDB.from("productosCarrito")
+            .select("*")
+            console.log("productos encontrados", rows)
+            return rows;
+        } 
+        catch (error) {
+            console.log(error)
+        }
+    };
+
+    async borrarProdsCarrito(id:any): Promise<boolean> {
+        let response = true;
+        try {
+            await knexMariaDB.from("productosCarrito")
+            .where("idProducto", "=", parseInt(id))
+            .del();
+        }
+        catch (error){
             console.log(error);
             response = false;
         }

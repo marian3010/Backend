@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-const messageSchema = new mongoose.Schema({
+const prodSchema = new mongoose.Schema({
     code: {
         type: String,
         require: true,
@@ -26,6 +26,6 @@ const messageSchema = new mongoose.Schema({
     },
 });
 
-const prodModel = mongoose.model("productos", messageSchema);
+const prodModel = mongoose.model("productos", prodSchema);
 
 export default prodModel;

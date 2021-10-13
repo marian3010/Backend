@@ -1,9 +1,7 @@
 import {Operaciones} from "../interfaces/Operaciones";
-import Productos, { Producto } from "../../modelo/productos";
-import Carrito from "../../modelo/carrito";
+import { Producto } from "../../modelo/productos";
 import { Mensaje } from "../../modelo/mensaje";
 import fs from "fs";
-
 
 interface Cart {
     id: number;
@@ -20,7 +18,6 @@ const fileCarrito = "./data/carritos.txt"
 
 class FsDao implements Operaciones {
     public archivo: AProductos | Cart
-    //public archivo: AProductos
     public nuevoId: number
     
     constructor() {

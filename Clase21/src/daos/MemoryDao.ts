@@ -1,22 +1,31 @@
+import {Operaciones} from "../interfaces/Operaciones";
 import { Producto } from "../../modelo/productos";
 import { Mensaje } from "../../modelo/mensaje";
-import Carrito from "../../modelo/carrito";
 
-class MemoryDao {
-    public productos:Producto[];
-    public nuevoId: number;
-    public messages: Mensaje[];
+interface Cart {
+    id: number;
+    timestamp: number;
+    productos: Producto[];
+}
+interface AProductos {
+    productos: Producto[];
+}
+    
+class MemoryDao implements Operaciones {
+    public archivo: AProductos | Cart
+    public nuevoId: number
+    public messages: Mensaje[]
     public messageNuevoId: number;
-    public carrito: Carrito[];
-
+    
     constructor() {
-        this.productos = [];
         this.nuevoId = 0;
-        this.messages = [];
+        this.archivo = {
+            productos: [],
+        };
+        this.messages= [];
         this.messageNuevoId = 0;
-        this.carrito = [];
-    }
-
+    }    
+   
     async agregarProducto(producto: Producto): Promise<boolean> {
         let response = true;
         this.nuevoId ++;
@@ -30,29 +39,29 @@ class MemoryDao {
             timestamp: producto.timestamp,
             id: this.nuevoId
         };
-        this.productos.push(prod);
+        this.archivo.productos.push(prod);
         return response;
     };
 
     async buscarProducto(id:any) {
-        for (let i = 0; i < this.productos.length; i++) {
-            if (this.productos[i].id == id) {
-                console.log("producto encontrado", this.productos[i]);
-                return this.productos[i];
+        for (let i = 0; i < this.archivo.productos.length; i++) {
+            if (this.archivo.productos[i].id == id) {
+                console.log("producto encontrado", this.archivo.productos[i]);
+                return this.archivo.productos[i];
             };
         };
     };
 
     async listarProductos() {
-        console.log("lista de productos en memoria",this.productos);
-        return this.productos;
+        console.log("lista de productos en memoria",this.archivo.productos);
+        return this.archivo.productos;
     };
 
     async borrarProducto(id:any): Promise<boolean> {
-        for (let i:number = 0; i < this.productos.length; i++) {
-            if (this.productos[i].id == id) {
-                console.log("producto borrado", this.productos[i]);
-                this.productos.splice(i, 1);
+        for (let i:number = 0; i < this.archivo.productos.length; i++) {
+            if (this.archivo.productos[i].id == id) {
+                console.log("producto borrado", this.archivo.productos[i]);
+                this.archivo.productos.splice(i, 1);
                 return true;
             };
         };
@@ -60,16 +69,16 @@ class MemoryDao {
     };
 
     async actualizarProducto(id:any, producto:Producto): Promise<boolean> {
-        for (let i = 0; i < this.productos.length; i++) {
-            if (this.productos[i].id == id) {
-                this.productos[i].code = producto.code;
-                this.productos[i].title = producto.title;
-                this.productos[i].description = producto.description;
-                this.productos[i].price = producto.price;
-                this.productos[i].thumbnail = producto.thumbnail;
-                this.productos[i].stock = producto.stock;
-                this.productos[i].timestamp = producto.timestamp;
-                const prodActualizado = this.productos[i];
+        for (let i = 0; i < this.archivo.productos.length; i++) {
+            if (this.archivo.productos[i].id == id) {
+                this.archivo.productos[i].code = producto.code;
+                this.archivo.productos[i].title = producto.title;
+                this.archivo.productos[i].description = producto.description;
+                this.archivo.productos[i].price = producto.price;
+                this.archivo.productos[i].thumbnail = producto.thumbnail;
+                this.archivo.productos[i].stock = producto.stock;
+                this.archivo.productos[i].timestamp = producto.timestamp;
+                const prodActualizado = this.archivo.productos[i];
                 return true;
             };
         };
@@ -97,19 +106,19 @@ class MemoryDao {
     async agregarProdsCarrito(id:any): Promise<boolean> {
         let response = true;
         try {
-           for (let i:number = 0; i < this.productos.length; i++) {
-                if (this.productos[i].id == id) {
+           for (let i:number = 0; i < this.archivo.productos.length; i++) {
+                if (this.archivo.productos[i].id == id) {
                     const prod: Producto = {
-                        code: this.productos[i].code,
-                        title:this.productos[i].title,
-                        description: this.productos[i].description,
-                        price:this.productos[i].price,
-                        thumbnail: this.productos[i].thumbnail,
-                        stock: this.productos[i].stock,
-                        timestamp: this.productos[i].timestamp,
-                        id: this.productos[i].id
+                        code: this.archivo.productos[i].code,
+                        title:this.archivo.productos[i].title,
+                        description: this.archivo.productos[i].description,
+                        price:this.archivo.productos[i].price,
+                        thumbnail: this.archivo.productos[i].thumbnail,
+                        stock: this.archivo.productos[i].stock,
+                        timestamp: this.archivo.productos[i].timestamp,
+                        id: this.archivo.productos[i].id
                     }
-                    this.carrito.productos.push(prod);
+                    this.archivo.productos.push(prod);
                     console.log("producto agregado al carrito", prod);
                 };
             };
@@ -124,7 +133,7 @@ class MemoryDao {
     
     async buscarProdCarrito(id:any) {
         let producto
-        for (const prod of this.carrito.productos) {
+        for (const prod of this.archivo.productos) {
             if (prod.id === parseInt(id)) {
                 producto = prod;
             }
@@ -134,7 +143,7 @@ class MemoryDao {
     
     async listarProdsCarrito() {
         try {
-           return this.carrito.productos;
+           return this.archivo.productos;
         } 
         catch (error) {
             console.log(error)
@@ -145,10 +154,9 @@ class MemoryDao {
     async borrarProdsCarrito(id:any): Promise<boolean> {
         let response = true;
         try {
-            for (let i:number = 0; i < this.carrito.productos.length; i++) {
-                if (this.carrito.productos[i].id == parseInt(id)) {
-                    this.carrito.productos.splice(i, 1);
-                    
+            for (let i:number = 0; i < this.archivo.productos.length; i++) {
+                if (this.archivo.productos[i].id == parseInt(id)) {
+                    this.archivo.productos.splice(i, 1);
                 };
             };
         }
