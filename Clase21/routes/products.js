@@ -39,11 +39,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.prods = void 0;
 var express_1 = __importDefault(require("express"));
 var productosRouter = express_1.default.Router();
 var productos_js_1 = __importDefault(require("../modelo/productos.js"));
 var authorization_js_1 = require("../middleware/authorization.js");
-var prods = new productos_js_1.default();
+exports.prods = new productos_js_1.default();
 var path_1 = __importDefault(require("path"));
 var __dirname = path_1.default.resolve();
 productosRouter.get('/', function (req, res) {
@@ -58,14 +59,14 @@ productosRouter.get('/listar/:id?', function (req, res) { return __awaiter(void 
                 console.log("parametro a buscar", req.params.id);
                 if (!req.params.id) return [3 /*break*/, 2];
                 console.log("va a buscar productos por id");
-                return [4 /*yield*/, prods.buscarProducto(req.params.id)];
+                return [4 /*yield*/, exports.prods.buscarProducto(req.params.id)];
             case 1:
                 producto = _a.sent();
                 res.json(producto);
                 return [3 /*break*/, 4];
             case 2:
                 console.log("va a buscar productos sin parametro");
-                return [4 /*yield*/, prods.listarProductos()];
+                return [4 /*yield*/, exports.prods.listarProductos()];
             case 3:
                 productos = _a.sent();
                 res.json(productos);
@@ -91,7 +92,7 @@ productosRouter.post('/guardar', (0, authorization_js_1.authorizationMiddleware)
         switch (_a.label) {
             case 0:
                 _a.trys.push([0, 2, , 3]);
-                return [4 /*yield*/, prods.agregarProducto(req.body.code, req.body.title, req.body.description, req.body.price, req.body.thumbnail, req.body.stock)];
+                return [4 /*yield*/, exports.prods.agregarProducto(req.body.code, req.body.title, req.body.description, req.body.price, req.body.thumbnail, req.body.stock)];
             case 1:
                 prod = _a.sent();
                 res.json(prod);
@@ -111,7 +112,7 @@ productosRouter.delete('/borrar/:id', (0, authorization_js_1.authorizationMiddle
         switch (_a.label) {
             case 0:
                 _a.trys.push([0, 2, , 3]);
-                return [4 /*yield*/, prods.borrarProducto(req.params.id)];
+                return [4 /*yield*/, exports.prods.borrarProducto(req.params.id)];
             case 1:
                 productoBorrado = _a.sent();
                 if (productoBorrado) {
@@ -140,7 +141,7 @@ productosRouter.put('/actualizar/:id', (0, authorization_js_1.authorizationMiddl
         switch (_a.label) {
             case 0:
                 _a.trys.push([0, 2, , 3]);
-                return [4 /*yield*/, prods.actualizarProducto(req.body.code, req.body.title, req.body.description, req.body.price, req.body.thumbnail, req.body.stock, req.params.id)];
+                return [4 /*yield*/, exports.prods.actualizarProducto(req.body.code, req.body.title, req.body.description, req.body.price, req.body.thumbnail, req.body.stock, req.params.id)];
             case 1:
                 prodAct = _a.sent();
                 if (prodAct) {

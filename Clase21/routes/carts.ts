@@ -1,7 +1,7 @@
 import express from "express";
 const carritoRouter = express.Router();
 import Carrito from "../modelo/carrito.js";
-const miCarrito: Carrito = new Carrito();
+export const miCarrito: Carrito = new Carrito();
 
 
 //listar carrito

@@ -2,7 +2,7 @@ import express from "express";
 const productosRouter = express.Router();
 import Productos from "../modelo/productos.js";
 import { authorizationMiddleware } from "../middleware/authorization.js";
-const prods = new Productos();
+export const prods = new Productos();
 import path from "path";
 const __dirname = path.resolve();
 

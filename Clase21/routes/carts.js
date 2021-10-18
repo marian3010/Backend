@@ -39,10 +39,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.miCarrito = void 0;
 var express_1 = __importDefault(require("express"));
 var carritoRouter = express_1.default.Router();
 var carrito_js_1 = __importDefault(require("../modelo/carrito.js"));
-var miCarrito = new carrito_js_1.default();
+exports.miCarrito = new carrito_js_1.default();
 //listar carrito
 carritoRouter.get('/listar/:id?', function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
     var producto, productos, err_1;
@@ -53,14 +54,14 @@ carritoRouter.get('/listar/:id?', function (req, res) { return __awaiter(void 0,
                 console.log("parametro a buscar", req.params.id);
                 if (!req.params.id) return [3 /*break*/, 2];
                 console.log("va a buscar productos al carrito por id");
-                return [4 /*yield*/, miCarrito.buscarProdCarrito(req.params.id)];
+                return [4 /*yield*/, exports.miCarrito.buscarProdCarrito(req.params.id)];
             case 1:
                 producto = _a.sent();
                 res.json(producto);
                 return [3 /*break*/, 4];
             case 2:
                 console.log("va a buscar productos sin parametro al carrito");
-                return [4 /*yield*/, miCarrito.listarProdsCarrito()];
+                return [4 /*yield*/, exports.miCarrito.listarProdsCarrito()];
             case 3:
                 productos = _a.sent();
                 res.json(productos);
@@ -82,7 +83,7 @@ carritoRouter.post('/agregar/:id_producto', function (req, res) { return __await
             case 0:
                 _a.trys.push([0, 4, , 5]);
                 if (!req.params.id_producto) return [3 /*break*/, 2];
-                return [4 /*yield*/, miCarrito.agregarProdsCarrito(req.params.id_producto)];
+                return [4 /*yield*/, exports.miCarrito.agregarProdsCarrito(req.params.id_producto)];
             case 1:
                 prod = _a.sent();
                 res.json(prod);
@@ -106,7 +107,7 @@ carritoRouter.delete('/borrar/:id', function (req, res) { return __awaiter(void 
         switch (_a.label) {
             case 0:
                 _a.trys.push([0, 2, , 3]);
-                return [4 /*yield*/, miCarrito.borrarProdsCarrito(req.params.id)];
+                return [4 /*yield*/, exports.miCarrito.borrarProdsCarrito(req.params.id)];
             case 1:
                 productoBorrado = _a.sent();
                 if (productoBorrado) {

@@ -14,6 +14,38 @@
 
 <body>
     <section class="container bg-light mt-3">
+        <div class="container">
+            <h1 class="mt-3 mb-3 pl-3">Filtros para la búsqueda de productos</h1>
+            <form>
+                <div class="form-row form-group col-md-6 mb-3">
+                    <label> Nombre</label>
+                    <input type="text" id="title" />
+                    <button class="btn btn-secondary">Buscar</button>
+                </div>
+                <div class="form-row form-group col-md-6 mb-3">
+                    <label> Código</label>
+                    <input type="text" id="code" />
+                    <button class="btn btn-secondary">Buscar</button>
+                </div>
+                <div class="form-row form-group col-md-8 mb-3">
+                    <label> Precio desde</label>
+                    <input type="text" id="priceFrom" />
+                    <label> Precio hasta</label>
+                    <input type="text" id="priceTo" />
+                    <button class="btn btn-secondary">Buscar</button>
+                </div>
+                <div class="form-row form-group col-md-8 mb-3">
+                    <label>Stock desde</label>
+                    <input type="text" id="stockFrom" />
+                    <label> Stock hasta</label>
+                    <input type="text" id="stockTo" />
+                    <button class="btn btn-secondary">Buscar</button>
+                </div>
+
+            </form>
+        </div>
+    </section>
+    <section class="container bg-light mt-3">
         <span id="tablaProductos"></span>
         <script>
             const hbsTemplate = Handlebars.compile(`
