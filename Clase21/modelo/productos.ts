@@ -46,29 +46,30 @@ class Productos {
     };
 
     public async buscarProducto(id:any): Promise<any> {
+        let productoEncontrado
         try {
-            const productoEncontrado = await dao.buscarProducto(id)
-            return productoEncontrado;
+            productoEncontrado = await dao.buscarProducto(id)
         }
         catch (error) {
             console.log(error);
         }
+        return productoEncontrado;
     };
 
     public async listarProductos(): Promise<any> {
+        let listaProductos: Producto[] = [];
         try {
-            let listaProductos: Producto[] = [];
             const rows = await dao.listarProductos()
             if (rows) {
                 for (const row of rows) {
                     listaProductos.push({code:row["code"],title:row["title"],description:row["description"],price:row["price"],thumbnail:row["thumbnail"],stock:row["stock"],timestamp:row["timestamp"],id:row["id"]});
-                }
-            }
-            return listaProductos;
+                };
+            };
         }
         catch (error) {
             console.log(error);
         }
+        return listaProductos; 
     };            
 
     public async borrarProducto(id:any) {

@@ -90,12 +90,12 @@ var Productos = /** @class */ (function () {
                         return [4 /*yield*/, dao.buscarProducto(id)];
                     case 1:
                         productoEncontrado = _a.sent();
-                        return [2 /*return*/, productoEncontrado];
+                        return [3 /*break*/, 3];
                     case 2:
                         error_2 = _a.sent();
                         console.log(error_2);
                         return [3 /*break*/, 3];
-                    case 3: return [2 /*return*/];
+                    case 3: return [2 /*return*/, productoEncontrado];
                 }
             });
         });
@@ -107,23 +107,27 @@ var Productos = /** @class */ (function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        _a.trys.push([0, 2, , 3]);
                         listaProductos = [];
-                        return [4 /*yield*/, dao.listarProductos()];
+                        _a.label = 1;
                     case 1:
+                        _a.trys.push([1, 3, , 4]);
+                        return [4 /*yield*/, dao.listarProductos()];
+                    case 2:
                         rows = _a.sent();
                         if (rows) {
                             for (_i = 0, rows_1 = rows; _i < rows_1.length; _i++) {
                                 row = rows_1[_i];
                                 listaProductos.push({ code: row["code"], title: row["title"], description: row["description"], price: row["price"], thumbnail: row["thumbnail"], stock: row["stock"], timestamp: row["timestamp"], id: row["id"] });
                             }
+                            ;
                         }
-                        return [2 /*return*/, listaProductos];
-                    case 2:
+                        ;
+                        return [3 /*break*/, 4];
+                    case 3:
                         error_3 = _a.sent();
                         console.log(error_3);
-                        return [3 /*break*/, 3];
-                    case 3: return [2 /*return*/];
+                        return [3 /*break*/, 4];
+                    case 4: return [2 /*return*/, listaProductos];
                 }
             });
         });

@@ -46,12 +46,14 @@ class Carrito {
     };
 
     public async listarProdsCarrito(): Promise<any> {
+        let listaProductos: Producto[] = [];
         try {
-            let listaProductos: Producto[] = [];
             const rows = await dao.listarProdsCarrito()
             if (rows) {
                 for (const row of rows) {
-                  listaProductos.push({code:row["code"],title:row["title"],description:row["description"],price:row["price"],thumbnail:row["thumbnail"],stock:row["stock"],timestamp:row["timestamp"],id:row["id"]});
+                    if (row) {
+                        listaProductos.push({code:row["code"],title:row["title"],description:row["description"],price:row["price"],thumbnail:row["thumbnail"],stock:row["stock"],timestamp:row["timestamp"],id:row["id"]});
+                    }
                 }
             }
             return listaProductos;
@@ -70,9 +72,7 @@ class Carrito {
           console.log(error);
       }
     };
-      
-     
-
+  
 };
 
 export default Carrito;

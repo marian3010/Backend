@@ -213,20 +213,33 @@ class MongoDBDao implements Operaciones {
                 await mongoose.connect(`mongodb+srv://${user}:${password}@cluster0.jbzno.mongodb.net/${dbname}?retryWrites=true&w=majority`)
             }
             console.log("Base de datos conectada");
-            const prodAgregarId =  await prodModel.default.find({_id: id}, {_id:1})
-            if (!prodAgregarId){
+            const prodAgregar =  await prodModel.default.find({_id: id}, {_id:1})
+            console.log("producto a agregar",prodAgregar)
+            if (!prodAgregar){
                 console.log("producto no encontrado")
                 resultado = false;
                 return resultado;
             }
             let carritoID = await cartModel.default.find({}, { _id:1 })
-            if (!carritoID) {
+                       
+            if (carritoID.length == 0) {
+                console.log("no encontró carrito, va a crear uno")
                 await cartModel.default.insertMany({timestamp: Date.now()});
                 carritoID = await cartModel.default.find({}, { _id:1 })
+            } else {
+                const prodExist = await cartProdModel.default.find({idProd:id});
+                console.log("prodexist", prodExist);
+                console.log("long de prodexist", prodExist.length);
+                if (prodExist.length>0) {
+                    console.log ("el producto ya existe en el carrito");
+                    resultado = false;
+                    return resultado;
+                }
             }
+            carritoID = JSON.parse(JSON.stringify(carritoID))
             const producto = {
-                idCarrito: carritoID,
-                idProd: prodAgregarId
+                idCart: carritoID[0]._id,
+                idProd: id
             }
             await cartProdModel.default.insertMany(producto);
         }
@@ -256,7 +269,12 @@ class MongoDBDao implements Operaciones {
             }
             console.log("Base de datos conectada");
             const prodID = await cartProdModel.default.find({idProd: id}, {_id:1})
-            producto = await prodModel.default.find({_id:prodID})
+            if (prodID.length == 0) {
+                console.log("el producto no está en el carrito");
+                return producto;
+            }
+            producto = await prodModel.default.find({_id:id}, {_id:1, code:1, title:1, price:1, thumbnail:1})
+            console.log("producto encontrado", producto);
         }
         catch(error) {
              console.log(error);
@@ -284,8 +302,17 @@ class MongoDBDao implements Operaciones {
             console.log("Base de datos conectada");
             const rows = await cartProdModel.default.find({}, {idProd:1});
             for (const row of rows) {
-                const regProd = await prodModel.default.find({_id:row.id})
-                productosArray.push({code:regProd["code"],title:regProd["title"],description:regProd["description"],price:regProd["price"],thumbnail:regProd["thumbnail"],stock:regProd["stock"],timestamp:regProd["timestamp"],id:regProd["id"]});
+                const regProd = await prodModel.default.find({_id:row.idProd})
+                let producto = {
+                    code: regProd[0].code,
+                    title: regProd[0].title,
+                    description: regProd[0].description,
+                    price: regProd[0].price,
+                    thumbnail: regProd[0].thumbnail,
+                    stock: regProd[0].stock,
+                    timestamp: regProd[0].timestamp
+                }
+                productosArray.push(producto);
             }
             return productosArray;
         }
@@ -313,6 +340,7 @@ class MongoDBDao implements Operaciones {
             }
             console.log("Base de datos conectada");
             await cartProdModel.default.deleteMany({idProd: id})
+            console.log("producto borrado");
         }
         catch(error) {
             console.log(error);

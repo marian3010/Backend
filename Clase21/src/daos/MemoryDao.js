@@ -38,8 +38,14 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var MemoryDao = /** @class */ (function () {
     function MemoryDao() {
+        this.nuevoCartId = 1;
+        this.carrito = {
+            id: this.nuevoCartId,
+            timestamp: Date.now(),
+            productos: [],
+        };
+        this.nuevoProdId = 0;
         this.productos = [];
-        this.nuevoId = 0;
         this.messages = [];
         this.messageNuevoId = 0;
     }
@@ -48,7 +54,7 @@ var MemoryDao = /** @class */ (function () {
             var response, prod;
             return __generator(this, function (_a) {
                 response = true;
-                this.nuevoId++;
+                this.nuevoProdId++;
                 prod = {
                     code: producto.code,
                     title: producto.title,
@@ -57,7 +63,7 @@ var MemoryDao = /** @class */ (function () {
                     thumbnail: producto.thumbnail,
                     stock: producto.stock,
                     timestamp: producto.timestamp,
-                    id: this.nuevoId
+                    id: this.nuevoProdId
                 };
                 this.productos.push(prod);
                 return [2 /*return*/, response];
@@ -93,12 +99,12 @@ var MemoryDao = /** @class */ (function () {
     ;
     MemoryDao.prototype.borrarProducto = function (id) {
         return __awaiter(this, void 0, void 0, function () {
-            var i, prodBorrado;
+            var i;
             return __generator(this, function (_a) {
                 for (i = 0; i < this.productos.length; i++) {
                     if (this.productos[i].id == id) {
-                        prodBorrado = this.productos[i];
-                        // this.productos.splice([i], 1);
+                        console.log("producto borrado", this.productos[i]);
+                        this.productos.splice(i, 1);
                         return [2 /*return*/, true];
                     }
                     ;
@@ -155,6 +161,151 @@ var MemoryDao = /** @class */ (function () {
                     id: this.messageNuevoId
                 };
                 this.messages.push(message);
+                return [2 /*return*/, response];
+            });
+        });
+    };
+    ;
+    MemoryDao.prototype.agregarProdsCarrito = function (id) {
+        return __awaiter(this, void 0, void 0, function () {
+            var response, i, i, prod;
+            return __generator(this, function (_a) {
+                response = false;
+                try {
+                    console.log("cant productos en carrito", this.carrito.productos.length);
+                    if (this.carrito.productos.length > 0) {
+                        for (i = 0; i < this.carrito.productos.length; i++) {
+                            if (this.carrito.productos[i].id == parseInt(id)) {
+                                console.log("el producto ya se encuentra en el carrito");
+                                response = false;
+                                return [2 /*return*/, response];
+                            }
+                        }
+                    }
+                    console.log("cant productos en memoria", this.productos.length);
+                    for (i = 0; i < this.productos.length; i++) {
+                        console.log("id parametro", parseInt(id));
+                        console.log("id de array productos", this.productos[i].id);
+                        if (this.productos[i].id == parseInt(id)) {
+                            prod = {
+                                code: this.productos[i].code,
+                                title: this.productos[i].title,
+                                description: this.productos[i].description,
+                                price: this.productos[i].price,
+                                thumbnail: this.productos[i].thumbnail,
+                                stock: this.productos[i].stock,
+                                timestamp: this.productos[i].timestamp,
+                                id: this.productos[i].id
+                            };
+                            this.carrito.productos.push(prod);
+                            console.log("producto agregado al carrito", prod);
+                            response = true;
+                            return [2 /*return*/, response];
+                        }
+                        ;
+                    }
+                    ;
+                    response = false;
+                    console.log("producto no encontrado");
+                }
+                catch (error) {
+                    console.log(error);
+                    response = false;
+                }
+                return [2 /*return*/, response];
+            });
+        });
+    };
+    ;
+    MemoryDao.prototype.buscarProdCarrito = function (id) {
+        return __awaiter(this, void 0, void 0, function () {
+            var productos, _i, _a, prod, producto;
+            return __generator(this, function (_b) {
+                productos = [];
+                console.log("productos del carrito", this.carrito.productos);
+                if (this.carrito.productos.length > 0) {
+                    for (_i = 0, _a = this.carrito.productos; _i < _a.length; _i++) {
+                        prod = _a[_i];
+                        console.log("producto del carrito", prod);
+                        if (prod.id === parseInt(id)) {
+                            producto = {
+                                code: prod.code,
+                                title: prod.title,
+                                description: prod.description,
+                                price: prod.price,
+                                thumbnail: prod.thumbnail,
+                                stock: prod.stock,
+                                timestamp: prod.timestamp
+                            };
+                            console.log("producto para devolver", producto);
+                            productos.push(producto);
+                            console.log("array de productos", productos);
+                            return [2 /*return*/, productos];
+                        }
+                    }
+                    console.log("no encontro el producto en el carrito");
+                    return [2 /*return*/, false];
+                }
+                else {
+                    console.log("el carrito no tiene productos");
+                    return [2 /*return*/, false];
+                }
+                return [2 /*return*/];
+            });
+        });
+    };
+    ;
+    MemoryDao.prototype.listarProdsCarrito = function () {
+        return __awaiter(this, void 0, void 0, function () {
+            var productos, _i, _a, prod, producto;
+            return __generator(this, function (_b) {
+                productos = [];
+                try {
+                    for (_i = 0, _a = this.carrito.productos; _i < _a.length; _i++) {
+                        prod = _a[_i];
+                        console.log("producto leido del carrito", prod);
+                        producto = {
+                            code: prod.code,
+                            title: prod.title,
+                            description: prod.description,
+                            price: prod.price,
+                            thumbnail: prod.thumbnail,
+                            stock: prod.stock,
+                            timestamp: prod.timestamp
+                        };
+                        console.log("producto a pushear", producto);
+                        productos.push(producto);
+                        console.log("array de productos", productos);
+                    }
+                    return [2 /*return*/, productos];
+                }
+                catch (error) {
+                    console.log(error);
+                    return [2 /*return*/, productos];
+                }
+                return [2 /*return*/];
+            });
+        });
+    };
+    ;
+    MemoryDao.prototype.borrarProdsCarrito = function (id) {
+        return __awaiter(this, void 0, void 0, function () {
+            var response, i;
+            return __generator(this, function (_a) {
+                response = true;
+                try {
+                    for (i = 0; i < this.carrito.productos.length; i++) {
+                        if (this.carrito.productos[i].id == parseInt(id)) {
+                            this.carrito.productos.splice(i, 1);
+                        }
+                        ;
+                    }
+                    ;
+                }
+                catch (error) {
+                    console.log(error);
+                    response = false;
+                }
                 return [2 /*return*/, response];
             });
         });

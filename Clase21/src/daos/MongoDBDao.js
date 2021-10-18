@@ -40,6 +40,8 @@ var server_1 = require("../../server");
 var mongoose = require("mongoose");
 var prodModel = require("../../model/prods");
 var modelMensajes = require("../../model/messages.js");
+var cartModel = require("../../model/cart");
+var cartProdModel = require("../../model/cartProd");
 var MongoDBDao = /** @class */ (function () {
     function MongoDBDao() {
     }
@@ -363,6 +365,266 @@ var MongoDBDao = /** @class */ (function () {
                     case 7:
                         error_7 = _a.sent();
                         console.log(error_7);
+                        resultado = false;
+                        return [3 /*break*/, 9];
+                    case 8:
+                        mongoose.disconnect().then(function () {
+                            console.log("Base de datos desconectada");
+                        });
+                        return [2 /*return*/, resultado];
+                    case 9:
+                        ;
+                        return [2 /*return*/];
+                }
+            });
+        });
+    };
+    ;
+    MongoDBDao.prototype.agregarProdsCarrito = function (id) {
+        return __awaiter(this, void 0, void 0, function () {
+            var resultado, dbname, password, user, prodAgregar, carritoID, prodExist, producto, error_8;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        resultado = true;
+                        _a.label = 1;
+                    case 1:
+                        _a.trys.push([1, 14, 15, 16]);
+                        if (!(server_1.opcionCapa == 4)) return [3 /*break*/, 3];
+                        console.log('agregar producto en carrito por mongoDB');
+                        return [4 /*yield*/, mongoose.connect("mongodb://localhost:27017/ecommerce")];
+                    case 2:
+                        _a.sent();
+                        return [3 /*break*/, 5];
+                    case 3:
+                        console.log("agregar producto en carrito por mongoAtlas");
+                        dbname = 'ecommerce';
+                        password = '12345';
+                        user = 'admin';
+                        return [4 /*yield*/, mongoose.connect("mongodb+srv://" + user + ":" + password + "@cluster0.jbzno.mongodb.net/" + dbname + "?retryWrites=true&w=majority")];
+                    case 4:
+                        _a.sent();
+                        _a.label = 5;
+                    case 5:
+                        console.log("Base de datos conectada");
+                        return [4 /*yield*/, prodModel.default.find({ _id: id }, { _id: 1 })];
+                    case 6:
+                        prodAgregar = _a.sent();
+                        console.log("producto a agregar", prodAgregar);
+                        if (!prodAgregar) {
+                            console.log("producto no encontrado");
+                            resultado = false;
+                            return [2 /*return*/, resultado];
+                        }
+                        return [4 /*yield*/, cartModel.default.find({}, { _id: 1 })];
+                    case 7:
+                        carritoID = _a.sent();
+                        if (!(carritoID.length == 0)) return [3 /*break*/, 10];
+                        console.log("no encontró carrito, va a crear uno");
+                        return [4 /*yield*/, cartModel.default.insertMany({ timestamp: Date.now() })];
+                    case 8:
+                        _a.sent();
+                        return [4 /*yield*/, cartModel.default.find({}, { _id: 1 })];
+                    case 9:
+                        carritoID = _a.sent();
+                        return [3 /*break*/, 12];
+                    case 10: return [4 /*yield*/, cartProdModel.default.find({ idProd: id })];
+                    case 11:
+                        prodExist = _a.sent();
+                        console.log("prodexist", prodExist);
+                        console.log("long de prodexist", prodExist.length);
+                        if (prodExist.length > 0) {
+                            console.log("el producto ya existe en el carrito");
+                            resultado = false;
+                            return [2 /*return*/, resultado];
+                        }
+                        _a.label = 12;
+                    case 12:
+                        carritoID = JSON.parse(JSON.stringify(carritoID));
+                        producto = {
+                            idCart: carritoID[0]._id,
+                            idProd: id
+                        };
+                        return [4 /*yield*/, cartProdModel.default.insertMany(producto)];
+                    case 13:
+                        _a.sent();
+                        return [3 /*break*/, 16];
+                    case 14:
+                        error_8 = _a.sent();
+                        console.log(error_8);
+                        resultado = false;
+                        return [3 /*break*/, 16];
+                    case 15:
+                        mongoose.disconnect().then(function () {
+                            console.log("Base de datos desconectada");
+                        });
+                        return [2 /*return*/, resultado];
+                    case 16: return [2 /*return*/];
+                }
+            });
+        });
+    };
+    ;
+    MongoDBDao.prototype.buscarProdCarrito = function (id) {
+        return __awaiter(this, void 0, void 0, function () {
+            var producto, dbname, password, user, prodID, error_9;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        producto = [];
+                        _a.label = 1;
+                    case 1:
+                        _a.trys.push([1, 8, 9, 10]);
+                        if (!(server_1.opcionCapa == 4)) return [3 /*break*/, 3];
+                        console.log('buscar producto por mongoDB');
+                        return [4 /*yield*/, mongoose.connect("mongodb://localhost:27017/ecommerce")];
+                    case 2:
+                        _a.sent();
+                        return [3 /*break*/, 5];
+                    case 3:
+                        console.log("buscar producto por mongoAtlas");
+                        dbname = 'ecommerce';
+                        password = '12345';
+                        user = 'admin';
+                        return [4 /*yield*/, mongoose.connect("mongodb+srv://" + user + ":" + password + "@cluster0.jbzno.mongodb.net/" + dbname + "?retryWrites=true&w=majority")];
+                    case 4:
+                        _a.sent();
+                        _a.label = 5;
+                    case 5:
+                        console.log("Base de datos conectada");
+                        return [4 /*yield*/, cartProdModel.default.find({ idProd: id }, { _id: 1 })];
+                    case 6:
+                        prodID = _a.sent();
+                        if (prodID.length == 0) {
+                            console.log("el producto no está en el carrito");
+                            return [2 /*return*/, producto];
+                        }
+                        return [4 /*yield*/, prodModel.default.find({ _id: id }, { _id: 1, code: 1, title: 1, price: 1, thumbnail: 1 })];
+                    case 7:
+                        producto = _a.sent();
+                        console.log("producto encontrado", producto);
+                        return [3 /*break*/, 10];
+                    case 8:
+                        error_9 = _a.sent();
+                        console.log(error_9);
+                        return [3 /*break*/, 10];
+                    case 9:
+                        mongoose.disconnect().then(function () {
+                            console.log("Base de datos desconectada");
+                        });
+                        return [2 /*return*/, producto];
+                    case 10:
+                        ;
+                        return [2 /*return*/];
+                }
+            });
+        });
+    };
+    ;
+    MongoDBDao.prototype.listarProdsCarrito = function () {
+        return __awaiter(this, void 0, void 0, function () {
+            var productosArray, dbname, password, user, rows, _i, rows_1, row, regProd, producto, error_10;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        productosArray = [];
+                        _a.label = 1;
+                    case 1:
+                        _a.trys.push([1, 11, 12, 13]);
+                        if (!(server_1.opcionCapa == 4)) return [3 /*break*/, 3];
+                        console.log('listar productos por mongoDB');
+                        return [4 /*yield*/, mongoose.connect("mongodb://localhost:27017/ecommerce")];
+                    case 2:
+                        _a.sent();
+                        return [3 /*break*/, 5];
+                    case 3:
+                        console.log("listar productos por mongoAtlas");
+                        dbname = 'ecommerce';
+                        password = '12345';
+                        user = 'admin';
+                        return [4 /*yield*/, mongoose.connect("mongodb+srv://" + user + ":" + password + "@cluster0.jbzno.mongodb.net/" + dbname + "?retryWrites=true&w=majority")];
+                    case 4:
+                        _a.sent();
+                        _a.label = 5;
+                    case 5:
+                        console.log("Base de datos conectada");
+                        return [4 /*yield*/, cartProdModel.default.find({}, { idProd: 1 })];
+                    case 6:
+                        rows = _a.sent();
+                        _i = 0, rows_1 = rows;
+                        _a.label = 7;
+                    case 7:
+                        if (!(_i < rows_1.length)) return [3 /*break*/, 10];
+                        row = rows_1[_i];
+                        return [4 /*yield*/, prodModel.default.find({ _id: row.idProd })];
+                    case 8:
+                        regProd = _a.sent();
+                        producto = {
+                            code: regProd[0].code,
+                            title: regProd[0].title,
+                            description: regProd[0].description,
+                            price: regProd[0].price,
+                            thumbnail: regProd[0].thumbnail,
+                            stock: regProd[0].stock,
+                            timestamp: regProd[0].timestamp
+                        };
+                        productosArray.push(producto);
+                        _a.label = 9;
+                    case 9:
+                        _i++;
+                        return [3 /*break*/, 7];
+                    case 10: return [2 /*return*/, productosArray];
+                    case 11:
+                        error_10 = _a.sent();
+                        console.log(error_10);
+                        return [3 /*break*/, 13];
+                    case 12:
+                        mongoose.disconnect().then(function () {
+                            console.log("Base de datos desconectada");
+                        });
+                        return [7 /*endfinally*/];
+                    case 13:
+                        ;
+                        return [2 /*return*/];
+                }
+            });
+        });
+    };
+    MongoDBDao.prototype.borrarProdsCarrito = function (id) {
+        return __awaiter(this, void 0, void 0, function () {
+            var resultado, dbname, password, user, error_11;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        resultado = true;
+                        _a.label = 1;
+                    case 1:
+                        _a.trys.push([1, 7, 8, 9]);
+                        if (!(server_1.opcionCapa == 4)) return [3 /*break*/, 3];
+                        console.log('borrar producto por mongoDB');
+                        return [4 /*yield*/, mongoose.connect("mongodb://localhost:27017/ecommerce")];
+                    case 2:
+                        _a.sent();
+                        return [3 /*break*/, 5];
+                    case 3:
+                        console.log("borrar producto por mongoAtlas");
+                        dbname = 'ecommerce';
+                        password = '12345';
+                        user = 'admin';
+                        return [4 /*yield*/, mongoose.connect("mongodb+srv://" + user + ":" + password + "@cluster0.jbzno.mongodb.net/" + dbname + "?retryWrites=true&w=majority")];
+                    case 4:
+                        _a.sent();
+                        _a.label = 5;
+                    case 5:
+                        console.log("Base de datos conectada");
+                        return [4 /*yield*/, cartProdModel.default.deleteMany({ idProd: id })];
+                    case 6:
+                        _a.sent();
+                        console.log("producto borrado");
+                        return [3 /*break*/, 9];
+                    case 7:
+                        error_11 = _a.sent();
+                        console.log(error_11);
                         resultado = false;
                         return [3 /*break*/, 9];
                     case 8:

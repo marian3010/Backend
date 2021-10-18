@@ -38,23 +38,22 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var admin = require("firebase-admin");
 var serviceAccount = require("../../data/ecommerce-43372-firebase-adminsdk-sakea-fd16d38086.json");
+admin.initializeApp({
+    credential: admin.credential.cert(serviceAccount),
+    databaseURL: "https://ecommerce-43372.firebaseio.com",
+});
+console.log("Base de datos conectada");
+var firestoreAdmin = admin.firestore();
 var FirebaseDao = /** @class */ (function () {
     function FirebaseDao() {
-        admin.initializeApp({
-            credential: admin.credential.cert(serviceAccount),
-            databaseURL: "https://ecommerce-43372.firebaseio.com",
-        });
-        console.log("Base de datos conectada");
     }
-    ;
     FirebaseDao.prototype.agregarProducto = function (producto) {
         return __awaiter(this, void 0, void 0, function () {
-            var resultado, firestoreAdmin, collection, error_1;
+            var resultado, collection, error_1;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         resultado = true;
-                        firestoreAdmin = admin.firestore();
                         collection = firestoreAdmin.collection("productos");
                         _a.label = 1;
                     case 1:
@@ -80,22 +79,35 @@ var FirebaseDao = /** @class */ (function () {
     ;
     FirebaseDao.prototype.buscarProducto = function (id) {
         return __awaiter(this, void 0, void 0, function () {
-            var firestoreAdmin, collection, doc, item, response, error_2;
+            var productosArray, collection, query, response, error_2;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        firestoreAdmin = admin.firestore();
+                        productosArray = [];
                         collection = firestoreAdmin.collection("productos");
                         _a.label = 1;
                     case 1:
                         _a.trys.push([1, 3, , 4]);
-                        doc = collection.doc("" + id);
-                        return [4 /*yield*/, doc.get()];
+                        return [4 /*yield*/, collection.get()];
                     case 2:
-                        item = _a.sent();
-                        response = item.data;
-                        console.log("resultado query", response);
-                        return [2 /*return*/, response];
+                        query = _a.sent();
+                        response = query.docs.map(function (doc) {
+                            var data = doc.data();
+                            if (doc.id == id) {
+                                var producto = {
+                                    id: doc.id,
+                                    code: data.code,
+                                    title: data.title,
+                                    description: data.description,
+                                    price: data.price,
+                                    thumbnail: data.thumbnail,
+                                    stock: data.stock,
+                                    timestamp: data.timestamp
+                                };
+                                productosArray.push(producto);
+                            }
+                        });
+                        return [2 /*return*/, productosArray];
                     case 3:
                         error_2 = _a.sent();
                         console.log(error_2);
@@ -110,12 +122,11 @@ var FirebaseDao = /** @class */ (function () {
     ;
     FirebaseDao.prototype.listarProductos = function () {
         return __awaiter(this, void 0, void 0, function () {
-            var productosArray, firestoreAdmin, collection, query, response_1, error_3;
+            var productosArray, collection, query, response, error_3;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         productosArray = [];
-                        firestoreAdmin = admin.firestore();
                         collection = firestoreAdmin.collection("productos");
                         _a.label = 1;
                     case 1:
@@ -123,9 +134,8 @@ var FirebaseDao = /** @class */ (function () {
                         return [4 /*yield*/, collection.get()];
                     case 2:
                         query = _a.sent();
-                        response_1 = query.docs.map(function (doc) {
+                        response = query.docs.map(function (doc) {
                             var data = doc.data();
-                            console.log(response_1);
                             var producto = {
                                 id: doc.id,
                                 code: data.code,
@@ -153,12 +163,11 @@ var FirebaseDao = /** @class */ (function () {
     ;
     FirebaseDao.prototype.borrarProducto = function (id) {
         return __awaiter(this, void 0, void 0, function () {
-            var resultado, firestoreAdmin, collection, doc, error_4;
+            var resultado, collection, doc, error_4;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         resultado = true;
-                        firestoreAdmin = admin.firestore();
                         collection = firestoreAdmin.collection("productos");
                         _a.label = 1;
                     case 1:
@@ -184,12 +193,11 @@ var FirebaseDao = /** @class */ (function () {
     ;
     FirebaseDao.prototype.actualizarProducto = function (id, producto) {
         return __awaiter(this, void 0, void 0, function () {
-            var resultado, firestoreAdmin, collection, doc, error_5;
+            var resultado, collection, doc, error_5;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         resultado = true;
-                        firestoreAdmin = admin.firestore();
                         collection = firestoreAdmin.collection("productos");
                         _a.label = 1;
                     case 1:
@@ -215,12 +223,11 @@ var FirebaseDao = /** @class */ (function () {
     ;
     FirebaseDao.prototype.leerMensajes = function () {
         return __awaiter(this, void 0, void 0, function () {
-            var mensajesArray, firestoreAdmin, collection, query, response_2, error_6;
+            var mensajesArray, collection, query, response_1, error_6;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         mensajesArray = [];
-                        firestoreAdmin = admin.firestore();
                         collection = firestoreAdmin.collection("mensajes");
                         _a.label = 1;
                     case 1:
@@ -228,9 +235,9 @@ var FirebaseDao = /** @class */ (function () {
                         return [4 /*yield*/, collection.get()];
                     case 2:
                         query = _a.sent();
-                        response_2 = query.docs.map(function (doc) {
+                        response_1 = query.docs.map(function (doc) {
                             var data = doc.data();
-                            console.log(response_2);
+                            console.log(response_1);
                             var mensaje = {
                                 id: doc.id,
                                 author: data.author,
@@ -254,12 +261,11 @@ var FirebaseDao = /** @class */ (function () {
     ;
     FirebaseDao.prototype.guardarMensajes = function (mensaje) {
         return __awaiter(this, void 0, void 0, function () {
-            var resultado, firestoreAdmin, collection, error_7;
+            var resultado, collection, error_7;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         resultado = true;
-                        firestoreAdmin = admin.firestore();
                         collection = firestoreAdmin.collection("mensajes");
                         _a.label = 1;
                     case 1:
@@ -278,6 +284,234 @@ var FirebaseDao = /** @class */ (function () {
                     case 5:
                         ;
                         return [2 /*return*/];
+                }
+            });
+        });
+    };
+    ;
+    FirebaseDao.prototype.agregarProdsCarrito = function (id) {
+        return __awaiter(this, void 0, void 0, function () {
+            var resultado, collProds, collCart, collCartProd, query, carritoID_1, nuevaQuery, query_1, producto, error_8;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        resultado = true;
+                        _a.label = 1;
+                    case 1:
+                        _a.trys.push([1, 8, 9, 10]);
+                        collProds = firestoreAdmin.collection("productos");
+                        collCart = firestoreAdmin.collection("carrito");
+                        collCartProd = firestoreAdmin.collection("productosCarrito");
+                        console.log("Base de datos conectada");
+                        return [4 /*yield*/, collProds.where("_id", "==", id).get()];
+                    case 2:
+                        query = _a.sent();
+                        query.docs.map(function (doc) {
+                            var data = doc.data();
+                            if (!data) {
+                                console.log("producto no encontrado");
+                                resultado = false;
+                                return resultado;
+                            }
+                        });
+                        return [4 /*yield*/, collCart.get()];
+                    case 3:
+                        nuevaQuery = _a.sent();
+                        nuevaQuery.docs.map(function (docs) {
+                            carritoID_1 = docs.id;
+                        });
+                        if (!!carritoID_1) return [3 /*break*/, 6];
+                        return [4 /*yield*/, collCart.doc().create({ timestamp: Date.now() })];
+                    case 4:
+                        _a.sent();
+                        return [4 /*yield*/, collCart.get()];
+                    case 5:
+                        query_1 = _a.sent();
+                        query_1.docs.map(function (docs) {
+                            carritoID_1 = docs.id;
+                        });
+                        _a.label = 6;
+                    case 6:
+                        producto = {
+                            idCarrito: carritoID_1,
+                            idProd: id
+                        };
+                        return [4 /*yield*/, collCartProd.doc().create(producto)];
+                    case 7:
+                        _a.sent();
+                        return [3 /*break*/, 10];
+                    case 8:
+                        error_8 = _a.sent();
+                        console.log(error_8);
+                        resultado = false;
+                        return [3 /*break*/, 10];
+                    case 9: return [2 /*return*/, resultado];
+                    case 10: return [2 /*return*/];
+                }
+            });
+        });
+    };
+    ;
+    FirebaseDao.prototype.buscarProdCarrito = function (id) {
+        return __awaiter(this, void 0, void 0, function () {
+            var productosArray, collProds, collCartProd, query, datosProductos, newQuery_1, prodsIds_1, error_9;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        productosArray = [];
+                        collProds = firestoreAdmin.collection("productos");
+                        collCartProd = firestoreAdmin.collection("productosCarrito");
+                        _a.label = 1;
+                    case 1:
+                        _a.trys.push([1, 4, , 5]);
+                        return [4 /*yield*/, collCartProd.get()];
+                    case 2:
+                        query = _a.sent();
+                        datosProductos = query.docs.map(function (doc) {
+                            var datos = doc.data();
+                            return datos;
+                        });
+                        return [4 /*yield*/, collProds.get()];
+                    case 3:
+                        newQuery_1 = _a.sent();
+                        prodsIds_1 = newQuery_1.docs.map(function (docu) {
+                            var data = docu.data();
+                            return docu.id;
+                        });
+                        // Extraigo productos que coincidan con productos del carrito
+                        datosProductos.map(function (datos) {
+                            //solo en el caso que coincida el id del producto con el id parámetro, devuelvo los datos del producto
+                            if (datos.idProd == id) {
+                                var indexProdc = prodsIds_1.indexOf(datos.idProd);
+                                if (indexProdc === -1) {
+                                    console.log('no existe');
+                                }
+                                else {
+                                    var data = newQuery_1.docs[indexProdc].data();
+                                    var producto = {
+                                        id: data.id,
+                                        code: data.code,
+                                        title: data.title,
+                                        description: data.description,
+                                        price: data.price,
+                                        thumbnail: data.thumbnail,
+                                        stock: data.stock,
+                                        timestamp: data.timestamp
+                                    };
+                                    productosArray.push(producto);
+                                }
+                                ;
+                            }
+                            ;
+                        });
+                        return [2 /*return*/, productosArray];
+                    case 4:
+                        error_9 = _a.sent();
+                        console.log(error_9);
+                        return [2 /*return*/, productosArray];
+                    case 5:
+                        ;
+                        return [2 /*return*/];
+                }
+            });
+        });
+    };
+    ;
+    FirebaseDao.prototype.listarProdsCarrito = function () {
+        return __awaiter(this, void 0, void 0, function () {
+            var productosArray, collProds, collCartProd, query, datosProductos, newQuery_2, prodsIds_2, error_10;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        productosArray = [];
+                        collProds = firestoreAdmin.collection("productos");
+                        collCartProd = firestoreAdmin.collection("productosCarrito");
+                        _a.label = 1;
+                    case 1:
+                        _a.trys.push([1, 4, , 5]);
+                        return [4 /*yield*/, collCartProd.get()];
+                    case 2:
+                        query = _a.sent();
+                        datosProductos = query.docs.map(function (doc) {
+                            var datos = doc.data();
+                            return datos;
+                        });
+                        return [4 /*yield*/, collProds.get()];
+                    case 3:
+                        newQuery_2 = _a.sent();
+                        prodsIds_2 = newQuery_2.docs.map(function (docu) {
+                            var data = docu.data();
+                            return docu.id;
+                        });
+                        // Extraigo productos que coincidan con productos del carrito
+                        datosProductos.map(function (datos) {
+                            // por cada producto en carrito, busco si existe en mi array
+                            // de ids de productos, creados anteriormente
+                            // chequeo si hay coincidencia usando el indexOf para obtener el index.
+                            var indexProdc = prodsIds_2.indexOf(datos.idProd);
+                            if (indexProdc === -1) {
+                                console.log('no existe');
+                            }
+                            else {
+                                var data = newQuery_2.docs[indexProdc].data();
+                                var producto = {
+                                    id: data.id,
+                                    code: data.code,
+                                    title: data.title,
+                                    description: data.description,
+                                    price: data.price,
+                                    thumbnail: data.thumbnail,
+                                    stock: data.stock,
+                                    timestamp: data.timestamp
+                                };
+                                productosArray.push(producto);
+                            }
+                            ;
+                        });
+                        return [2 /*return*/, productosArray];
+                    case 4:
+                        error_10 = _a.sent();
+                        console.log(error_10);
+                        return [2 /*return*/, productosArray];
+                    case 5:
+                        ;
+                        return [2 /*return*/];
+                }
+            });
+        });
+    };
+    ;
+    FirebaseDao.prototype.borrarProdsCarrito = function (id) {
+        return __awaiter(this, void 0, void 0, function () {
+            var resultado, collCartProd, query, datosProductos, error_11;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        resultado = false;
+                        collCartProd = firestoreAdmin.collection("productosCarrito");
+                        _a.label = 1;
+                    case 1:
+                        _a.trys.push([1, 3, , 4]);
+                        return [4 /*yield*/, collCartProd.get()];
+                    case 2:
+                        query = _a.sent();
+                        datosProductos = query.docs.map(function (doc) {
+                            var datos = doc.data();
+                            var idBorrar = doc.id;
+                            if (datos.idProd == id) {
+                                var prodBorrado = collCartProd.doc(idBorrar).delete();
+                                resultado = true;
+                            }
+                        });
+                        return [3 /*break*/, 4];
+                    case 3:
+                        error_11 = _a.sent();
+                        console.log(error_11);
+                        resultado = false;
+                        return [3 /*break*/, 4];
+                    case 4:
+                        ;
+                        return [2 /*return*/, resultado];
                 }
             });
         });

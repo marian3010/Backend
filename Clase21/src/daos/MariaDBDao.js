@@ -42,43 +42,72 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var mariaDB_1 = __importDefault(require("../../db/mariaDB"));
 var knex_1 = __importDefault(require("knex"));
 var knexMariaDB = (0, knex_1.default)(mariaDB_1.default);
+knexMariaDB.schema.hasTable("productos")
+    .then(function (response) {
+    console.log("respuesta al create table productos", response);
+    if (!response) {
+        knexMariaDB.schema.createTable("productos", function (table) {
+            table.increments("id", { primaryKey: true });
+            table.string("code");
+            table.string("title").notNullable();
+            table.string("description");
+            table.integer("price").notNullable();
+            table.string("thumbnail");
+            table.integer("stock");
+            table.integer("timestamp");
+        })
+            .then(function () { return console.log("tabla productos creada en mariaDB"); })
+            .catch(function (error) {
+            console.log(error);
+        });
+    }
+});
+knexMariaDB.schema.hasTable("mensajes")
+    .then(function (res) {
+    console.log("respuesta al create table mensajes", res);
+    if (!res) {
+        knexMariaDB.schema.createTable("mensajes", function (table) {
+            table.string("author");
+            table.string("fecha");
+            table.string("text");
+        })
+            .then(function () { return console.log("tabla mensajes creada en mariaDB"); })
+            .catch(function (error) {
+            console.log(error);
+        });
+    }
+});
+knexMariaDB.schema.hasTable("carrito")
+    .then(function (resp) {
+    console.log("respuesta al create table carrito", resp);
+    if (!resp) {
+        knexMariaDB.schema.createTable("carrito", function (table) {
+            table.increments("id", { primaryKey: true });
+            table.integer("timestamp");
+        })
+            .then(function () { return console.log("tabla carrito creada en mariaDB"); })
+            .catch(function (error) {
+            console.log(error);
+        });
+    }
+});
+knexMariaDB.schema.hasTable("productosCarrito")
+    .then(function (respo) {
+    console.log("respuesta al create table productosCarrito", respo);
+    if (!respo) {
+        knexMariaDB.schema.createTable("productosCarrito", function (table) {
+            table.increments("id", { primaryKey: true });
+            table.integer('idCarrito').notNullable();
+            table.integer('idProducto').notNullable();
+        })
+            .then(function () { return console.log("tabla productosCarrito creada en mariaDB"); })
+            .catch(function (error) {
+            console.log(error);
+        });
+    }
+});
 var MariaDBDao = /** @class */ (function () {
     function MariaDBDao() {
-        knexMariaDB.schema.hasTable("productos")
-            .then(function (response) {
-            console.log("respuesta al create table productos", response);
-            if (!response) {
-                knexMariaDB.schema.createTable("productos", function (table) {
-                    table.increments("id", { primaryKey: true });
-                    table.string("code");
-                    table.string("title").notNullable();
-                    table.string("description");
-                    table.integer("price").notNullable();
-                    table.string("thumbnail");
-                    table.integer("stock");
-                    table.integer("timestamp");
-                })
-                    .then(function () { return console.log("tabla productos creada en mariaDB"); })
-                    .catch(function (error) {
-                    console.log(error);
-                });
-            }
-        });
-        knexMariaDB.schema.hasTable("mensajes")
-            .then(function (res) {
-            console.log("respuesta al create table mensajes", res);
-            if (!res) {
-                knexMariaDB.schema.createTable("mensajes", function (table) {
-                    table.string("author");
-                    table.string("fecha");
-                    table.string("text");
-                })
-                    .then(function () { return console.log("tabla mensajes creada en mariaDB"); })
-                    .catch(function (error) {
-                    console.log(error);
-                });
-            }
-        });
     }
     MariaDBDao.prototype.agregarProducto = function (producto) {
         return __awaiter(this, void 0, void 0, function () {
@@ -245,6 +274,181 @@ var MariaDBDao = /** @class */ (function () {
                     case 3:
                         error_7 = _a.sent();
                         console.log(error_7);
+                        response = false;
+                        return [3 /*break*/, 4];
+                    case 4: return [2 /*return*/, response];
+                }
+            });
+        });
+    };
+    ;
+    MariaDBDao.prototype.agregarProdsCarrito = function (id) {
+        return __awaiter(this, void 0, void 0, function () {
+            var response, prodAgregar, prodCart, carritoID, prods, _i, prods_1, prod, producto, error_8;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        response = true;
+                        _a.label = 1;
+                    case 1:
+                        _a.trys.push([1, 9, , 10]);
+                        return [4 /*yield*/, knexMariaDB("productos").select("id").where("id", "=", parseInt(id))];
+                    case 2:
+                        prodAgregar = _a.sent();
+                        if (prodAgregar.length == 0) {
+                            console.log("producto no encontrado");
+                            response = false;
+                            return [2 /*return*/, response];
+                        }
+                        return [4 /*yield*/, knexMariaDB("productosCarrito").select("id").where("idProducto", "=", parseInt(id))];
+                    case 3:
+                        prodCart = _a.sent();
+                        if (prodCart.length > 0) {
+                            console.log("el producto ingresado ya existe en el carrito");
+                            response = false;
+                            return [2 /*return*/, response];
+                        }
+                        return [4 /*yield*/, knexMariaDB("carrito").select("id")];
+                    case 4:
+                        carritoID = _a.sent();
+                        if (!(carritoID.length == 0)) return [3 /*break*/, 6];
+                        return [4 /*yield*/, knexMariaDB("carrito").insert({ timestamp: Date.now() }).returning('id')];
+                    case 5:
+                        carritoID = _a.sent();
+                        return [3 /*break*/, 7];
+                    case 6:
+                        prods = JSON.parse(JSON.stringify(carritoID));
+                        console.log("carritoID cuando existe el carrito", carritoID);
+                        for (_i = 0, prods_1 = prods; _i < prods_1.length; _i++) {
+                            prod = prods_1[_i];
+                            carritoID = prod.id;
+                        }
+                        _a.label = 7;
+                    case 7:
+                        producto = {
+                            idCarrito: carritoID,
+                            idProducto: id
+                        };
+                        return [4 /*yield*/, knexMariaDB("productosCarrito").insert(producto)];
+                    case 8:
+                        _a.sent();
+                        return [3 /*break*/, 10];
+                    case 9:
+                        error_8 = _a.sent();
+                        console.log(error_8);
+                        response = false;
+                        return [3 /*break*/, 10];
+                    case 10: return [2 /*return*/, response];
+                }
+            });
+        });
+    };
+    ;
+    MariaDBDao.prototype.buscarProdCarrito = function (id) {
+        return __awaiter(this, void 0, void 0, function () {
+            var producto, productoCart, error_9;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        producto = [];
+                        _a.label = 1;
+                    case 1:
+                        _a.trys.push([1, 4, , 5]);
+                        return [4 /*yield*/, knexMariaDB("productosCarrito").select("id").where("idProducto", "=", parseInt(id))];
+                    case 2:
+                        productoCart = _a.sent();
+                        if (productoCart.length == 0) {
+                            console.log("el producto no está en el carrito");
+                            return [2 /*return*/, producto];
+                        }
+                        return [4 /*yield*/, knexMariaDB("productos").select("*").where("id", "=", parseInt(id))];
+                    case 3:
+                        producto = _a.sent();
+                        console.log("id producto encontrado", producto);
+                        return [2 /*return*/, producto];
+                    case 4:
+                        error_9 = _a.sent();
+                        console.log(error_9);
+                        return [2 /*return*/, producto];
+                    case 5: return [2 /*return*/];
+                }
+            });
+        });
+    };
+    ;
+    MariaDBDao.prototype.listarProdsCarrito = function () {
+        return __awaiter(this, void 0, void 0, function () {
+            var productosArray, rows, results, productoInsert, _i, results_1, row, prods, _a, prods_2, prod, error_10;
+            return __generator(this, function (_b) {
+                switch (_b.label) {
+                    case 0:
+                        productosArray = [];
+                        _b.label = 1;
+                    case 1:
+                        _b.trys.push([1, 7, , 8]);
+                        console.log("listar productos carrito por mariaDB");
+                        return [4 /*yield*/, knexMariaDB("productosCarrito").select("*")];
+                    case 2:
+                        rows = _b.sent();
+                        results = JSON.parse(JSON.stringify(rows));
+                        productoInsert = void 0;
+                        _i = 0, results_1 = results;
+                        _b.label = 3;
+                    case 3:
+                        if (!(_i < results_1.length)) return [3 /*break*/, 6];
+                        row = results_1[_i];
+                        return [4 /*yield*/, knexMariaDB("productos").select("*").where("id", "=", row.idProducto)];
+                    case 4:
+                        prods = _b.sent();
+                        prods = JSON.parse(JSON.stringify(prods));
+                        for (_a = 0, prods_2 = prods; _a < prods_2.length; _a++) {
+                            prod = prods_2[_a];
+                            productoInsert = {
+                                id: prod.id,
+                                code: prod.code,
+                                title: prod.title,
+                                description: prod.description,
+                                price: prod.price,
+                                thumbnail: prod.thumbnail,
+                                stock: prod.stock,
+                                timestamp: prod.timestamp
+                            };
+                        }
+                        productosArray.push(productoInsert);
+                        _b.label = 5;
+                    case 5:
+                        _i++;
+                        return [3 /*break*/, 3];
+                    case 6: return [3 /*break*/, 8];
+                    case 7:
+                        error_10 = _b.sent();
+                        console.log(error_10);
+                        return [3 /*break*/, 8];
+                    case 8: return [2 /*return*/, productosArray];
+                }
+            });
+        });
+    };
+    ;
+    MariaDBDao.prototype.borrarProdsCarrito = function (id) {
+        return __awaiter(this, void 0, void 0, function () {
+            var response, error_11;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        response = true;
+                        _a.label = 1;
+                    case 1:
+                        _a.trys.push([1, 3, , 4]);
+                        return [4 /*yield*/, knexMariaDB.from("productosCarrito")
+                                .where("idProducto", "=", parseInt(id))
+                                .del()];
+                    case 2:
+                        _a.sent();
+                        return [3 /*break*/, 4];
+                    case 3:
+                        error_11 = _a.sent();
+                        console.log(error_11);
                         response = false;
                         return [3 /*break*/, 4];
                     case 4: return [2 /*return*/, response];

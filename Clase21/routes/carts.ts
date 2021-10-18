@@ -6,31 +6,32 @@ const miCarrito: Carrito = new Carrito();
 
 //listar carrito
 carritoRouter.get('/listar/:id?', async (req: express.Request, res: express.Response) => {
-    if (req.params.id) {
-        try {
+    try {
+        console.log("parametro a buscar",req.params.id)
+        if (req.params.id) {
             console.log("va a buscar productos al carrito por id")
             const producto = await miCarrito.buscarProdCarrito(req.params.id)
             res.json(producto);
-           
-        } catch (err) {
-            console.log(err)
-        }
-    } else {
-        try {
+        } else {
             console.log("va a buscar productos sin parametro al carrito")
             const productos = await miCarrito.listarProdsCarrito()
             res.json(productos);
-        } catch(err) {
+        } 
+    } catch(err) {
             console.log(err)
-        }   
-    };
+    }   
+   
 });
 
 //agrego producto al carrito
 carritoRouter.post('/agregar/:id_producto', async (req: express.Request, res: express.Response) => {
     try {
-        const prod = await miCarrito.agregarProdsCarrito(req.params.id_producto);
-        res.json(prod);
+        if (req.params.id_producto) {
+            const prod = await miCarrito.agregarProdsCarrito(req.params.id_producto);
+            res.json(prod);
+        } else {
+            res.send({ error: 'debe indicar el id de producto a agregar' });
+        }
     } catch(err) {
         console.log(err)
     }    

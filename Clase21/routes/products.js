@@ -50,38 +50,32 @@ productosRouter.get('/', function (req, res) {
     res.sendFile(__dirname + "/public/listoProds.html");
 });
 productosRouter.get('/listar/:id?', function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var producto, err_1, productos, err_2;
+    var producto, productos, err_1;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
-                if (!req.params.id) return [3 /*break*/, 5];
-                _a.label = 1;
-            case 1:
-                _a.trys.push([1, 3, , 4]);
+                _a.trys.push([0, 5, , 6]);
+                console.log("parametro a buscar", req.params.id);
+                if (!req.params.id) return [3 /*break*/, 2];
                 console.log("va a buscar productos por id");
                 return [4 /*yield*/, prods.buscarProducto(req.params.id)];
-            case 2:
+            case 1:
                 producto = _a.sent();
                 res.json(producto);
                 return [3 /*break*/, 4];
-            case 3:
-                err_1 = _a.sent();
-                console.log(err_1);
-                return [3 /*break*/, 4];
-            case 4: return [3 /*break*/, 8];
-            case 5:
-                _a.trys.push([5, 7, , 8]);
+            case 2:
                 console.log("va a buscar productos sin parametro");
                 return [4 /*yield*/, prods.listarProductos()];
-            case 6:
+            case 3:
                 productos = _a.sent();
                 res.json(productos);
-                return [3 /*break*/, 8];
-            case 7:
-                err_2 = _a.sent();
-                console.log(err_2);
-                return [3 /*break*/, 8];
-            case 8:
+                _a.label = 4;
+            case 4: return [3 /*break*/, 6];
+            case 5:
+                err_1 = _a.sent();
+                console.log(err_1);
+                return [3 /*break*/, 6];
+            case 6:
                 ;
                 return [2 /*return*/];
         }
@@ -92,7 +86,7 @@ productosRouter.get('/guardar', (0, authorization_js_1.authorizationMiddleware)(
     res.sendFile(__dirname + "/public/agregoProd.html");
 });
 productosRouter.post('/guardar', (0, authorization_js_1.authorizationMiddleware)(), function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var prod, err_3;
+    var prod, err_2;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
@@ -103,8 +97,8 @@ productosRouter.post('/guardar', (0, authorization_js_1.authorizationMiddleware)
                 res.json(prod);
                 return [3 /*break*/, 3];
             case 2:
-                err_3 = _a.sent();
-                console.log(err_3);
+                err_2 = _a.sent();
+                console.log(err_2);
                 return [3 /*break*/, 3];
             case 3: return [2 /*return*/];
         }
@@ -112,7 +106,7 @@ productosRouter.post('/guardar', (0, authorization_js_1.authorizationMiddleware)
 }); });
 //busco un producto por id y lo borro
 productosRouter.delete('/borrar/:id', (0, authorization_js_1.authorizationMiddleware)(), function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var productoBorrado, err_4;
+    var productoBorrado, err_3;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
@@ -130,8 +124,8 @@ productosRouter.delete('/borrar/:id', (0, authorization_js_1.authorizationMiddle
                 ;
                 return [3 /*break*/, 3];
             case 2:
-                err_4 = _a.sent();
-                console.log("hubo un error", err_4);
+                err_3 = _a.sent();
+                console.log("hubo un error", err_3);
                 return [3 /*break*/, 3];
             case 3:
                 ;
@@ -141,7 +135,7 @@ productosRouter.delete('/borrar/:id', (0, authorization_js_1.authorizationMiddle
 }); });
 // busco un producto por id y lo actualizo
 productosRouter.put('/actualizar/:id', (0, authorization_js_1.authorizationMiddleware)(), function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var prodAct, err_5;
+    var prodAct, err_4;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
@@ -159,8 +153,8 @@ productosRouter.put('/actualizar/:id', (0, authorization_js_1.authorizationMiddl
                 ;
                 return [3 /*break*/, 3];
             case 2:
-                err_5 = _a.sent();
-                console.log("hubo un error", err_5);
+                err_4 = _a.sent();
+                console.log("hubo un error", err_4);
                 return [3 /*break*/, 3];
             case 3: return [2 /*return*/];
         }
