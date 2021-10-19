@@ -51,22 +51,23 @@ productosRouter.get('/', function (req, res) {
     res.sendFile(__dirname + "/public/listoProds.html");
 });
 productosRouter.get('/listar/:id?', function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var producto, productos, err_1;
+    var idBuscar, producto, productos, err_1;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
                 _a.trys.push([0, 5, , 6]);
-                console.log("parametro a buscar", req.params.id);
-                if (!req.params.id) return [3 /*break*/, 2];
+                idBuscar = parseInt(req.params.id);
+                console.log("parametro a buscar idBuscar", idBuscar);
+                if (!idBuscar) return [3 /*break*/, 2];
                 console.log("va a buscar productos por id");
-                return [4 /*yield*/, exports.prods.buscarProducto(req.params.id)];
+                return [4 /*yield*/, exports.prods.buscarProducto(idBuscar)];
             case 1:
                 producto = _a.sent();
                 res.json(producto);
                 return [3 /*break*/, 4];
             case 2:
                 console.log("va a buscar productos sin parametro");
-                return [4 /*yield*/, exports.prods.listarProductos()];
+                return [4 /*yield*/, exports.prods.listarProductos(req.body.filtro, req.body.valorDesde, req.body.valorHasta)];
             case 3:
                 productos = _a.sent();
                 res.json(productos);

@@ -1,7 +1,6 @@
 import {Operaciones} from "../interfaces/Operaciones";
 import { Producto } from "../../modelo/productos";
 import { Mensaje } from "../../modelo/mensaje";
-import Carrito from "../../modelo/carrito";
 
 interface Cart {
     id: number;
@@ -10,6 +9,7 @@ interface Cart {
 }
     
 class MemoryDao implements Operaciones {
+    private static instance: MemoryDao;
     public carrito: Cart
     public nuevoCartId: number
     public messages: Mensaje[]
@@ -18,6 +18,11 @@ class MemoryDao implements Operaciones {
     public productos: Producto []
     
     constructor() {
+        if (typeof MemoryDao.instance === 'object' ) {
+            console.log("ya existe el objeto");
+            return MemoryDao.instance;
+        }
+        MemoryDao.instance = this;
         this.nuevoCartId = 1;
         this.carrito = {
             id: this.nuevoCartId,
@@ -120,10 +125,7 @@ class MemoryDao implements Operaciones {
                     }
                 } 
             }
-            console.log("cant productos en memoria", this.productos.length);
             for (let i:number = 0; i < this.productos.length; i++) {
-                console.log("id parametro", parseInt(id));
-                console.log("id de array productos", this.productos[i].id);
                 if (this.productos[i].id == parseInt(id)) {
                     const prod: Producto = {
                         code: this.productos[i].code,
@@ -136,7 +138,6 @@ class MemoryDao implements Operaciones {
                         id: this.productos[i].id
                     }
                     this.carrito.productos.push(prod);
-                    console.log("producto agregado al carrito", prod);
                     response = true;
                     return response;
                 };
@@ -153,10 +154,9 @@ class MemoryDao implements Operaciones {
     
     async buscarProdCarrito(id:any) {
         let productos = [];
-        console.log("productos del carrito", this.carrito.productos);
+        console.log("entro a buscar por id")
         if (this.carrito.productos.length > 0) {
             for (const prod of this.carrito.productos) {
-                console.log("producto del carrito", prod)
                 if (prod.id === parseInt(id)) {
                     const producto = {
                         code: prod.code,
@@ -167,9 +167,7 @@ class MemoryDao implements Operaciones {
                         stock: prod.stock,
                         timestamp: prod.timestamp
                     }
-                    console.log("producto para devolver", producto)
                     productos.push(producto)    
-                    console.log ("array de productos", productos)
                     return productos;
                 } 
             }
@@ -186,7 +184,7 @@ class MemoryDao implements Operaciones {
         let productos = [];
         try {
             for (const prod of this.carrito.productos) {
-                console.log("producto leido del carrito", prod)
+                console.log("productos del carrito", this.carrito.productos)
                 const producto = {
                     code: prod.code,
                     title: prod.title,
@@ -196,9 +194,7 @@ class MemoryDao implements Operaciones {
                     stock: prod.stock,
                     timestamp: prod.timestamp
                 }
-                console.log("producto a pushear", producto)
                 productos.push(producto)   
-                console.log("array de productos", productos) 
             } 
             return productos;
         } catch (error) {

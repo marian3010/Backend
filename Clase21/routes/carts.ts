@@ -7,10 +7,11 @@ export const miCarrito: Carrito = new Carrito();
 //listar carrito
 carritoRouter.get('/listar/:id?', async (req: express.Request, res: express.Response) => {
     try {
-        console.log("parametro a buscar",req.params.id)
-        if (req.params.id) {
+        let idBuscar = parseInt(req.params.id);
+        console.log("parametro a buscar idBuscar",idBuscar)
+        if (idBuscar) {
             console.log("va a buscar productos al carrito por id")
-            const producto = await miCarrito.buscarProdCarrito(req.params.id)
+            const producto = await miCarrito.buscarProdCarrito(idBuscar)
             res.json(producto);
         } else {
             console.log("va a buscar productos sin parametro al carrito")

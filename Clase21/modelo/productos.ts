@@ -56,7 +56,7 @@ class Productos {
         return productoEncontrado;
     };
 
-    public async listarProductos(): Promise<any> {
+    public async listarProductos(filtro: any, valorDesde: any, valorHasta:any): Promise<any> {
         let listaProductos: Producto[] = [];
         try {
             const rows = await dao.listarProductos()
@@ -65,6 +65,19 @@ class Productos {
                     listaProductos.push({code:row["code"],title:row["title"],description:row["description"],price:row["price"],thumbnail:row["thumbnail"],stock:row["stock"],timestamp:row["timestamp"],id:row["id"]});
                 };
             };
+            console.log("filtro", filtro);
+            console.log("valor desde", valorDesde);
+            console.log("valor hasta", valorHasta);
+            if (!filtro) return listaProductos;
+            if (filtro === 'nombre')
+               return listaProductos.find(producto => producto.title === valorDesde)
+            if (filtro === 'codigo')
+               return listaProductos.find(producto => producto.code === valorDesde )
+            if (filtro === 'precio')
+                return listaProductos.filter(producto => producto.price > valorDesde && producto.price < valorHasta)
+            if (filtro === 'stock')
+                return listaProductos.filter(producto => producto.stock > valorDesde && producto.stock < valorHasta)
+          
         }
         catch (error) {
             console.log(error);

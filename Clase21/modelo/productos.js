@@ -101,13 +101,16 @@ var Productos = /** @class */ (function () {
         });
     };
     ;
-    Productos.prototype.listarProductos = function () {
+    Productos.prototype.listarProductos = function (filtro, valorDesde, valorHasta) {
         return __awaiter(this, void 0, void 0, function () {
             var listaProductos, rows, _i, rows_1, row, error_3;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         listaProductos = [];
+                        console.log("filtro", filtro);
+                        console.log("valor desde", valorDesde);
+                        console.log("valor hasta", valorHasta);
                         _a.label = 1;
                     case 1:
                         _a.trys.push([1, 3, , 4]);
@@ -122,6 +125,16 @@ var Productos = /** @class */ (function () {
                             ;
                         }
                         ;
+                        if (!filtro)
+                            return [2 /*return*/, listaProductos];
+                        if (filtro === 'nombre')
+                            return [2 /*return*/, listaProductos.find(function (producto) { return producto.title === valorDesde; })];
+                        if (filtro === 'codigo')
+                            return [2 /*return*/, listaProductos.find(function (producto) { return producto.code === valorDesde; })];
+                        if (filtro === 'precio')
+                            return [2 /*return*/, listaProductos.filter(function (producto) { return producto.price > valorDesde && producto.price < valorHasta; })];
+                        if (filtro === 'stock')
+                            return [2 /*return*/, listaProductos.filter(function (producto) { return producto.stock > valorDesde && producto.stock < valorHasta; })];
                         return [3 /*break*/, 4];
                     case 3:
                         error_3 = _a.sent();

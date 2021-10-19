@@ -65,7 +65,7 @@ var express_handlebars_1 = __importDefault(require("express-handlebars"));
 var SocketIO = __importStar(require("socket.io"));
 // Defino la opción de Base de Datos
 var DaoFactory_1 = require("./src/DaoFactory");
-exports.opcionCapa = DaoFactory_1.capaPersistencia.memory;
+exports.opcionCapa = DaoFactory_1.capaPersistencia.mariaDB;
 var mensaje_1 = require("./modelo/mensaje");
 var products_1 = __importDefault(require("./routes/products"));
 var carts_1 = __importDefault(require("./routes/carts"));

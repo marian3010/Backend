@@ -38,6 +38,11 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var MemoryDao = /** @class */ (function () {
     function MemoryDao() {
+        if (typeof MemoryDao.instance === 'object') {
+            console.log("ya existe el objeto");
+            return MemoryDao.instance;
+        }
+        MemoryDao.instance = this;
         this.nuevoCartId = 1;
         this.carrito = {
             id: this.nuevoCartId,
@@ -182,10 +187,7 @@ var MemoryDao = /** @class */ (function () {
                             }
                         }
                     }
-                    console.log("cant productos en memoria", this.productos.length);
                     for (i = 0; i < this.productos.length; i++) {
-                        console.log("id parametro", parseInt(id));
-                        console.log("id de array productos", this.productos[i].id);
                         if (this.productos[i].id == parseInt(id)) {
                             prod = {
                                 code: this.productos[i].code,
@@ -198,7 +200,6 @@ var MemoryDao = /** @class */ (function () {
                                 id: this.productos[i].id
                             };
                             this.carrito.productos.push(prod);
-                            console.log("producto agregado al carrito", prod);
                             response = true;
                             return [2 /*return*/, response];
                         }
@@ -222,11 +223,10 @@ var MemoryDao = /** @class */ (function () {
             var productos, _i, _a, prod, producto;
             return __generator(this, function (_b) {
                 productos = [];
-                console.log("productos del carrito", this.carrito.productos);
+                console.log("entro a buscar por id");
                 if (this.carrito.productos.length > 0) {
                     for (_i = 0, _a = this.carrito.productos; _i < _a.length; _i++) {
                         prod = _a[_i];
-                        console.log("producto del carrito", prod);
                         if (prod.id === parseInt(id)) {
                             producto = {
                                 code: prod.code,
@@ -237,9 +237,7 @@ var MemoryDao = /** @class */ (function () {
                                 stock: prod.stock,
                                 timestamp: prod.timestamp
                             };
-                            console.log("producto para devolver", producto);
                             productos.push(producto);
-                            console.log("array de productos", productos);
                             return [2 /*return*/, productos];
                         }
                     }
@@ -263,7 +261,7 @@ var MemoryDao = /** @class */ (function () {
                 try {
                     for (_i = 0, _a = this.carrito.productos; _i < _a.length; _i++) {
                         prod = _a[_i];
-                        console.log("producto leido del carrito", prod);
+                        console.log("productos del carrito", this.carrito.productos);
                         producto = {
                             code: prod.code,
                             title: prod.title,
@@ -273,9 +271,7 @@ var MemoryDao = /** @class */ (function () {
                             stock: prod.stock,
                             timestamp: prod.timestamp
                         };
-                        console.log("producto a pushear", producto);
                         productos.push(producto);
-                        console.log("array de productos", productos);
                     }
                     return [2 /*return*/, productos];
                 }

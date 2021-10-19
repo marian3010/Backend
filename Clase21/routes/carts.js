@@ -46,15 +46,16 @@ var carrito_js_1 = __importDefault(require("../modelo/carrito.js"));
 exports.miCarrito = new carrito_js_1.default();
 //listar carrito
 carritoRouter.get('/listar/:id?', function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var producto, productos, err_1;
+    var idBuscar, producto, productos, err_1;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
                 _a.trys.push([0, 5, , 6]);
-                console.log("parametro a buscar", req.params.id);
-                if (!req.params.id) return [3 /*break*/, 2];
+                idBuscar = parseInt(req.params.id);
+                console.log("parametro a buscar idBuscar", idBuscar);
+                if (!idBuscar) return [3 /*break*/, 2];
                 console.log("va a buscar productos al carrito por id");
-                return [4 /*yield*/, exports.miCarrito.buscarProdCarrito(req.params.id)];
+                return [4 /*yield*/, exports.miCarrito.buscarProdCarrito(idBuscar)];
             case 1:
                 producto = _a.sent();
                 res.json(producto);
