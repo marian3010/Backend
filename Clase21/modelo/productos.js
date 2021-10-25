@@ -90,6 +90,7 @@ var Productos = /** @class */ (function () {
                         return [4 /*yield*/, dao.buscarProducto(id)];
                     case 1:
                         productoEncontrado = _a.sent();
+                        console.log("producto encontrado", productoEncontrado);
                         return [3 /*break*/, 3];
                     case 2:
                         error_2 = _a.sent();
@@ -108,9 +109,6 @@ var Productos = /** @class */ (function () {
                 switch (_a.label) {
                     case 0:
                         listaProductos = [];
-                        console.log("filtro", filtro);
-                        console.log("valor desde", valorDesde);
-                        console.log("valor hasta", valorHasta);
                         _a.label = 1;
                     case 1:
                         _a.trys.push([1, 3, , 4]);
@@ -125,8 +123,15 @@ var Productos = /** @class */ (function () {
                             ;
                         }
                         ;
-                        if (!filtro)
+                        console.log("lista productos", listaProductos);
+                        console.log("filtro", filtro);
+                        console.log("valor desde", valorDesde);
+                        console.log("valor hasta", valorHasta);
+                        if (!filtro) {
+                            console.log("sin filtro");
+                            console.log("lista productos", listaProductos);
                             return [2 /*return*/, listaProductos];
+                        }
                         if (filtro === 'nombre')
                             return [2 /*return*/, listaProductos.find(function (producto) { return producto.title === valorDesde; })];
                         if (filtro === 'codigo')

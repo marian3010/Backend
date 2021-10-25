@@ -49,6 +49,7 @@ class Productos {
         let productoEncontrado
         try {
             productoEncontrado = await dao.buscarProducto(id)
+            console.log("producto encontrado", productoEncontrado);
         }
         catch (error) {
             console.log(error);
@@ -65,10 +66,15 @@ class Productos {
                     listaProductos.push({code:row["code"],title:row["title"],description:row["description"],price:row["price"],thumbnail:row["thumbnail"],stock:row["stock"],timestamp:row["timestamp"],id:row["id"]});
                 };
             };
+            console.log("lista productos", listaProductos)
             console.log("filtro", filtro);
             console.log("valor desde", valorDesde);
             console.log("valor hasta", valorHasta);
-            if (!filtro) return listaProductos;
+            if (!filtro) {
+                console.log("sin filtro")
+                console.log("lista productos", listaProductos)
+                return listaProductos;
+            }    
             if (filtro === 'nombre')
                return listaProductos.find(producto => producto.title === valorDesde)
             if (filtro === 'codigo')

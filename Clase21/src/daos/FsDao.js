@@ -100,32 +100,36 @@ var FsDao = /** @class */ (function () {
     ;
     FsDao.prototype.buscarProducto = function (id) {
         return __awaiter(this, void 0, void 0, function () {
-            var productos, _a, _b, i, prod, error_2;
+            var respuesta, productos, _a, _b, i, prod, error_2;
             return __generator(this, function (_c) {
                 switch (_c.label) {
                     case 0:
-                        _c.trys.push([0, 2, , 3]);
+                        respuesta = [];
+                        _c.label = 1;
+                    case 1:
+                        _c.trys.push([1, 3, , 4]);
                         console.log('buscar prod en fs');
                         _b = (_a = JSON).parse;
                         return [4 /*yield*/, fs_1.default.promises.readFile(fileProductos, "utf-8")];
-                    case 1:
+                    case 2:
                         productos = _b.apply(_a, [_c.sent()]);
                         for (i = 0; i < productos.length; i++) {
                             if (productos[i].id == parseInt(id)) {
                                 prod = productos[i];
                                 console.log("devuelve prod encontrado", prod);
-                                return [2 /*return*/, prod];
+                                respuesta.push(prod);
+                                return [2 /*return*/, respuesta];
                             }
                             ;
                         }
                         ;
                         console.log("no encontro el producto");
                         return [2 /*return*/, false];
-                    case 2:
+                    case 3:
                         error_2 = _c.sent();
                         console.log(error_2);
                         return [2 /*return*/, false];
-                    case 3: return [2 /*return*/];
+                    case 4: return [2 /*return*/];
                 }
             });
         });
@@ -224,7 +228,7 @@ var FsDao = /** @class */ (function () {
             return __generator(this, function (_c) {
                 switch (_c.label) {
                     case 0:
-                        response = true;
+                        response = false;
                         _c.label = 1;
                     case 1:
                         _c.trys.push([1, 8, , 9]);
@@ -247,6 +251,7 @@ var FsDao = /** @class */ (function () {
                         return [4 /*yield*/, fs_1.default.promises.writeFile(fileProductos, JSON.stringify(productos, null, "\t"), "utf-8")];
                     case 4:
                         _c.sent();
+                        response = true;
                         _c.label = 5;
                     case 5:
                         ;
@@ -443,7 +448,7 @@ var FsDao = /** @class */ (function () {
                         for (_i = 0, listaProductos_1 = listaProductos; _i < listaProductos_1.length; _i++) {
                             prod = listaProductos_1[_i];
                             if (prod.id === parseInt(id)) {
-                                producto = prod;
+                                producto.push(prod);
                             }
                         }
                         return [2 /*return*/, (producto)];
@@ -485,7 +490,7 @@ var FsDao = /** @class */ (function () {
             return __generator(this, function (_c) {
                 switch (_c.label) {
                     case 0:
-                        response = true;
+                        response = false;
                         _c.label = 1;
                     case 1:
                         _c.trys.push([1, 8, , 9]);
@@ -502,6 +507,7 @@ var FsDao = /** @class */ (function () {
                         return [4 /*yield*/, fs_1.default.promises.writeFile(fileCarrito, JSON.stringify(carrito, null, "\t"), "utf-8")];
                     case 4:
                         _c.sent();
+                        response = true;
                         _c.label = 5;
                     case 5:
                         ;
@@ -515,7 +521,6 @@ var FsDao = /** @class */ (function () {
                     case 8:
                         error_12 = _c.sent();
                         console.log(error_12);
-                        response = false;
                         return [3 /*break*/, 9];
                     case 9: return [2 /*return*/, response];
                 }

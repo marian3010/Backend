@@ -13,7 +13,7 @@ productosRouter.get('/', (req: express.Request, res: express.Response) => {
 
 productosRouter.get('/listar/:id?', async (req: express.Request, res: express.Response) => {
     try {
-        let idBuscar = parseInt(req.params.id);
+        let idBuscar = (req.params.id);
         console.log("parametro a buscar idBuscar",idBuscar)
         if (idBuscar) {
             console.log("va a buscar productos por id")

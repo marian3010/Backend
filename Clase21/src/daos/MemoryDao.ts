@@ -53,12 +53,15 @@ class MemoryDao implements Operaciones {
     };
 
     async buscarProducto(id:any) {
+        let productos = [];
         for (let i = 0; i < this.productos.length; i++) {
             if (this.productos[i].id == id) {
                 console.log("producto encontrado", this.productos[i]);
-                return this.productos[i];
+                productos.push(this.productos[i])
+                return productos;
             };
         };
+        return false;
     };
 
     async listarProductos() {
@@ -78,6 +81,7 @@ class MemoryDao implements Operaciones {
     };
 
     async actualizarProducto(id:any, producto:Producto): Promise<boolean> {
+        let response = false;
         for (let i = 0; i < this.productos.length; i++) {
             if (this.productos[i].id == id) {
                 this.productos[i].code = producto.code;
@@ -88,10 +92,10 @@ class MemoryDao implements Operaciones {
                 this.productos[i].stock = producto.stock;
                 this.productos[i].timestamp = producto.timestamp;
                 const prodActualizado = this.productos[i];
-                return true;
+                response = true;
             };
         };
-        return false;
+        return response;
     };
 
     async leerMensajes() {
@@ -204,17 +208,17 @@ class MemoryDao implements Operaciones {
     };
 
     async borrarProdsCarrito(id:any): Promise<boolean> {
-        let response = true;
+        let response = false;
         try {
             for (let i:number = 0; i < this.carrito.productos.length; i++) {
                 if (this.carrito.productos[i].id == parseInt(id)) {
                     this.carrito.productos.splice(i, 1);
+                    response = true;
                 };
             };
         }
         catch (error){
             console.log(error);
-            response = false;
         }
         return response;
     };

@@ -29,7 +29,7 @@ class FirebaseDao implements Operaciones {
         };
     };
 
-    async buscarProducto(id:any) {
+    async buscarProducto(id:string) {
         let productosArray: Producto[] = []
         const collection = firestoreAdmin.collection("productos");
         try {
@@ -50,6 +50,9 @@ class FirebaseDao implements Operaciones {
                       productosArray.push(producto);
                 }
             });
+            if (productosArray.length === 0) {
+                console.log("no encontro el producto");
+            }
             return productosArray;
         }
         catch(error) {
@@ -83,12 +86,13 @@ class FirebaseDao implements Operaciones {
         };
     };   
     
-    async borrarProducto(id:any): Promise<boolean> {
-        let resultado = true;
+    async borrarProducto(id:string): Promise<boolean> {
+        let resultado = false;
         const collection = firestoreAdmin.collection("productos");
         try {
             let doc = await collection.doc(id).delete();
             console.log("producto borrado", doc);
+            resultado = true;
         }
         catch(error) {
             console.log(error);
@@ -98,16 +102,16 @@ class FirebaseDao implements Operaciones {
         };
     };
 
-    async actualizarProducto(id:any, producto:Producto): Promise<boolean> {
-        let resultado = true;
+    async actualizarProducto(id:string, producto:Producto): Promise<boolean> {
+        let resultado = false;
         const collection = firestoreAdmin.collection("productos");
         try {
             let doc = await collection.doc(id).update(producto);
+            resultado = true;
             console.log("producto actualizado", doc);
         }
         catch (error) {
             console.log(error);
-            resultado = false;
         } finally {
             return resultado;
         };
@@ -151,39 +155,67 @@ class FirebaseDao implements Operaciones {
         };
     };
 
-    async agregarProdsCarrito(id:any): Promise<boolean> {
-        let resultado = true;
+    async agregarProdsCarrito(id:string): Promise<boolean> {
+        let resultado = false;
         try {
             const collProds = firestoreAdmin.collection("productos");
             const collCart = firestoreAdmin.collection("carrito");
             const collCartProd = firestoreAdmin.collection("productosCarrito");
             console.log("Base de datos conectada");
-            const query = await collProds.where("_id", "==", id).get();
-            query.docs.map ((doc:any) => {
-                const data = doc.data();
-                if (!data){
-                    console.log("producto no encontrado")
-                    resultado = false;
-                    return resultado;
+            //me fijo primero si el producto a agregar existe en colección de productos
+            const query = await collProds.get();
+            let existe;
+            const datosProductos = query.docs.map ((doc:any) => {
+                const datos = doc.data();
+                console.log("datos de producto", datos);
+                console.log("id del producto", doc.id);
+                if (doc.id == id) {
+                    console.log ("el producto existe")
+                    existe = true;
                 }
-            })  
+            });
+            if (!existe) {
+                console.log("el producto no existe")
+                resultado = false;
+                return resultado;
+            }
+            // me fijo si existe el carrito
             let carritoID  
             const nuevaQuery = await collCart.get()
             nuevaQuery.docs.map ((docs:any) => {
                 carritoID = docs.id
             })
-            if (!carritoID) {
+            let existeCart
+            if (carritoID) {
+                console.log("existe el carrito", carritoID)
+                //me fijo si el producto a agregar ya existe en el carrito
+                const query = await collCartProd.get();
+                const datosCarrito = query.docs.map ((doc:any) => {
+                    const datos = doc.data();
+                    if (datos.idProd == id) {
+                        console.log("el producto ya existe en el carrito")
+                        existeCart = true;
+                        return;
+                    }
+                });
+            } else {
                 await collCart.doc().create({timestamp:Date.now()});
                 const query = await collCart.get()
                 query.docs.map ((docs:any) => {
                     carritoID = docs.id
                 })
             }    
+            if (existeCart) {
+                console.log("el producto ya existe en el carrito");
+                resultado = false;
+                return resultado;
+            }
             const producto = {
                 idCarrito: carritoID,
                 idProd: id
             }
             await collCartProd.doc().create(producto);
+            resultado = true;
         }    
         catch (error) {
             console.log(error);
@@ -193,7 +225,7 @@ class FirebaseDao implements Operaciones {
         }
     };
 
-    async buscarProdCarrito(id:any) {
+    async buscarProdCarrito(id:string) {
         let productosArray: Producto[] = []
         const collProds = firestoreAdmin.collection("productos");
         const collCartProd = firestoreAdmin.collection("productosCarrito");
@@ -294,7 +326,7 @@ class FirebaseDao implements Operaciones {
         };
     };
  
-    async borrarProdsCarrito(id:any): Promise<boolean> {
+    async borrarProdsCarrito(id:string): Promise<boolean> {
         let resultado = false;
         const collCartProd = firestoreAdmin.collection("productosCarrito");
         try {
@@ -309,7 +341,7 @@ class FirebaseDao implements Operaciones {
             });
         } catch(error) {
              console.log(error);
-             resultado = false;
+             
         };
         return resultado;
     };

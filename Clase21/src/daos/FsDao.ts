@@ -59,6 +59,7 @@ class FsDao implements Operaciones {
     };
 
     async buscarProducto(id:any) {
+        let respuesta = []
         try {
             console.log('buscar prod en fs')
             let productos = JSON.parse(await fs.promises.readFile(fileProductos, "utf-8"))
@@ -66,7 +67,8 @@ class FsDao implements Operaciones {
                 if (productos[i].id == parseInt(id)) {
                     const prod: Producto = productos[i]
                     console.log("devuelve prod encontrado", prod);
-                    return prod;
+                    respuesta.push(prod)
+                    return respuesta;
                 };
             };
             console.log("no encontro el producto")
@@ -125,7 +127,7 @@ class FsDao implements Operaciones {
     };
 
     async actualizarProducto(id:any, producto:Producto): Promise<boolean> {
-        let response = true;
+        let response = false;
         try {
             let productos = JSON.parse(await fs.promises.readFile(fileProductos, "utf-8"))
             for (let i:number = 0; i < productos.length; i++) {
@@ -138,6 +140,7 @@ class FsDao implements Operaciones {
                     productos[i].stock = producto.stock;
                     productos[i].timestamp = producto.timestamp;
                     await fs.promises.writeFile(fileProductos, JSON.stringify(productos, null, "\t"), "utf-8");
+                    response = true;
                 };
             };
         }
@@ -243,7 +246,7 @@ class FsDao implements Operaciones {
         let producto = [];
         for (const prod of listaProductos) {
             if (prod.id === parseInt(id)) {
-                producto = prod;
+                producto.push(prod);
             }
         } 
         return(producto);
@@ -264,19 +267,19 @@ class FsDao implements Operaciones {
     };
 
     async borrarProdsCarrito(id:any): Promise<boolean> {
-        let response = true;
+        let response = false;
         try {
             let carrito = JSON.parse(await fs.promises.readFile(fileCarrito, "utf-8"))
             for (let i:number = 0; i < carrito.productos.length; i++) {
                 if (carrito.productos[i].id == parseInt(id)) {
                     carrito.productos.splice(i, 1);
                     await fs.promises.writeFile(fileCarrito, JSON.stringify(carrito, null, "\t"), "utf-8");
+                    response = true;
                 };
             };
         }
         catch (error){
             console.log(error);
-            response = false;
         }
         return response;
     };

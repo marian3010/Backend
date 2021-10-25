@@ -7,7 +7,30 @@ const prodModel = require("../../model/prods");
 const modelMensajes = require("../../model/messages.js");
 const cartModel = require("../../model/cart");
 const cartProdModel = require("../../model/cartProd");
+const connectStrLocal =  "mongodb://localhost:27017/ecommerce"
 
+async function connectMongoose(connect:string) {
+    console.log("conexión a mongoLocal");
+    try {
+        await mongoose.connect(connect)
+        console.log("Base de datos conectada");
+    } catch(error) {
+        console.log(error)
+    }    
+}
+
+async function connectMongooseAtlas() {
+    console.log("conexión a mongoAtlas");
+    try {
+        const dbname = 'ecommerce'
+        const password = '12345'
+        const user = 'admin'
+        await mongoose.connect(`mongodb+srv://${user}:${password}@cluster0.jbzno.mongodb.net/${dbname}?retryWrites=true&w=majority`)
+        console.log("Base de datos conectada");
+    } catch(error) {
+        console.log(error)
+    }    
+}
 
 class MongoDBDao implements Operaciones {
     async agregarProducto(producto: Producto): Promise<boolean> {
@@ -15,16 +38,12 @@ class MongoDBDao implements Operaciones {
         try {
             if (opcionCapa == 4) {
                 console.log('agregar producto por mongoDB')
-                await mongoose.connect("mongodb://localhost:27017/ecommerce")
+                await connectMongoose(connectStrLocal);
             } else {
                 console.log("agregar producto por mongoAtlas");
-                const dbname = 'ecommerce'
-                const password = '12345'
-                const user = 'admin'
-                await mongoose.connect(`mongodb+srv://${user}:${password}@cluster0.jbzno.mongodb.net/${dbname}?retryWrites=true&w=majority`)
+                await connectMongooseAtlas()
                 
             }
-            console.log("Base de datos conectada");
             await prodModel.default.insertMany(producto);
         }
         catch (error) {
@@ -38,21 +57,17 @@ class MongoDBDao implements Operaciones {
         }
     }
 
-    async buscarProducto(id:any) {
+    async buscarProducto(id:string) {
         let producto: Producto[] = []
         try {
             if (opcionCapa == 4) {
                 console.log('buscar producto por mongoDB')
-                await mongoose.connect("mongodb://localhost:27017/ecommerce")
+                await connectMongoose(connectStrLocal);
             } else {
-                console.log("buscar producto por mongoAtlas");
-                const dbname = 'ecommerce'
-                const password = '12345'
-                const user = 'admin'
-                await mongoose.connect(`mongodb+srv://${user}:${password}@cluster0.jbzno.mongodb.net/${dbname}?retryWrites=true&w=majority`)
+                console.log('buscar producto por mongoAtlas')
+                await connectMongooseAtlas()
             }
-            console.log("Base de datos conectada");
-            producto = await prodModel.default.find({_id: id}, {_id:1, code:1,title:1,price:1,stock:1 })
+            producto = await prodModel.default.find({_id:id}, {_id:1, code:1, title:1, price:1, stock:1})
         }
         catch(error) {
              console.log(error);
@@ -69,17 +84,13 @@ class MongoDBDao implements Operaciones {
         try {
             if (opcionCapa == 4) {
                 console.log('listar productos por mongoDB')
-                await mongoose.connect("mongodb://localhost:27017/ecommerce")
+                await connectMongoose(connectStrLocal);
             } else {
                 console.log("listar productos por mongoAtlas");
-                const dbname = 'ecommerce'
-                const password = '12345'
-                const user = 'admin'
-                await mongoose.connect(`mongodb+srv://${user}:${password}@cluster0.jbzno.mongodb.net/${dbname}?retryWrites=true&w=majority`)
+                await connectMongooseAtlas()
             }
-            console.log("Base de datos conectada");
             productosArray = await prodModel.default.find();
-            return productosArray;
+            console.log("productos encontrados", productosArray);
         }
         catch(error) {
              console.log(error);
@@ -87,7 +98,8 @@ class MongoDBDao implements Operaciones {
             mongoose.disconnect().then(() => {
               console.log("Base de datos desconectada");
             });
-            //return productosArray;
+            return productosArray;
+            
         };
     }    
     
@@ -96,15 +108,11 @@ class MongoDBDao implements Operaciones {
         try {
             if (opcionCapa == 4) {
                 console.log('borrar producto por mongoDB')
-                await mongoose.connect("mongodb://localhost:27017/ecommerce")
+                await connectMongoose(connectStrLocal);
             } else {
                 console.log("borrar producto por mongoAtlas");
-                const dbname = 'ecommerce'
-                const password = '12345'
-                const user = 'admin'
-                await mongoose.connect(`mongodb+srv://${user}:${password}@cluster0.jbzno.mongodb.net/${dbname}?retryWrites=true&w=majority`)
+                await connectMongooseAtlas()
             }
-            console.log("Base de datos conectada");
             await prodModel.default.deleteMany({_id: id})
         }
         catch(error) {
@@ -119,25 +127,21 @@ class MongoDBDao implements Operaciones {
     }
 
     async actualizarProducto(id:any, producto:Producto): Promise<boolean> {
-        let resultado = true;
+        let resultado = false;
         try {
             if (opcionCapa == 4) {
                 console.log('actualizar producto por mongoDB')
-                await mongoose.connect("mongodb://localhost:27017/ecommerce")
+                await connectMongoose(connectStrLocal);
             } else {
                 console.log("actualizar producto por mongoAtlas");
-                const dbname = 'ecommerce'
-                const password = '12345'
-                const user = 'admin'
-                await mongoose.connect(`mongodb+srv://${user}:${password}@cluster0.jbzno.mongodb.net/${dbname}?retryWrites=true&w=majority`)
+                await connectMongooseAtlas()
             }
-            console.log("Base de datos conectada");
             await prodModel.default.findOneAndUpdate(id,producto)
             console.log("producto actualizado")
+            resultado = true;
         }
         catch (error) {
             console.log(error);
-            resultado = false;
         } finally {
             mongoose.disconnect().then(() => {
                 console.log("Base de datos desconectada");
@@ -151,15 +155,11 @@ class MongoDBDao implements Operaciones {
         try {
             if (opcionCapa == 4) {
                 console.log('listar mensajes por mongoDB')
-                await mongoose.connect("mongodb://localhost:27017/ecommerce")
+                await connectMongoose(connectStrLocal);
             } else {
                 console.log("listar mensajes por mongoAtlas");
-                const dbname = 'ecommerce'
-                const password = '12345'
-                const user = 'admin'
-                await mongoose.connect(`mongodb+srv://${user}:${password}@cluster0.jbzno.mongodb.net/${dbname}?retryWrites=true&w=majority`)
+                await connectMongooseAtlas()
             }
-            console.log("Base de datos conectada");
             mensajesArray = await modelMensajes.default.find();
             return mensajesArray;
         }
@@ -177,13 +177,10 @@ class MongoDBDao implements Operaciones {
         try {
             if (opcionCapa == 4) {
                 console.log('listar mensajes por mongoDB')
-                await mongoose.connect("mongodb://localhost:27017/ecommerce")
+                await connectMongoose(connectStrLocal);
             } else {
                 console.log("listar mensajes por mongoAtlas");
-                const dbname = 'ecommerce'
-                const password = '12345'
-                const user = 'admin'
-                await mongoose.connect(`mongodb+srv://${user}:${password}@cluster0.jbzno.mongodb.net/${dbname}?retryWrites=true&w=majority`)
+                await connectMongooseAtlas()
             }
             console.log("mensaje a insertar en Mongodb", mensaje);
             await modelMensajes.default.insertMany(mensaje) 
@@ -199,22 +196,17 @@ class MongoDBDao implements Operaciones {
         };
     };   
 
-    async agregarProdsCarrito(id:any): Promise<boolean> {
+    async agregarProdsCarrito(id:string): Promise<boolean> {
         let resultado = true;
         try {
             if (opcionCapa == 4) {
                 console.log('agregar producto en carrito por mongoDB')
-                await mongoose.connect("mongodb://localhost:27017/ecommerce")
+                await connectMongoose(connectStrLocal);
             } else {
                 console.log("agregar producto en carrito por mongoAtlas");
-                const dbname = 'ecommerce'
-                const password = '12345'
-                const user = 'admin'
-                await mongoose.connect(`mongodb+srv://${user}:${password}@cluster0.jbzno.mongodb.net/${dbname}?retryWrites=true&w=majority`)
+                await connectMongooseAtlas()
             }
-            console.log("Base de datos conectada");
             const prodAgregar =  await prodModel.default.find({_id: id}, {_id:1})
-            console.log("producto a agregar",prodAgregar)
             if (!prodAgregar){
                 console.log("producto no encontrado")
                 resultado = false;
@@ -254,20 +246,16 @@ class MongoDBDao implements Operaciones {
         }
     };
 
-    async buscarProdCarrito(id:any) {
+    async buscarProdCarrito(id:string) {
         let producto: Producto[] = []
         try {
             if (opcionCapa == 4) {
                 console.log('buscar producto por mongoDB')
-                await mongoose.connect("mongodb://localhost:27017/ecommerce")
+                await connectMongoose(connectStrLocal);
             } else {
                 console.log("buscar producto por mongoAtlas");
-                const dbname = 'ecommerce'
-                const password = '12345'
-                const user = 'admin'
-                await mongoose.connect(`mongodb+srv://${user}:${password}@cluster0.jbzno.mongodb.net/${dbname}?retryWrites=true&w=majority`)
+                await connectMongooseAtlas()
             }
-            console.log("Base de datos conectada");
             const prodID = await cartProdModel.default.find({idProd: id}, {_id:1})
             if (prodID.length == 0) {
                 console.log("el producto no está en el carrito");
@@ -291,15 +279,11 @@ class MongoDBDao implements Operaciones {
         try {
             if (opcionCapa == 4) {
                 console.log('listar productos por mongoDB')
-                await mongoose.connect("mongodb://localhost:27017/ecommerce")
+                await connectMongoose(connectStrLocal);
             } else {
                 console.log("listar productos por mongoAtlas");
-                const dbname = 'ecommerce'
-                const password = '12345'
-                const user = 'admin'
-                await mongoose.connect(`mongodb+srv://${user}:${password}@cluster0.jbzno.mongodb.net/${dbname}?retryWrites=true&w=majority`)
+                await connectMongooseAtlas()
             }
-            console.log("Base de datos conectada");
             const rows = await cartProdModel.default.find({}, {idProd:1});
             for (const row of rows) {
                 const regProd = await prodModel.default.find({_id:row.idProd})
@@ -325,26 +309,22 @@ class MongoDBDao implements Operaciones {
         };
     }    
  
-    async borrarProdsCarrito(id:any): Promise<boolean> {
-        let resultado = true;
+    async borrarProdsCarrito(id:string): Promise<boolean> {
+        let resultado = false;
         try {
             if (opcionCapa == 4) {
-                console.log('borrar producto por mongoDB')
-                await mongoose.connect("mongodb://localhost:27017/ecommerce")
+                console.log('borrar producto del carrito por mongoDB')
+                await connectMongoose(connectStrLocal);
             } else {
-                console.log("borrar producto por mongoAtlas");
-                const dbname = 'ecommerce'
-                const password = '12345'
-                const user = 'admin'
-                await mongoose.connect(`mongodb+srv://${user}:${password}@cluster0.jbzno.mongodb.net/${dbname}?retryWrites=true&w=majority`)
+                console.log("borrar producto del carrito por mongoAtlas");
+                await connectMongooseAtlas()
             }
-            console.log("Base de datos conectada");
             await cartProdModel.default.deleteMany({idProd: id})
+            resultado = true;
             console.log("producto borrado");
         }
         catch(error) {
             console.log(error);
-            resultado = false;
         } finally {
             mongoose.disconnect().then(() => {
             console.log("Base de datos desconectada");

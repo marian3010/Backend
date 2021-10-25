@@ -5,7 +5,7 @@ import * as SocketIO from 'socket.io';
 
 // Defino la opción de Base de Datos
 import {capaPersistencia} from './src/DaoFactory';
-export const opcionCapa:number = capaPersistencia.mariaDB;
+export const opcionCapa:number = capaPersistencia.memory;
 
 import {Mensajes} from "./modelo/mensaje";
 import productosRouter from './routes/products';

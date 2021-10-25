@@ -78,17 +78,19 @@ var MemoryDao = /** @class */ (function () {
     ;
     MemoryDao.prototype.buscarProducto = function (id) {
         return __awaiter(this, void 0, void 0, function () {
-            var i;
+            var productos, i;
             return __generator(this, function (_a) {
+                productos = [];
                 for (i = 0; i < this.productos.length; i++) {
                     if (this.productos[i].id == id) {
                         console.log("producto encontrado", this.productos[i]);
-                        return [2 /*return*/, this.productos[i]];
+                        productos.push(this.productos[i]);
+                        return [2 /*return*/, productos];
                     }
                     ;
                 }
                 ;
-                return [2 /*return*/];
+                return [2 /*return*/, false];
             });
         });
     };
@@ -122,8 +124,9 @@ var MemoryDao = /** @class */ (function () {
     ;
     MemoryDao.prototype.actualizarProducto = function (id, producto) {
         return __awaiter(this, void 0, void 0, function () {
-            var i, prodActualizado;
+            var response, i, prodActualizado;
             return __generator(this, function (_a) {
+                response = false;
                 for (i = 0; i < this.productos.length; i++) {
                     if (this.productos[i].id == id) {
                         this.productos[i].code = producto.code;
@@ -134,12 +137,12 @@ var MemoryDao = /** @class */ (function () {
                         this.productos[i].stock = producto.stock;
                         this.productos[i].timestamp = producto.timestamp;
                         prodActualizado = this.productos[i];
-                        return [2 /*return*/, true];
+                        response = true;
                     }
                     ;
                 }
                 ;
-                return [2 /*return*/, false];
+                return [2 /*return*/, response];
             });
         });
     };
@@ -288,11 +291,12 @@ var MemoryDao = /** @class */ (function () {
         return __awaiter(this, void 0, void 0, function () {
             var response, i;
             return __generator(this, function (_a) {
-                response = true;
+                response = false;
                 try {
                     for (i = 0; i < this.carrito.productos.length; i++) {
                         if (this.carrito.productos[i].id == parseInt(id)) {
                             this.carrito.productos.splice(i, 1);
+                            response = true;
                         }
                         ;
                     }
@@ -300,7 +304,6 @@ var MemoryDao = /** @class */ (function () {
                 }
                 catch (error) {
                     console.log(error);
-                    response = false;
                 }
                 return [2 /*return*/, response];
             });

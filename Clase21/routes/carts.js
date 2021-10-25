@@ -51,7 +51,7 @@ carritoRouter.get('/listar/:id?', function (req, res) { return __awaiter(void 0,
         switch (_a.label) {
             case 0:
                 _a.trys.push([0, 5, , 6]);
-                idBuscar = parseInt(req.params.id);
+                idBuscar = (req.params.id);
                 console.log("parametro a buscar idBuscar", idBuscar);
                 if (!idBuscar) return [3 /*break*/, 2];
                 console.log("va a buscar productos al carrito por id");

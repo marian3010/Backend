@@ -107,6 +107,9 @@ var FirebaseDao = /** @class */ (function () {
                                 productosArray.push(producto);
                             }
                         });
+                        if (productosArray.length === 0) {
+                            console.log("no encontro el producto");
+                        }
                         return [2 /*return*/, productosArray];
                     case 3:
                         error_2 = _a.sent();
@@ -167,7 +170,7 @@ var FirebaseDao = /** @class */ (function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        resultado = true;
+                        resultado = false;
                         collection = firestoreAdmin.collection("productos");
                         _a.label = 1;
                     case 1:
@@ -176,6 +179,7 @@ var FirebaseDao = /** @class */ (function () {
                     case 2:
                         doc = _a.sent();
                         console.log("producto borrado", doc);
+                        resultado = true;
                         return [3 /*break*/, 5];
                     case 3:
                         error_4 = _a.sent();
@@ -197,7 +201,7 @@ var FirebaseDao = /** @class */ (function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        resultado = true;
+                        resultado = false;
                         collection = firestoreAdmin.collection("productos");
                         _a.label = 1;
                     case 1:
@@ -205,12 +209,12 @@ var FirebaseDao = /** @class */ (function () {
                         return [4 /*yield*/, collection.doc(id).update(producto)];
                     case 2:
                         doc = _a.sent();
+                        resultado = true;
                         console.log("producto actualizado", doc);
                         return [3 /*break*/, 5];
                     case 3:
                         error_5 = _a.sent();
                         console.log(error_5);
-                        resultado = false;
                         return [3 /*break*/, 5];
                     case 4: return [2 /*return*/, resultado];
                     case 5:
@@ -291,62 +295,87 @@ var FirebaseDao = /** @class */ (function () {
     ;
     FirebaseDao.prototype.agregarProdsCarrito = function (id) {
         return __awaiter(this, void 0, void 0, function () {
-            var resultado, collProds, collCart, collCartProd, query, carritoID_1, nuevaQuery, query_1, producto, error_8;
+            var resultado, collProds, collCart, collCartProd, query, existe_1, datosProductos, carritoID_1, nuevaQuery, existeCart_1, query_1, datosCarrito, query_2, producto, error_8;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        resultado = true;
+                        resultado = false;
                         _a.label = 1;
                     case 1:
-                        _a.trys.push([1, 8, 9, 10]);
+                        _a.trys.push([1, 10, 11, 12]);
                         collProds = firestoreAdmin.collection("productos");
                         collCart = firestoreAdmin.collection("carrito");
                         collCartProd = firestoreAdmin.collection("productosCarrito");
                         console.log("Base de datos conectada");
-                        return [4 /*yield*/, collProds.where("_id", "==", id).get()];
+                        return [4 /*yield*/, collProds.get()];
                     case 2:
                         query = _a.sent();
-                        query.docs.map(function (doc) {
-                            var data = doc.data();
-                            if (!data) {
-                                console.log("producto no encontrado");
-                                resultado = false;
-                                return resultado;
+                        datosProductos = query.docs.map(function (doc) {
+                            var datos = doc.data();
+                            console.log("datos de producto", datos);
+                            console.log("id del producto", doc.id);
+                            if (doc.id == id) {
+                                console.log("el producto existe");
+                                existe_1 = true;
                             }
                         });
+                        if (!existe_1) {
+                            console.log("el producto no existe");
+                            resultado = false;
+                            return [2 /*return*/, resultado];
+                        }
                         return [4 /*yield*/, collCart.get()];
                     case 3:
                         nuevaQuery = _a.sent();
                         nuevaQuery.docs.map(function (docs) {
                             carritoID_1 = docs.id;
                         });
-                        if (!!carritoID_1) return [3 /*break*/, 6];
-                        return [4 /*yield*/, collCart.doc().create({ timestamp: Date.now() })];
+                        if (!carritoID_1) return [3 /*break*/, 5];
+                        console.log("existe el carrito", carritoID_1);
+                        return [4 /*yield*/, collCartProd.get()];
                     case 4:
+                        query_1 = _a.sent();
+                        datosCarrito = query_1.docs.map(function (doc) {
+                            var datos = doc.data();
+                            if (datos.idProd == id) {
+                                console.log("el producto ya existe en el carrito");
+                                existeCart_1 = true;
+                                return;
+                            }
+                        });
+                        return [3 /*break*/, 8];
+                    case 5: return [4 /*yield*/, collCart.doc().create({ timestamp: Date.now() })];
+                    case 6:
                         _a.sent();
                         return [4 /*yield*/, collCart.get()];
-                    case 5:
-                        query_1 = _a.sent();
-                        query_1.docs.map(function (docs) {
+                    case 7:
+                        query_2 = _a.sent();
+                        query_2.docs.map(function (docs) {
                             carritoID_1 = docs.id;
                         });
-                        _a.label = 6;
-                    case 6:
+                        _a.label = 8;
+                    case 8:
+                        if (existeCart_1) {
+                            console.log("el producto ya existe en el carrito");
+                            resultado = false;
+                            return [2 /*return*/, resultado];
+                        }
                         producto = {
                             idCarrito: carritoID_1,
                             idProd: id
                         };
                         return [4 /*yield*/, collCartProd.doc().create(producto)];
-                    case 7:
+                    case 9:
                         _a.sent();
-                        return [3 /*break*/, 10];
-                    case 8:
+                        resultado = true;
+                        return [3 /*break*/, 12];
+                    case 10:
                         error_8 = _a.sent();
                         console.log(error_8);
                         resultado = false;
-                        return [3 /*break*/, 10];
-                    case 9: return [2 /*return*/, resultado];
-                    case 10: return [2 /*return*/];
+                        return [3 /*break*/, 12];
+                    case 11: return [2 /*return*/, resultado];
+                    case 12: return [2 /*return*/];
                 }
             });
         });
@@ -507,7 +536,6 @@ var FirebaseDao = /** @class */ (function () {
                     case 3:
                         error_11 = _a.sent();
                         console.log(error_11);
-                        resultado = false;
                         return [3 /*break*/, 4];
                     case 4:
                         ;

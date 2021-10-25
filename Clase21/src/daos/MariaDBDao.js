@@ -136,7 +136,7 @@ var MariaDBDao = /** @class */ (function () {
     };
     MariaDBDao.prototype.buscarProducto = function (id) {
         return __awaiter(this, void 0, void 0, function () {
-            var producto, error_2;
+            var prod, error_2;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -146,9 +146,9 @@ var MariaDBDao = /** @class */ (function () {
                                 .select("*")
                                 .where("id", "=", parseInt(id))];
                     case 1:
-                        producto = _a.sent();
-                        console.log("productos encontrados", producto);
-                        return [2 /*return*/, producto];
+                        prod = _a.sent();
+                        console.log("productos encontrados", prod);
+                        return [2 /*return*/, prod];
                     case 2:
                         error_2 = _a.sent();
                         console.log(error_2);
@@ -209,26 +209,26 @@ var MariaDBDao = /** @class */ (function () {
     };
     MariaDBDao.prototype.actualizarProducto = function (id, producto) {
         return __awaiter(this, void 0, void 0, function () {
-            var response, response_1, error_5;
+            var resultado, response, error_5;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        response = true;
+                        resultado = false;
                         _a.label = 1;
                     case 1:
                         _a.trys.push([1, 3, , 4]);
                         return [4 /*yield*/, knexMariaDB.from("productos").where("id", "=", parseInt(id))
                                 .update(producto)];
                     case 2:
-                        response_1 = _a.sent();
-                        console.log("producto actualizado", response_1);
+                        response = _a.sent();
+                        console.log("producto actualizado", response);
+                        resultado = true;
                         return [3 /*break*/, 4];
                     case 3:
                         error_5 = _a.sent();
                         console.log(error_5);
-                        response = false;
                         return [3 /*break*/, 4];
-                    case 4: return [2 /*return*/, response];
+                    case 4: return [2 /*return*/, resultado];
                 }
             });
         });
@@ -436,7 +436,7 @@ var MariaDBDao = /** @class */ (function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        response = true;
+                        response = false;
                         _a.label = 1;
                     case 1:
                         _a.trys.push([1, 3, , 4]);
@@ -445,11 +445,11 @@ var MariaDBDao = /** @class */ (function () {
                                 .del()];
                     case 2:
                         _a.sent();
+                        response = true;
                         return [3 /*break*/, 4];
                     case 3:
                         error_11 = _a.sent();
                         console.log(error_11);
-                        response = false;
                         return [3 /*break*/, 4];
                     case 4: return [2 /*return*/, response];
                 }
