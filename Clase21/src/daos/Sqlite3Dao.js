@@ -151,7 +151,6 @@ var Sqlite3Dao = /** @class */ (function () {
                                 .where("id", "=", parseInt(id))];
                     case 2:
                         prod = _a.sent();
-                        console.log("productos encontrados", prod);
                         productos.push(prod);
                         return [2 /*return*/, productos];
                     case 3:
@@ -227,8 +226,9 @@ var Sqlite3Dao = /** @class */ (function () {
                                 .update(producto)];
                     case 2:
                         response = _a.sent();
-                        resultado = true;
-                        console.log("producto actualizado", response);
+                        if (response) {
+                            resultado = true;
+                        }
                         return [3 /*break*/, 4];
                     case 3:
                         error_5 = _a.sent();
@@ -437,7 +437,7 @@ var Sqlite3Dao = /** @class */ (function () {
     ;
     Sqlite3Dao.prototype.borrarProdsCarrito = function (id) {
         return __awaiter(this, void 0, void 0, function () {
-            var response, error_11;
+            var response, resp, error_11;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -449,8 +449,10 @@ var Sqlite3Dao = /** @class */ (function () {
                                 .where("idProducto", "=", parseInt(id))
                                 .del()];
                     case 2:
-                        _a.sent();
-                        response = true;
+                        resp = _a.sent();
+                        if (resp) {
+                            response = true;
+                        }
                         return [3 /*break*/, 4];
                     case 3:
                         error_11 = _a.sent();

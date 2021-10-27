@@ -116,7 +116,7 @@ carritoRouter.delete('/borrar/:id', function (req, res) { return __awaiter(void 
                     return [2 /*return*/];
                 }
                 else {
-                    res.send({ error: 'producto no encontrado' });
+                    res.send(false);
                 }
                 ;
                 return [3 /*break*/, 3];

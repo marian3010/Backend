@@ -1,32 +1,22 @@
 [
 	{
+		"code": "A102",
+		"title": "Calculadora",
+		"description": "calculadora para la vida",
+		"price": "50",
+		"thumbnail": "https://cdn3.iconfinder.com/data/icons/education-209/64/globe-earth-geograhy-planet-school-256.png",
+		"stock": "34",
+		"timestamp": 1635204861160,
+		"id": 2
+	},
+	{
 		"code": "A101",
-		"title": "Globo",
+		"title": "Pelota",
 		"description": "Globo terráqueo para uso escolar",
 		"price": "750",
 		"thumbnail": "https://cdn3.iconfinder.com/data/icons/education-209/64/globe-earth-geograhy-planet-school-256.png",
 		"stock": "11",
-		"timestamp": 1634507961394,
-		"id": 1
-	},
-	{
-		"code": "A102",
-		"title": "Escuadra",
-		"description": "Escuadra de uso escolar",
-		"price": "260",
-		"thumbnail": "https://cdn3.iconfinder.com/data/icons/education-209/64/globe-earth-geograhy-planet-school-256.png",
-		"stock": "13",
-		"timestamp": 1634508482090,
-		"id": 2
-	},
-	{
-		"code": "A103",
-		"title": "Teclado",
-		"description": "Teclado de computer",
-		"price": "620",
-		"thumbnail": "www.teclado.com.ar",
-		"stock": "3",
-		"timestamp": 1634508020973,
+		"timestamp": 1635204861747,
 		"id": 3
 	}
 ]

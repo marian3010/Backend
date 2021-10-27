@@ -222,7 +222,9 @@ var MariaDBDao = /** @class */ (function () {
                     case 2:
                         response = _a.sent();
                         console.log("producto actualizado", response);
-                        resultado = true;
+                        if (response) {
+                            resultado = true;
+                        }
                         return [3 /*break*/, 4];
                     case 3:
                         error_5 = _a.sent();
@@ -432,7 +434,7 @@ var MariaDBDao = /** @class */ (function () {
     ;
     MariaDBDao.prototype.borrarProdsCarrito = function (id) {
         return __awaiter(this, void 0, void 0, function () {
-            var response, error_11;
+            var response, resp, error_11;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -444,8 +446,11 @@ var MariaDBDao = /** @class */ (function () {
                                 .where("idProducto", "=", parseInt(id))
                                 .del()];
                     case 2:
-                        _a.sent();
-                        response = true;
+                        resp = _a.sent();
+                        console.log("respuesta de borrar producto del carrito", resp);
+                        if (resp) {
+                            response = true;
+                        }
                         return [3 /*break*/, 4];
                     case 3:
                         error_11 = _a.sent();

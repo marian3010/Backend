@@ -51,7 +51,7 @@ productosRouter.delete('/borrar/:id', authorizationMiddleware(), async (req: exp
             res.json(productoBorrado);
             return;
         } else {
-            res.send({ error: 'producto no encontrado' });
+            res.send(false);
         };
     } catch (err) {
         console.log("hubo un error", err);
@@ -67,7 +67,7 @@ productosRouter.put('/actualizar/:id', authorizationMiddleware(), async(req: exp
             res.json(prodAct);
             return;
         } else {
-            res.send({ error: 'producto no encontrado' });
+            res.send(false);
         };
     } catch (err) {
         console.log("hubo un error", err);

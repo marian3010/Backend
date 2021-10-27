@@ -90,13 +90,20 @@ class FirebaseDao implements Operaciones {
         let resultado = false;
         const collection = firestoreAdmin.collection("productos");
         try {
-            let doc = await collection.doc(id).delete();
-            console.log("producto borrado", doc);
-            resultado = true;
+            //busco el producto para ver si existe
+            const query = await collection.get();
+            const response = query.docs.map((doc:any) => {
+                const data = doc.data();
+                if (doc.id === id) {
+                    //si lo encuentra lo borra
+                    collection.doc(id).delete();
+                    resultado = true;
+                    return resultado;
+                }
+            });
         }
         catch(error) {
             console.log(error);
-            resultado = false;
         } finally {
             return resultado;
         };
@@ -106,9 +113,16 @@ class FirebaseDao implements Operaciones {
         let resultado = false;
         const collection = firestoreAdmin.collection("productos");
         try {
-            let doc = await collection.doc(id).update(producto);
-            resultado = true;
-            console.log("producto actualizado", doc);
+            //busco el producto para ver si existe
+            const query = await collection.get();
+            const response = query.docs.map((doc:any) => {
+                //const data = doc.data();
+                if (doc.id === id) {
+                    //si lo encuentra lo actualiza
+                    collection.doc(id).update(producto);
+                    resultado = true;
+                }
+            });
         }
         catch (error) {
             console.log(error);
@@ -174,48 +188,45 @@ class FirebaseDao implements Operaciones {
                     existe = true;
                 }
             });
-            if (!existe) {
-                console.log("el producto no existe")
-                resultado = false;
-                return resultado;
-            }
-            // me fijo si existe el carrito
-            let carritoID  
-            const nuevaQuery = await collCart.get()
-            nuevaQuery.docs.map ((docs:any) => {
-                carritoID = docs.id
-            })
-            let existeCart
-            if (carritoID) {
-                console.log("existe el carrito", carritoID)
-                //me fijo si el producto a agregar ya existe en el carrito
-                const query = await collCartProd.get();
-                const datosCarrito = query.docs.map ((doc:any) => {
-                    const datos = doc.data();
-                    if (datos.idProd == id) {
-                        console.log("el producto ya existe en el carrito")
-                        existeCart = true;
-                        return;
-                    }
-                });
-            } else {
-                await collCart.doc().create({timestamp:Date.now()});
-                const query = await collCart.get()
-                query.docs.map ((docs:any) => {
+            if (existe) {
+                // me fijo si existe el carrito
+                let carritoID  
+                const nuevaQuery = await collCart.get()
+                nuevaQuery.docs.map ((docs:any) => {
                     carritoID = docs.id
                 })
-            }    
-            if (existeCart) {
-                console.log("el producto ya existe en el carrito");
-                resultado = false;
-                return resultado;
+                let existeCart
+                if (carritoID) {
+                    console.log("existe el carrito", carritoID)
+                    //me fijo si el producto a agregar ya existe en el carrito
+                    const query = await collCartProd.get();
+                    const datosCarrito = query.docs.map ((doc:any) => {
+                        const datos = doc.data();
+                        if (datos.idProd == id) {
+                            console.log("el producto ya existe en el carrito")
+                            existeCart = true;
+                            return;
+                        }
+                    });
+                } else {
+                    await collCart.doc().create({timestamp:Date.now()});
+                    const query = await collCart.get()
+                    query.docs.map ((docs:any) => {
+                        carritoID = docs.id
+                    })
+                }    
+                if (!existeCart) {
+                    const producto = {
+                        idCarrito: carritoID,
+                        idProd: id
+                    }
+                    const resp = await collCartProd.doc().create(producto);
+                    console.log("respuesta de agregar prod en carrito", resp)
+                    if (resp) {
+                        resultado = true;
+                    }    
+                }
             }
-            const producto = {
-                idCarrito: carritoID,
-                idProd: id
-            }
-            await collCartProd.doc().create(producto);
-            resultado = true;
         }    
         catch (error) {
             console.log(error);
@@ -334,14 +345,14 @@ class FirebaseDao implements Operaciones {
             const datosProductos = query.docs.map ((doc:any) => {
                 const datos = doc.data();
                 const idBorrar = doc.id
-                if (datos.idProd == id) {
-                    const prodBorrado = collCartProd.doc(idBorrar).delete();
+                if (datos.idProd === id) {
+                    collCartProd.doc(idBorrar).delete();
                     resultado = true;
+                    return;
                 }
             });
         } catch(error) {
              console.log(error);
-             
         };
         return resultado;
     };

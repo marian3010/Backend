@@ -67,7 +67,7 @@ class MongoDBDao implements Operaciones {
                 console.log('buscar producto por mongoAtlas')
                 await connectMongooseAtlas()
             }
-            producto = await prodModel.default.find({_id:id}, {_id:1, code:1, title:1, price:1, stock:1})
+            producto = await prodModel.default.find({_id:id}, {_id:1, code:1, title:1, description:1, price:1, thumbnail:1, stock:1, timestamp:1})
         }
         catch(error) {
              console.log(error);
@@ -103,8 +103,8 @@ class MongoDBDao implements Operaciones {
         };
     }    
     
-    async borrarProducto(id:any): Promise<boolean> {
-        let resultado = true;
+    async borrarProducto(id:string): Promise<boolean> {
+        let resultado = false;
         try {
             if (opcionCapa == 4) {
                 console.log('borrar producto por mongoDB')
@@ -113,7 +113,11 @@ class MongoDBDao implements Operaciones {
                 console.log("borrar producto por mongoAtlas");
                 await connectMongooseAtlas()
             }
-            await prodModel.default.deleteMany({_id: id})
+            const resp = await prodModel.default.deleteMany({_id: id})
+            console.log("producto borrado", resp.deletedCount);
+            if (resp.deletedCount == 1) {
+                resultado = true;
+            }
         }
         catch(error) {
             console.log(error);
@@ -126,7 +130,7 @@ class MongoDBDao implements Operaciones {
         };
     }
 
-    async actualizarProducto(id:any, producto:Producto): Promise<boolean> {
+    async actualizarProducto(id:string, producto:Producto): Promise<boolean> {
         let resultado = false;
         try {
             if (opcionCapa == 4) {
@@ -136,9 +140,11 @@ class MongoDBDao implements Operaciones {
                 console.log("actualizar producto por mongoAtlas");
                 await connectMongooseAtlas()
             }
-            await prodModel.default.findOneAndUpdate(id,producto)
-            console.log("producto actualizado")
-            resultado = true;
+            const resp = await prodModel.default.findByIdAndUpdate(id,producto)
+            console.log("producto actualizado", resp)
+            if (resp) {
+                resultado = true;
+            }
         }
         catch (error) {
             console.log(error);
@@ -197,7 +203,7 @@ class MongoDBDao implements Operaciones {
     };   
 
     async agregarProdsCarrito(id:string): Promise<boolean> {
-        let resultado = true;
+        let resultado = false;
         try {
             if (opcionCapa == 4) {
                 console.log('agregar producto en carrito por mongoDB')
@@ -206,38 +212,40 @@ class MongoDBDao implements Operaciones {
                 console.log("agregar producto en carrito por mongoAtlas");
                 await connectMongooseAtlas()
             }
+            //me fijo si existe el producto a agregar
             const prodAgregar =  await prodModel.default.find({_id: id}, {_id:1})
-            if (!prodAgregar){
-                console.log("producto no encontrado")
-                resultado = false;
-                return resultado;
-            }
-            let carritoID = await cartModel.default.find({}, { _id:1 })
-                       
-            if (carritoID.length == 0) {
-                console.log("no encontró carrito, va a crear uno")
-                await cartModel.default.insertMany({timestamp: Date.now()});
-                carritoID = await cartModel.default.find({}, { _id:1 })
-            } else {
-                const prodExist = await cartProdModel.default.find({idProd:id});
-                console.log("prodexist", prodExist);
-                console.log("long de prodexist", prodExist.length);
-                if (prodExist.length>0) {
-                    console.log ("el producto ya existe en el carrito");
-                    resultado = false;
-                    return resultado;
+            console.log("resultado de buscar el producto", prodAgregar)
+            console.log("long del array de prodAgregar", prodAgregar.length)
+            if (prodAgregar.length > 0){
+                let carritoID = await cartModel.default.find({}, { _id:1 })
+                if (carritoID.length == 0) {
+                    console.log("no encontró carrito, va a crear uno")
+                    await cartModel.default.insertMany({timestamp: Date.now()});
+                    carritoID = await cartModel.default.find({}, { _id:1 })
+                } else {
+                    //verifico si el producto ya está en el carrito
+                    const prodExist = await cartProdModel.default.find({idProd:id});
+                    if (prodExist.length>0) {
+                        console.log ("el producto ya existe en el carrito");
+                        
+                    } else {
+                        carritoID = JSON.parse(JSON.stringify(carritoID))
+                        const producto = {
+                            idCart: carritoID[0]._id,
+                            idProd: id
+                        }
+                        const result = await cartProdModel.default.insertMany(producto);
+                        console.log("resultado de agregar el prod al carrito", result)
+                        if (result) {
+                            resultado = true;
+                        }
+                    }
                 }
             }
-            carritoID = JSON.parse(JSON.stringify(carritoID))
-            const producto = {
-                idCart: carritoID[0]._id,
-                idProd: id
-            }
-            await cartProdModel.default.insertMany(producto);
+            
         }
         catch (error) {
             console.log(error);
-            resultado = false;
         } finally {
             mongoose.disconnect().then(() => {
                 console.log("Base de datos desconectada");
@@ -247,7 +255,7 @@ class MongoDBDao implements Operaciones {
     };
 
     async buscarProdCarrito(id:string) {
-        let producto: Producto[] = []
+        let producto:Producto[] = [] 
         try {
             if (opcionCapa == 4) {
                 console.log('buscar producto por mongoDB')
@@ -259,10 +267,10 @@ class MongoDBDao implements Operaciones {
             const prodID = await cartProdModel.default.find({idProd: id}, {_id:1})
             if (prodID.length == 0) {
                 console.log("el producto no está en el carrito");
-                return producto;
+            } else {
+                producto = await prodModel.default.find({_id:id}, {_id:1, code:1, title:1, description:1, price:1, thumbnail:1, stock:1, timestamp:1})
+                console.log("producto encontrado", producto);
             }
-            producto = await prodModel.default.find({_id:id}, {_id:1, code:1, title:1, price:1, thumbnail:1})
-            console.log("producto encontrado", producto);
         }
         catch(error) {
              console.log(error);
@@ -288,6 +296,7 @@ class MongoDBDao implements Operaciones {
             for (const row of rows) {
                 const regProd = await prodModel.default.find({_id:row.idProd})
                 let producto = {
+                    _id: regProd[0]._id,
                     code: regProd[0].code,
                     title: regProd[0].title,
                     description: regProd[0].description,
@@ -298,7 +307,6 @@ class MongoDBDao implements Operaciones {
                 }
                 productosArray.push(producto);
             }
-            return productosArray;
         }
         catch(error) {
              console.log(error);
@@ -306,6 +314,7 @@ class MongoDBDao implements Operaciones {
             mongoose.disconnect().then(() => {
               console.log("Base de datos desconectada");
             });
+            return productosArray;
         };
     }    
  
@@ -319,9 +328,11 @@ class MongoDBDao implements Operaciones {
                 console.log("borrar producto del carrito por mongoAtlas");
                 await connectMongooseAtlas()
             }
-            await cartProdModel.default.deleteMany({idProd: id})
-            resultado = true;
-            console.log("producto borrado");
+            const resp = await cartProdModel.default.deleteMany({idProd: id})
+            console.log("producto borrado", resp.deletedCount);
+            if (resp.deletedCount == 1) {
+                resultado = true;
+            }
         }
         catch(error) {
             console.log(error);

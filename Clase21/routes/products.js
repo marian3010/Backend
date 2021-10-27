@@ -121,7 +121,7 @@ productosRouter.delete('/borrar/:id', (0, authorization_js_1.authorizationMiddle
                     return [2 /*return*/];
                 }
                 else {
-                    res.send({ error: 'producto no encontrado' });
+                    res.send(false);
                 }
                 ;
                 return [3 /*break*/, 3];
@@ -150,7 +150,7 @@ productosRouter.put('/actualizar/:id', (0, authorization_js_1.authorizationMiddl
                     return [2 /*return*/];
                 }
                 else {
-                    res.send({ error: 'producto no encontrado' });
+                    res.send(false);
                 }
                 ;
                 return [3 /*break*/, 3];

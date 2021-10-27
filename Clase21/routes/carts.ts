@@ -47,7 +47,7 @@ carritoRouter.delete('/borrar/:id', async (req: express.Request, res: express.Re
             res.json(productoBorrado);
             return;
         } else {
-            res.send({ error: 'producto no encontrado' });
+            res.send(false);
         };
     } catch (err) {
         console.log("hubo un error", err);

@@ -133,7 +133,9 @@ class MariaDBDao implements Operaciones {
             const response = await knexMariaDB.from("productos").where("id","=",parseInt(id))
             .update(producto)
             console.log("producto actualizado", response)
-            resultado = true;
+            if (response) {
+                resultado = true;
+            }
         }
         catch (error) {
             console.log(error);
@@ -259,10 +261,14 @@ class MariaDBDao implements Operaciones {
     async borrarProdsCarrito(id:any): Promise<boolean> {
         let response = false;
         try {
-            await knexMariaDB.from("productosCarrito")
+            const resp = await knexMariaDB.from("productosCarrito")
             .where("idProducto", "=", parseInt(id))
             .del();
-            response = true;
+            console.log("respuesta de borrar producto del carrito", resp)
+            if (resp) {
+                response = true;
+            }
+           
         }
         catch (error){
             console.log(error);

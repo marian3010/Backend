@@ -160,7 +160,7 @@ var MongoDBDao = /** @class */ (function () {
                     case 4:
                         _a.sent();
                         _a.label = 5;
-                    case 5: return [4 /*yield*/, prodModel.default.find({ _id: id }, { _id: 1, code: 1, title: 1, price: 1, stock: 1 })];
+                    case 5: return [4 /*yield*/, prodModel.default.find({ _id: id }, { _id: 1, code: 1, title: 1, description: 1, price: 1, thumbnail: 1, stock: 1, timestamp: 1 })];
                     case 6:
                         producto = _a.sent();
                         return [3 /*break*/, 9];
@@ -225,11 +225,11 @@ var MongoDBDao = /** @class */ (function () {
     };
     MongoDBDao.prototype.borrarProducto = function (id) {
         return __awaiter(this, void 0, void 0, function () {
-            var resultado, error_6;
+            var resultado, resp, error_6;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        resultado = true;
+                        resultado = false;
                         _a.label = 1;
                     case 1:
                         _a.trys.push([1, 7, 8, 9]);
@@ -247,7 +247,11 @@ var MongoDBDao = /** @class */ (function () {
                         _a.label = 5;
                     case 5: return [4 /*yield*/, prodModel.default.deleteMany({ _id: id })];
                     case 6:
-                        _a.sent();
+                        resp = _a.sent();
+                        console.log("producto borrado", resp.deletedCount);
+                        if (resp.deletedCount == 1) {
+                            resultado = true;
+                        }
                         return [3 /*break*/, 9];
                     case 7:
                         error_6 = _a.sent();
@@ -268,7 +272,7 @@ var MongoDBDao = /** @class */ (function () {
     };
     MongoDBDao.prototype.actualizarProducto = function (id, producto) {
         return __awaiter(this, void 0, void 0, function () {
-            var resultado, error_7;
+            var resultado, resp, error_7;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -288,11 +292,13 @@ var MongoDBDao = /** @class */ (function () {
                     case 4:
                         _a.sent();
                         _a.label = 5;
-                    case 5: return [4 /*yield*/, prodModel.default.findOneAndUpdate(id, producto)];
+                    case 5: return [4 /*yield*/, prodModel.default.findByIdAndUpdate(id, producto)];
                     case 6:
-                        _a.sent();
-                        console.log("producto actualizado");
-                        resultado = true;
+                        resp = _a.sent();
+                        console.log("producto actualizado", resp);
+                        if (resp) {
+                            resultado = true;
+                        }
                         return [3 /*break*/, 9];
                     case 7:
                         error_7 = _a.sent();
@@ -402,14 +408,14 @@ var MongoDBDao = /** @class */ (function () {
     ;
     MongoDBDao.prototype.agregarProdsCarrito = function (id) {
         return __awaiter(this, void 0, void 0, function () {
-            var resultado, prodAgregar, carritoID, prodExist, producto, error_10;
+            var resultado, prodAgregar, carritoID, prodExist, producto, result, error_10;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        resultado = true;
+                        resultado = false;
                         _a.label = 1;
                     case 1:
-                        _a.trys.push([1, 14, 15, 16]);
+                        _a.trys.push([1, 15, 16, 17]);
                         if (!(server_1.opcionCapa == 4)) return [3 /*break*/, 3];
                         console.log('agregar producto en carrito por mongoDB');
                         return [4 /*yield*/, connectMongoose(connectStrLocal)];
@@ -425,11 +431,9 @@ var MongoDBDao = /** @class */ (function () {
                     case 5: return [4 /*yield*/, prodModel.default.find({ _id: id }, { _id: 1 })];
                     case 6:
                         prodAgregar = _a.sent();
-                        if (!prodAgregar) {
-                            console.log("producto no encontrado");
-                            resultado = false;
-                            return [2 /*return*/, resultado];
-                        }
+                        console.log("resultado de buscar el producto", prodAgregar);
+                        console.log("long del array de prodAgregar", prodAgregar.length);
+                        if (!(prodAgregar.length > 0)) return [3 /*break*/, 14];
                         return [4 /*yield*/, cartModel.default.find({}, { _id: 1 })];
                     case 7:
                         carritoID = _a.sent();
@@ -441,18 +445,13 @@ var MongoDBDao = /** @class */ (function () {
                         return [4 /*yield*/, cartModel.default.find({}, { _id: 1 })];
                     case 9:
                         carritoID = _a.sent();
-                        return [3 /*break*/, 12];
+                        return [3 /*break*/, 14];
                     case 10: return [4 /*yield*/, cartProdModel.default.find({ idProd: id })];
                     case 11:
                         prodExist = _a.sent();
-                        console.log("prodexist", prodExist);
-                        console.log("long de prodexist", prodExist.length);
-                        if (prodExist.length > 0) {
-                            console.log("el producto ya existe en el carrito");
-                            resultado = false;
-                            return [2 /*return*/, resultado];
-                        }
-                        _a.label = 12;
+                        if (!(prodExist.length > 0)) return [3 /*break*/, 12];
+                        console.log("el producto ya existe en el carrito");
+                        return [3 /*break*/, 14];
                     case 12:
                         carritoID = JSON.parse(JSON.stringify(carritoID));
                         producto = {
@@ -461,19 +460,23 @@ var MongoDBDao = /** @class */ (function () {
                         };
                         return [4 /*yield*/, cartProdModel.default.insertMany(producto)];
                     case 13:
-                        _a.sent();
-                        return [3 /*break*/, 16];
-                    case 14:
+                        result = _a.sent();
+                        console.log("resultado de agregar el prod al carrito", result);
+                        if (result) {
+                            resultado = true;
+                        }
+                        _a.label = 14;
+                    case 14: return [3 /*break*/, 17];
+                    case 15:
                         error_10 = _a.sent();
                         console.log(error_10);
-                        resultado = false;
-                        return [3 /*break*/, 16];
-                    case 15:
+                        return [3 /*break*/, 17];
+                    case 16:
                         mongoose.disconnect().then(function () {
                             console.log("Base de datos desconectada");
                         });
                         return [2 /*return*/, resultado];
-                    case 16: return [2 /*return*/];
+                    case 17: return [2 /*return*/];
                 }
             });
         });
@@ -488,7 +491,7 @@ var MongoDBDao = /** @class */ (function () {
                         producto = [];
                         _a.label = 1;
                     case 1:
-                        _a.trys.push([1, 8, 9, 10]);
+                        _a.trys.push([1, 10, 11, 12]);
                         if (!(server_1.opcionCapa == 4)) return [3 /*break*/, 3];
                         console.log('buscar producto por mongoDB');
                         return [4 /*yield*/, connectMongoose(connectStrLocal)];
@@ -504,25 +507,25 @@ var MongoDBDao = /** @class */ (function () {
                     case 5: return [4 /*yield*/, cartProdModel.default.find({ idProd: id }, { _id: 1 })];
                     case 6:
                         prodID = _a.sent();
-                        if (prodID.length == 0) {
-                            console.log("el producto no está en el carrito");
-                            return [2 /*return*/, producto];
-                        }
-                        return [4 /*yield*/, prodModel.default.find({ _id: id }, { _id: 1, code: 1, title: 1, price: 1, thumbnail: 1 })];
-                    case 7:
+                        if (!(prodID.length == 0)) return [3 /*break*/, 7];
+                        console.log("el producto no está en el carrito");
+                        return [3 /*break*/, 9];
+                    case 7: return [4 /*yield*/, prodModel.default.find({ _id: id }, { _id: 1, code: 1, title: 1, description: 1, price: 1, thumbnail: 1, stock: 1, timestamp: 1 })];
+                    case 8:
                         producto = _a.sent();
                         console.log("producto encontrado", producto);
-                        return [3 /*break*/, 10];
-                    case 8:
+                        _a.label = 9;
+                    case 9: return [3 /*break*/, 12];
+                    case 10:
                         error_11 = _a.sent();
                         console.log(error_11);
-                        return [3 /*break*/, 10];
-                    case 9:
+                        return [3 /*break*/, 12];
+                    case 11:
                         mongoose.disconnect().then(function () {
                             console.log("Base de datos desconectada");
                         });
                         return [2 /*return*/, producto];
-                    case 10:
+                    case 12:
                         ;
                         return [2 /*return*/];
                 }
@@ -564,6 +567,7 @@ var MongoDBDao = /** @class */ (function () {
                     case 8:
                         regProd = _a.sent();
                         producto = {
+                            _id: regProd[0]._id,
                             code: regProd[0].code,
                             title: regProd[0].title,
                             description: regProd[0].description,
@@ -577,7 +581,7 @@ var MongoDBDao = /** @class */ (function () {
                     case 9:
                         _i++;
                         return [3 /*break*/, 7];
-                    case 10: return [2 /*return*/, productosArray];
+                    case 10: return [3 /*break*/, 13];
                     case 11:
                         error_12 = _a.sent();
                         console.log(error_12);
@@ -586,7 +590,7 @@ var MongoDBDao = /** @class */ (function () {
                         mongoose.disconnect().then(function () {
                             console.log("Base de datos desconectada");
                         });
-                        return [7 /*endfinally*/];
+                        return [2 /*return*/, productosArray];
                     case 13:
                         ;
                         return [2 /*return*/];
@@ -596,7 +600,7 @@ var MongoDBDao = /** @class */ (function () {
     };
     MongoDBDao.prototype.borrarProdsCarrito = function (id) {
         return __awaiter(this, void 0, void 0, function () {
-            var resultado, error_13;
+            var resultado, resp, error_13;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -618,9 +622,11 @@ var MongoDBDao = /** @class */ (function () {
                         _a.label = 5;
                     case 5: return [4 /*yield*/, cartProdModel.default.deleteMany({ idProd: id })];
                     case 6:
-                        _a.sent();
-                        resultado = true;
-                        console.log("producto borrado");
+                        resp = _a.sent();
+                        console.log("producto borrado", resp.deletedCount);
+                        if (resp.deletedCount == 1) {
+                            resultado = true;
+                        }
                         return [3 /*break*/, 9];
                     case 7:
                         error_13 = _a.sent();
