@@ -58,22 +58,23 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.opcionCapa = void 0;
 var express_1 = __importDefault(require("express"));
 var path_1 = __importDefault(require("path"));
-var mensaje_1 = require("./modelo/mensaje");
 var express_handlebars_1 = __importDefault(require("express-handlebars"));
 var SocketIO = __importStar(require("socket.io"));
+// Defino la opción de Base de Datos
+var DaoFactory_1 = require("./src/DaoFactory");
+exports.opcionCapa = DaoFactory_1.capaPersistencia.mongoLocal;
+var mensaje_1 = require("./modelo/mensaje");
 var products_1 = __importDefault(require("./routes/products"));
 var carts_1 = __importDefault(require("./routes/carts"));
-var sqlite3_js_1 = __importDefault(require("./db/sqlite3.js"));
 var isAdmin = true;
 var __dirname = path_1.default.resolve();
 var port = 8080;
 var app = (0, express_1.default)();
 var error = new Error("La ruta no es válida");
 var notFoundMiddleware = function () { return function (req, _res, next) { return next(error); }; };
-var knex_1 = __importDefault(require("knex"));
-var knexo = (0, knex_1.default)(sqlite3_js_1.default);
 app.use(express_1.default.json());
 app.use(express_1.default.urlencoded({ extended: true }));
 app.use(express_1.default.static(__dirname + "/public"));

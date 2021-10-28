@@ -1,26 +1,16 @@
 {
+	"id": 1,
+	"timestamp": 1635204857663,
 	"productos": [
 		{
 			"code": "A101",
-			"title": "Globo Terráqueo",
+			"title": "Pelota",
 			"description": "Globo terráqueo para uso escolar",
 			"price": "750",
 			"thumbnail": "https://cdn3.iconfinder.com/data/icons/education-209/64/globe-earth-geograhy-planet-school-256.png",
 			"stock": "11",
-			"id": 1,
-			"timestamp": 1632172575629
-		},
-		{
-			"code": "A101",
-			"title": "Globo Terráqueo",
-			"description": "Globo terráqueo para uso escolar",
-			"price": "750",
-			"thumbnail": "https://cdn3.iconfinder.com/data/icons/education-209/64/globe-earth-geograhy-planet-school-256.png",
-			"stock": "11",
-			"id": 3,
-			"timestamp": 1632172947368
+			"timestamp": 1635204861747,
+			"id": 3
 		}
-	],
-	"id": 1,
-	"timestamp": 1632172102414
+	]
 }

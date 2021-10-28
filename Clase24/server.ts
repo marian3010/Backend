@@ -1,11 +1,15 @@
 import express from "express";
 import path from "path";
-import {Mensajes, Mensaje} from "./modelo/mensaje";
 import handlebars from "express-handlebars";
 import * as SocketIO from 'socket.io';
+
+// Defino la opción de Base de Datos
+import {capaPersistencia} from './src/DaoFactory';
+export const opcionCapa:number = capaPersistencia.mongoLocal;
+
+import {Mensajes} from "./modelo/mensaje";
 import productosRouter from './routes/products';
 import carritoRouter from './routes/carts';
-import options from './db/sqlite3.js'
 
 const isAdmin:boolean = true;
 const __dirname = path.resolve();
@@ -13,9 +17,6 @@ const port = 8080;
 const app = express();
 const error = new Error("La ruta no es válida");
 const notFoundMiddleware = () => (req: express.Request, _res: express.Response, next: express.NextFunction) => {return next(error);};
-
-import knex from "knex";
-const knexo = knex(options);
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -43,7 +44,6 @@ const io = new SocketIO.Server(server);
 server.on("error", (error) => {
     console.error(error);
 });
-
 
 const msgList = new Mensajes();
 

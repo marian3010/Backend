@@ -39,30 +39,13 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var mariaDB_1 = __importDefault(require("../db/mariaDB"));
-var knex_1 = __importDefault(require("knex"));
-var knexo = (0, knex_1.default)(mariaDB_1.default);
+var DaoFactory_1 = __importDefault(require("../src/DaoFactory"));
+var server_1 = require("../server");
+var daoFact = new DaoFactory_1.default(server_1.opcionCapa);
+var dao = daoFact.elegirBD();
+console.log("Dao", dao);
 var Productos = /** @class */ (function () {
     function Productos() {
-        knexo.schema.hasTable("productos")
-            .then(function (response) {
-            if (!response) {
-                knexo.schema.createTable("productos", function (table) {
-                    table.increments("id", { primaryKey: true });
-                    table.string("code");
-                    table.string("title").notNullable();
-                    table.string("description");
-                    table.integer("price").notNullable();
-                    table.string("thumbnail");
-                    table.integer("stock");
-                    table.integer("timestamp");
-                })
-                    .then(function () { return console.log("tabla productos creada"); })
-                    .catch(function (error) {
-                    console.log(error);
-                });
-            }
-        });
     }
     ;
     Productos.prototype.agregarProducto = function (code, title, description, price, thumbnail, stock, timestamp) {
@@ -82,10 +65,10 @@ var Productos = /** @class */ (function () {
                             stock: stock,
                             timestamp: timestamp
                         };
-                        return [4 /*yield*/, knexo("productos").insert(producto)];
+                        return [4 /*yield*/, dao.agregarProducto(producto)];
                     case 1:
                         response = _a.sent();
-                        console.log("Id del producto agregado", response);
+                        console.log("función exitosa", response);
                         return [2 /*return*/, producto];
                     case 2:
                         error_1 = _a.sent();
@@ -99,55 +82,70 @@ var Productos = /** @class */ (function () {
     ;
     Productos.prototype.buscarProducto = function (id) {
         return __awaiter(this, void 0, void 0, function () {
-            var prodsArray, rows, _i, rows_1, row, error_2;
+            var productoEncontrado, error_2;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         _a.trys.push([0, 2, , 3]);
-                        prodsArray = [];
-                        return [4 /*yield*/, knexo.from("productos")
-                                .select("*")
-                                .where("id", "=", id)];
+                        return [4 /*yield*/, dao.buscarProducto(id)];
                     case 1:
-                        rows = _a.sent();
-                        for (_i = 0, rows_1 = rows; _i < rows_1.length; _i++) {
-                            row = rows_1[_i];
-                            prodsArray.push({ code: row["code"], title: row["title"], description: row["description"], price: row["price"], thumbnail: row["thumbnail"], stock: row["stock"], timestamp: row["timestamp"] });
-                            console.log("producto encontrado", prodsArray);
-                        }
-                        return [2 /*return*/, prodsArray];
+                        productoEncontrado = _a.sent();
+                        console.log("producto encontrado", productoEncontrado);
+                        return [3 /*break*/, 3];
                     case 2:
                         error_2 = _a.sent();
                         console.log(error_2);
                         return [3 /*break*/, 3];
-                    case 3: return [2 /*return*/];
+                    case 3: return [2 /*return*/, productoEncontrado];
                 }
             });
         });
     };
     ;
-    Productos.prototype.listarProductos = function () {
+    Productos.prototype.listarProductos = function (filtro, valorDesde, valorHasta) {
         return __awaiter(this, void 0, void 0, function () {
-            var listaProductos, rows, _i, rows_2, row, error_3;
+            var listaProductos, rows, _i, rows_1, row, error_3;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        _a.trys.push([0, 2, , 3]);
                         listaProductos = [];
-                        return [4 /*yield*/, knexo.from("productos")
-                                .select("*")];
+                        _a.label = 1;
                     case 1:
-                        rows = _a.sent();
-                        for (_i = 0, rows_2 = rows; _i < rows_2.length; _i++) {
-                            row = rows_2[_i];
-                            listaProductos.push({ code: row["code"], title: row["title"], description: row["description"], price: row["price"], thumbnail: row["thumbnail"], stock: row["stock"], timestamp: row["timestamp"], id: row["id"] });
-                        }
-                        return [2 /*return*/, listaProductos];
+                        _a.trys.push([1, 3, , 4]);
+                        return [4 /*yield*/, dao.listarProductos()];
                     case 2:
+                        rows = _a.sent();
+                        if (rows) {
+                            for (_i = 0, rows_1 = rows; _i < rows_1.length; _i++) {
+                                row = rows_1[_i];
+                                listaProductos.push({ code: row["code"], title: row["title"], description: row["description"], price: row["price"], thumbnail: row["thumbnail"], stock: row["stock"], timestamp: row["timestamp"], id: row["id"] });
+                            }
+                            ;
+                        }
+                        ;
+                        console.log("lista productos", listaProductos);
+                        console.log("filtro", filtro);
+                        console.log("valor desde", valorDesde);
+                        console.log("valor hasta", valorHasta);
+                        if (!filtro) {
+                            console.log("sin filtro");
+                            console.log("lista productos", listaProductos);
+                            return [2 /*return*/, listaProductos];
+                        }
+                        if (filtro === 'nombre')
+                            return [2 /*return*/, listaProductos.find(function (producto) { return producto.title === valorDesde; })];
+                        if (filtro === 'codigo')
+                            return [2 /*return*/, listaProductos.find(function (producto) { return producto.code === valorDesde; })];
+                        if (filtro === 'precio')
+                            return [2 /*return*/, listaProductos.filter(function (producto) { return producto.price > valorDesde && producto.price < valorHasta; })];
+                        if (filtro === 'stock')
+                            return [2 /*return*/, listaProductos.filter(function (producto) { return producto.stock > valorDesde && producto.stock < valorHasta; })];
+                        return [3 /*break*/, 4];
+                    case 3:
                         error_3 = _a.sent();
                         console.log(error_3);
-                        return [3 /*break*/, 3];
-                    case 3: return [2 /*return*/];
+                        return [3 /*break*/, 4];
+                    case 4: return [2 /*return*/, listaProductos];
                 }
             });
         });
@@ -160,12 +158,9 @@ var Productos = /** @class */ (function () {
                 switch (_a.label) {
                     case 0:
                         _a.trys.push([0, 2, , 3]);
-                        return [4 /*yield*/, knexo.from("productos")
-                                .where("id", "=", id)
-                                .del()];
+                        return [4 /*yield*/, dao.borrarProducto(id)];
                     case 1:
                         response = _a.sent();
-                        console.log("respuesta del delete", response);
                         return [2 /*return*/, response];
                     case 2:
                         error_4 = _a.sent();
@@ -179,19 +174,21 @@ var Productos = /** @class */ (function () {
     ;
     Productos.prototype.actualizarProducto = function (code, title, description, price, thumbnail, stock, id) {
         return __awaiter(this, void 0, void 0, function () {
-            var response, error_5;
+            var producto, response, error_5;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         _a.trys.push([0, 2, , 3]);
-                        return [4 /*yield*/, knexo.from("productos").where("id", "=", id)
-                                .update("code", code)
-                                .update("title", title)
-                                .update("description", description)
-                                .update("price", price)
-                                .update("thumbnail", thumbnail)
-                                .update("stock", stock)
-                                .update("timestamp", Date.now())];
+                        producto = {
+                            code: code,
+                            title: title,
+                            description: description,
+                            price: price,
+                            thumbnail: thumbnail,
+                            stock: stock,
+                            timestamp: Date.now()
+                        };
+                        return [4 /*yield*/, dao.actualizarProducto(id, producto)];
                     case 1:
                         response = _a.sent();
                         return [2 /*return*/, response];

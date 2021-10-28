@@ -1,7 +1,14 @@
-import options from '../db/mariaDB';
-import knex from "knex";
-const knexo = knex(options);
+import DaoFactory from '../src/DaoFactory';
+import MariaDBDao from '../src/daos/MariaDBDao';
+import MongoDBDao from '../src/daos/MongoDBDao';
+import Sqlite3Dao from '../src/daos/Sqlite3Dao';
+import FsDao from '../src/daos/FsDao';
+import MemoryDao from '../src/daos/MemoryDao';
+import { opcionCapa } from "../server"
 
+const daoFact = new DaoFactory(opcionCapa);
+const dao: MongoDBDao | Sqlite3Dao | MariaDBDao | FsDao | MemoryDao = daoFact.elegirBD()
+console.log("Dao", dao);
 
 export interface Producto {
     id?: number;
@@ -14,31 +21,8 @@ export interface Producto {
     timestamp: number;
 } 
 
-interface AProductos {
-    productos: Producto[];
-}
-
 class Productos {
     public constructor() {
-        knexo.schema.hasTable("productos")
-        .then(response => {
-            if(!response) {
-                knexo.schema.createTable("productos", (table:any) => {
-                    table.increments("id",{primaryKey:true})
-                    table.string("code");
-                    table.string("title").notNullable();
-                    table.string("description");
-                    table.integer("price").notNullable();
-                    table.string("thumbnail");
-                    table.integer("stock");
-                    table.integer("timestamp");
-                })
-                .then(() => console.log("tabla productos creada"))
-                .catch((error) => {
-                  console.log(error);
-                })
-            }
-        });
     };
     
     public async agregarProducto(code:string, title:string, description:string, price:number, thumbnail:string, stock:number, timestamp:number = Date.now()) {
@@ -52,8 +36,8 @@ class Productos {
                 stock,
                 timestamp 
             }
-            const response = await knexo("productos").insert(producto);
-            console.log("Id del producto agregado", response)
+            const response = await dao.agregarProducto(producto);
+            console.log("función exitosa", response)
             return producto;
         }
         catch (error) {
@@ -61,44 +45,55 @@ class Productos {
         }
     };
 
-    public async buscarProducto(id:number) {
+    public async buscarProducto(id:any): Promise<any> {
+        let productoEncontrado
         try {
-            const prodsArray: Producto[] | undefined = [];
-            const rows = await knexo.from("productos")
-            .select("*")
-            .where("id", "=", id)
-                for (const row of rows) {
-                prodsArray.push({code:row["code"],title:row["title"],description:row["description"],price:row["price"],thumbnail:row["thumbnail"],stock:row["stock"],timestamp:row["timestamp"]});
-                console.log("producto encontrado",prodsArray);
-              }
-             return prodsArray;
+            productoEncontrado = await dao.buscarProducto(id)
+            console.log("producto encontrado", productoEncontrado);
         }
         catch (error) {
             console.log(error);
         }
+        return productoEncontrado;
     };
 
-    public async listarProductos() {
+    public async listarProductos(filtro: any, valorDesde: any, valorHasta:any): Promise<any> {
+        let listaProductos: Producto[] = [];
         try {
-            const listaProductos: Producto[] = [];
-            const rows = await knexo.from("productos")
-            .select("*")
-            for (const row of rows) {
-                listaProductos.push({code:row["code"],title:row["title"],description:row["description"],price:row["price"],thumbnail:row["thumbnail"],stock:row["stock"],timestamp:row["timestamp"],id:row["id"]});
-            }
-            return listaProductos;
+            const rows = await dao.listarProductos()
+            if (rows) {
+                for (const row of rows) {
+                    listaProductos.push({code:row["code"],title:row["title"],description:row["description"],price:row["price"],thumbnail:row["thumbnail"],stock:row["stock"],timestamp:row["timestamp"],id:row["id"]});
+                };
+            };
+            console.log("lista productos", listaProductos)
+            console.log("filtro", filtro);
+            console.log("valor desde", valorDesde);
+            console.log("valor hasta", valorHasta);
+            if (!filtro) {
+                console.log("sin filtro")
+                console.log("lista productos", listaProductos)
+                return listaProductos;
+            }    
+            if (filtro === 'nombre')
+               return listaProductos.find(producto => producto.title === valorDesde)
+            if (filtro === 'codigo')
+               return listaProductos.find(producto => producto.code === valorDesde )
+            if (filtro === 'precio')
+                return listaProductos.filter(producto => producto.price > valorDesde && producto.price < valorHasta)
+            if (filtro === 'stock')
+                return listaProductos.filter(producto => producto.stock > valorDesde && producto.stock < valorHasta)
+          
         }
         catch (error) {
             console.log(error);
         }
+        return listaProductos; 
     };            
 
-    public async borrarProducto(id:number) {
+    public async borrarProducto(id:any) {
         try {
-            const response = await knexo.from("productos")
-            .where("id", "=", id)
-            .del();
-            console.log("respuesta del delete", response)
+            const response = await dao.borrarProducto(id)
             return response;
         } 
         catch (error) {
@@ -106,16 +101,18 @@ class Productos {
         }
     };
 
-    public async actualizarProducto(code:string, title:string, description:string, price:number, thumbnail:string, stock:number, id:number) {
+    public async actualizarProducto(code:string, title:string, description:string, price:number, thumbnail:string, stock:number, id:any) {
         try {
-            const response = await knexo.from("productos").where("id","=",id)
-            .update("code", code)
-            .update("title", title)
-            .update("description", description)
-            .update("price", price)
-            .update("thumbnail", thumbnail)
-            .update("stock", stock)
-            .update("timestamp", Date.now())
+            const producto: Producto = {
+                code,
+                title,
+                description,
+                price,
+                thumbnail,
+                stock,
+                timestamp: Date.now()
+            }
+            const response = await dao.actualizarProducto(id,producto);
             return response;
         } 
         catch (error) {

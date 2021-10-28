@@ -10,9 +10,42 @@
     <script src="/socket.io/socket.io.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.7.7/handlebars.min.js" integrity="sha512-RNLkV3d+aLtfcpEyFG8jRbnWHxUqVZozacROI4J2F1sTaDqo1dPQYs01OMi1t1w9Y2FdbSCDSQ2ZVdAC8bzgAg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js" integrity="sha512-qTXRIMyZIFb8iQcfjXWCO8+M5Tbc38Qi5WzdPOYZHIlZpzBHG3L3by84BBBOiRGiEb7KKtAOAs5qYdUiZiQNNQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdn.jsdelivr.net/npm/normalizr@3.6.1/dist/normalizr.browser.min.js"></script>
 </head>
 
 <body>
+    <section class="container bg-light mt-3">
+        <div class="container">
+            <h1 class="mt-3 mb-3 pl-3">Filtros para la búsqueda de productos</h1>
+            <form>
+                <div class="form-row form-group col-md-6 mb-3">
+                    <label> Nombre</label>
+                    <input type="text" id="title" />
+                    <button class="btn btn-secondary">Buscar</button>
+                </div>
+                <div class="form-row form-group col-md-6 mb-3">
+                    <label> Código</label>
+                    <input type="text" id="code" />
+                    <button class="btn btn-secondary">Buscar</button>
+                </div>
+                <div class="form-row form-group col-md-8 mb-3">
+                    <label> Precio desde</label>
+                    <input type="text" id="priceFrom" />
+                    <label> Precio hasta</label>
+                    <input type="text" id="priceTo" />
+                    <button class="btn btn-secondary">Buscar</button>
+                </div>
+                <div class="form-row form-group col-md-8 mb-3">
+                    <label>Stock desde</label>
+                    <input type="text" id="stockFrom" />
+                    <label> Stock hasta</label>
+                    <input type="text" id="stockTo" />
+                    <button class="btn btn-secondary">Buscar</button>
+                </div>
+
+            </form>
+        </div>
+    </section>
     <section class="container bg-light mt-3">
         <span id="tablaProductos"></span>
         <script>

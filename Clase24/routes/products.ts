@@ -2,11 +2,9 @@ import express from "express";
 const productosRouter = express.Router();
 import Productos from "../modelo/productos.js";
 import { authorizationMiddleware } from "../middleware/authorization.js";
-const prods = new Productos();
+export const prods = new Productos();
 import path from "path";
 const __dirname = path.resolve();
-const faker = require('faker');
-faker.locale = "es";
 
 
 productosRouter.get('/', (req: express.Request, res: express.Response) => {
@@ -14,23 +12,21 @@ productosRouter.get('/', (req: express.Request, res: express.Response) => {
 });
 
 productosRouter.get('/listar/:id?', async (req: express.Request, res: express.Response) => {
-    if (req.params.id) {
-        try {
+    try {
+        let idBuscar = (req.params.id);
+        console.log("parametro a buscar idBuscar",idBuscar)
+        if (idBuscar) {
             console.log("va a buscar productos por id")
-            const producto = await prods.buscarProducto(parseInt(req.params.id))
+            const producto = await prods.buscarProducto(idBuscar)
             res.json(producto);
            
-        } catch (err) {
-            console.log(err)
-        }
-    } else {
-        try {
+        } else {
             console.log("va a buscar productos sin parametro")
-            const productos = await prods.listarProductos()
+            const productos = await prods.listarProductos(req.body.filtro, req.body.valorDesde, req.body.valorHasta)
             res.json(productos);
-        } catch(err) {
-            console.log(err)
-        }   
+        } 
+    } catch(err) {
+        console.log(err)
     };
 });
 
@@ -50,12 +46,12 @@ productosRouter.post('/guardar', authorizationMiddleware(), async (req: express.
 //busco un producto por id y lo borro
 productosRouter.delete('/borrar/:id', authorizationMiddleware(), async (req: express.Request, res: express.Response) => {
     try {
-        const productoBorrado = await prods.borrarProducto(parseInt(req.params.id));
+        const productoBorrado = await prods.borrarProducto(req.params.id);
         if (productoBorrado) {
             res.json(productoBorrado);
             return;
         } else {
-            res.send({ error: 'producto no encontrado' });
+            res.send(false);
         };
     } catch (err) {
         console.log("hubo un error", err);
@@ -66,35 +62,16 @@ productosRouter.delete('/borrar/:id', authorizationMiddleware(), async (req: exp
 // busco un producto por id y lo actualizo
 productosRouter.put('/actualizar/:id', authorizationMiddleware(), async(req: express.Request, res: express.Response) => {
     try {
-        const prodAct = await prods.actualizarProducto(req.body.code, req.body.title, req.body.description, req.body.price, req.body.thumbnail, req.body.stock, parseInt(req.params.id));
+        const prodAct = await prods.actualizarProducto(req.body.code, req.body.title, req.body.description, req.body.price, req.body.thumbnail, req.body.stock, req.params.id);
         if (prodAct) {
             res.json(prodAct);
             return;
         } else {
-            res.send({ error: 'producto no encontrado' });
+            res.send(false);
         };
     } catch (err) {
         console.log("hubo un error", err);
     }
 });
-
-// genero mock de productos con faker
-let id = 0;
-productosRouter.get('/vista-test/:cant?', (req: express.Request, res: express.Response) => {
-    const prodsArray = [];
-    const cant = Number(req.params.cant);
-    const cantGenerar = isNaN(cant) ? 10 : cant;
-
-    for (let i = 0; i < cantGenerar; i++) {
-        prodsArray.push({
-            id: ++id,
-            nombre: faker.commerce.productName(),
-            precio: faker.commerce.price(),
-            foto: faker.image.image(),
-        });
-    }
-    res.json(prodsArray);
-});
-
 
 export default productosRouter;

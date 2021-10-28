@@ -39,51 +39,45 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.prods = void 0;
 var express_1 = __importDefault(require("express"));
 var productosRouter = express_1.default.Router();
 var productos_js_1 = __importDefault(require("../modelo/productos.js"));
 var authorization_js_1 = require("../middleware/authorization.js");
-var prods = new productos_js_1.default();
+exports.prods = new productos_js_1.default();
 var path_1 = __importDefault(require("path"));
 var __dirname = path_1.default.resolve();
-var faker = require('faker');
-faker.locale = "es";
 productosRouter.get('/', function (req, res) {
     res.sendFile(__dirname + "/public/listoProds.html");
 });
 productosRouter.get('/listar/:id?', function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var producto, err_1, productos, err_2;
+    var idBuscar, producto, productos, err_1;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
-                if (!req.params.id) return [3 /*break*/, 5];
-                _a.label = 1;
-            case 1:
-                _a.trys.push([1, 3, , 4]);
+                _a.trys.push([0, 5, , 6]);
+                idBuscar = (req.params.id);
+                console.log("parametro a buscar idBuscar", idBuscar);
+                if (!idBuscar) return [3 /*break*/, 2];
                 console.log("va a buscar productos por id");
-                return [4 /*yield*/, prods.buscarProducto(parseInt(req.params.id))];
-            case 2:
+                return [4 /*yield*/, exports.prods.buscarProducto(idBuscar)];
+            case 1:
                 producto = _a.sent();
                 res.json(producto);
                 return [3 /*break*/, 4];
-            case 3:
-                err_1 = _a.sent();
-                console.log(err_1);
-                return [3 /*break*/, 4];
-            case 4: return [3 /*break*/, 8];
-            case 5:
-                _a.trys.push([5, 7, , 8]);
+            case 2:
                 console.log("va a buscar productos sin parametro");
-                return [4 /*yield*/, prods.listarProductos()];
-            case 6:
+                return [4 /*yield*/, exports.prods.listarProductos(req.body.filtro, req.body.valorDesde, req.body.valorHasta)];
+            case 3:
                 productos = _a.sent();
                 res.json(productos);
-                return [3 /*break*/, 8];
-            case 7:
-                err_2 = _a.sent();
-                console.log(err_2);
-                return [3 /*break*/, 8];
-            case 8:
+                _a.label = 4;
+            case 4: return [3 /*break*/, 6];
+            case 5:
+                err_1 = _a.sent();
+                console.log(err_1);
+                return [3 /*break*/, 6];
+            case 6:
                 ;
                 return [2 /*return*/];
         }
@@ -94,19 +88,19 @@ productosRouter.get('/guardar', (0, authorization_js_1.authorizationMiddleware)(
     res.sendFile(__dirname + "/public/agregoProd.html");
 });
 productosRouter.post('/guardar', (0, authorization_js_1.authorizationMiddleware)(), function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var prod, err_3;
+    var prod, err_2;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
                 _a.trys.push([0, 2, , 3]);
-                return [4 /*yield*/, prods.agregarProducto(req.body.code, req.body.title, req.body.description, req.body.price, req.body.thumbnail, req.body.stock)];
+                return [4 /*yield*/, exports.prods.agregarProducto(req.body.code, req.body.title, req.body.description, req.body.price, req.body.thumbnail, req.body.stock)];
             case 1:
                 prod = _a.sent();
                 res.json(prod);
                 return [3 /*break*/, 3];
             case 2:
-                err_3 = _a.sent();
-                console.log(err_3);
+                err_2 = _a.sent();
+                console.log(err_2);
                 return [3 /*break*/, 3];
             case 3: return [2 /*return*/];
         }
@@ -114,12 +108,12 @@ productosRouter.post('/guardar', (0, authorization_js_1.authorizationMiddleware)
 }); });
 //busco un producto por id y lo borro
 productosRouter.delete('/borrar/:id', (0, authorization_js_1.authorizationMiddleware)(), function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var productoBorrado, err_4;
+    var productoBorrado, err_3;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
                 _a.trys.push([0, 2, , 3]);
-                return [4 /*yield*/, prods.borrarProducto(parseInt(req.params.id))];
+                return [4 /*yield*/, exports.prods.borrarProducto(req.params.id)];
             case 1:
                 productoBorrado = _a.sent();
                 if (productoBorrado) {
@@ -127,13 +121,13 @@ productosRouter.delete('/borrar/:id', (0, authorization_js_1.authorizationMiddle
                     return [2 /*return*/];
                 }
                 else {
-                    res.send({ error: 'producto no encontrado' });
+                    res.send(false);
                 }
                 ;
                 return [3 /*break*/, 3];
             case 2:
-                err_4 = _a.sent();
-                console.log("hubo un error", err_4);
+                err_3 = _a.sent();
+                console.log("hubo un error", err_3);
                 return [3 /*break*/, 3];
             case 3:
                 ;
@@ -143,12 +137,12 @@ productosRouter.delete('/borrar/:id', (0, authorization_js_1.authorizationMiddle
 }); });
 // busco un producto por id y lo actualizo
 productosRouter.put('/actualizar/:id', (0, authorization_js_1.authorizationMiddleware)(), function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var prodAct, err_5;
+    var prodAct, err_4;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
                 _a.trys.push([0, 2, , 3]);
-                return [4 /*yield*/, prods.actualizarProducto(req.body.code, req.body.title, req.body.description, req.body.price, req.body.thumbnail, req.body.stock, parseInt(req.params.id))];
+                return [4 /*yield*/, exports.prods.actualizarProducto(req.body.code, req.body.title, req.body.description, req.body.price, req.body.thumbnail, req.body.stock, req.params.id)];
             case 1:
                 prodAct = _a.sent();
                 if (prodAct) {
@@ -156,32 +150,16 @@ productosRouter.put('/actualizar/:id', (0, authorization_js_1.authorizationMiddl
                     return [2 /*return*/];
                 }
                 else {
-                    res.send({ error: 'producto no encontrado' });
+                    res.send(false);
                 }
                 ;
                 return [3 /*break*/, 3];
             case 2:
-                err_5 = _a.sent();
-                console.log("hubo un error", err_5);
+                err_4 = _a.sent();
+                console.log("hubo un error", err_4);
                 return [3 /*break*/, 3];
             case 3: return [2 /*return*/];
         }
     });
 }); });
-// genero mock de productos con faker
-var id = 0;
-productosRouter.get('/vista-test/:cant?', function (req, res) {
-    var array = [];
-    var cant = Number(req.params.cant);
-    var cantidadAGenerar = isNaN(cant) ? 10 : cant;
-    for (var index = 0; index < cantidadAGenerar; index++) {
-        array.push({
-            id: ++id,
-            nombre: faker.commerce.productName(),
-            precio: faker.commerce.price(),
-            foto: faker.image.image(),
-        });
-    }
-    res.json(array);
-});
 exports.default = productosRouter;
