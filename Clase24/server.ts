@@ -1,4 +1,5 @@
 import express from "express";
+import session from 'express-session';
 import path from "path";
 import handlebars from "express-handlebars";
 import * as SocketIO from 'socket.io';
