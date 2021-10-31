@@ -137,27 +137,25 @@ var Sqlite3Dao = /** @class */ (function () {
     };
     Sqlite3Dao.prototype.buscarProducto = function (id) {
         return __awaiter(this, void 0, void 0, function () {
-            var productos, prod, error_2;
+            var prod, error_2;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        productos = [];
-                        _a.label = 1;
-                    case 1:
-                        _a.trys.push([1, 3, , 4]);
+                        _a.trys.push([0, 2, , 3]);
                         console.log('buscar por SQLite3');
                         return [4 /*yield*/, knexSQLite3.from("productos")
                                 .select("*")
                                 .where("id", "=", parseInt(id))];
-                    case 2:
+                    case 1:
                         prod = _a.sent();
-                        productos.push(prod);
-                        return [2 /*return*/, productos];
-                    case 3:
+                        console.log("producto encontrado", prod);
+                        //productos.push(prod)
+                        return [2 /*return*/, prod];
+                    case 2:
                         error_2 = _a.sent();
                         console.log(error_2);
-                        return [3 /*break*/, 4];
-                    case 4: return [2 /*return*/];
+                        return [3 /*break*/, 3];
+                    case 3: return [2 /*return*/];
                 }
             });
         });
@@ -191,7 +189,7 @@ var Sqlite3Dao = /** @class */ (function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        resultado = true;
+                        resultado = false;
                         _a.label = 1;
                     case 1:
                         _a.trys.push([1, 3, , 4]);
@@ -201,11 +199,13 @@ var Sqlite3Dao = /** @class */ (function () {
                     case 2:
                         response = _a.sent();
                         console.log("respuesta del delete", response);
+                        if (response) {
+                            resultado = true;
+                        }
                         return [3 /*break*/, 4];
                     case 3:
                         error_4 = _a.sent();
                         console.log(error_4);
-                        resultado = false;
                         return [3 /*break*/, 4];
                     case 4: return [2 /*return*/, resultado];
                 }

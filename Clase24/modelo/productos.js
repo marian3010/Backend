@@ -133,9 +133,9 @@ var Productos = /** @class */ (function () {
                             return [2 /*return*/, listaProductos];
                         }
                         if (filtro === 'nombre')
-                            return [2 /*return*/, listaProductos.find(function (producto) { return producto.title === valorDesde; })];
+                            return [2 /*return*/, [listaProductos.find(function (producto) { return producto.title === valorDesde; })]];
                         if (filtro === 'codigo')
-                            return [2 /*return*/, listaProductos.find(function (producto) { return producto.code === valorDesde; })];
+                            return [2 /*return*/, [listaProductos.find(function (producto) { return producto.code === valorDesde; })]];
                         if (filtro === 'precio')
                             return [2 /*return*/, listaProductos.filter(function (producto) { return producto.price > valorDesde && producto.price < valorHasta; })];
                         if (filtro === 'stock')

@@ -65,10 +65,11 @@ var express_handlebars_1 = __importDefault(require("express-handlebars"));
 var SocketIO = __importStar(require("socket.io"));
 // Defino la opción de Base de Datos
 var DaoFactory_1 = require("./src/DaoFactory");
-exports.opcionCapa = DaoFactory_1.capaPersistencia.mongoLocal;
+exports.opcionCapa = DaoFactory_1.capaPersistencia.fileSys;
 var mensaje_1 = require("./modelo/mensaje");
 var products_1 = __importDefault(require("./routes/products"));
 var carts_1 = __importDefault(require("./routes/carts"));
+var login_1 = require("./routes/login");
 var isAdmin = true;
 var __dirname = path_1.default.resolve();
 var port = 8080;
@@ -80,7 +81,9 @@ app.use(express_1.default.urlencoded({ extended: true }));
 app.use(express_1.default.static(__dirname + "/public"));
 app.use('/productos', products_1.default);
 app.use('/carrito', carts_1.default);
+app.use('/ecommerce', login_1.loginRouter);
 app.use(notFoundMiddleware);
+//app.use(sessionHandler);
 app.set("view engine", "hbs");
 app.set("views", path_1.default.join(__dirname, 'views'));
 app.engine("hbs", (0, express_handlebars_1.default)({

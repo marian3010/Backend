@@ -183,11 +183,11 @@ var MariaDBDao = /** @class */ (function () {
     };
     MariaDBDao.prototype.borrarProducto = function (id) {
         return __awaiter(this, void 0, void 0, function () {
-            var response, error_4;
+            var response, resul, error_4;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        response = true;
+                        response = false;
                         _a.label = 1;
                     case 1:
                         _a.trys.push([1, 3, , 4]);
@@ -195,12 +195,14 @@ var MariaDBDao = /** @class */ (function () {
                                 .where("id", "=", parseInt(id))
                                 .del()];
                     case 2:
-                        _a.sent();
+                        resul = _a.sent();
+                        if (resul) {
+                            response = true;
+                        }
                         return [3 /*break*/, 4];
                     case 3:
                         error_4 = _a.sent();
                         console.log(error_4);
-                        response = false;
                         return [3 /*break*/, 4];
                     case 4: return [2 /*return*/, response];
                 }

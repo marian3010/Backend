@@ -1,16 +1,16 @@
 import express from "express";
-import session from 'express-session';
 import path from "path";
 import handlebars from "express-handlebars";
 import * as SocketIO from 'socket.io';
 
 // Defino la opción de Base de Datos
 import {capaPersistencia} from './src/DaoFactory';
-export const opcionCapa:number = capaPersistencia.mongoLocal;
+export const opcionCapa:number = capaPersistencia.fileSys;
 
 import {Mensajes} from "./modelo/mensaje";
 import productosRouter from './routes/products';
 import carritoRouter from './routes/carts';
+import {loginRouter, sessionHandler} from './routes/login';
 
 const isAdmin:boolean = true;
 const __dirname = path.resolve();
@@ -25,7 +25,9 @@ app.use(express.static(`${__dirname}/public`));
 
 app.use('/productos', productosRouter);
 app.use('/carrito', carritoRouter);
+app.use('/ecommerce', loginRouter);
 app.use(notFoundMiddleware); 
+//app.use(sessionHandler);
 
 app.set("view engine", "hbs");
 app.set("views", path.join(__dirname, 'views'));

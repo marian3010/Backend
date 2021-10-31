@@ -88,14 +88,15 @@ class Sqlite3Dao implements Operaciones {
     }
 
     async buscarProducto(id:any) {
-        let productos = [];
+        //let productos = [];
         try {
             console.log('buscar por SQLite3')
             const prod = await knexSQLite3.from("productos")
             .select("*")
             .where("id", "=", parseInt(id))
-            productos.push(prod)
-            return productos;
+            console.log("producto encontrado", prod)
+            //productos.push(prod)
+            return prod;
         }
         catch (error) {
             console.log(error);
@@ -116,16 +117,18 @@ class Sqlite3Dao implements Operaciones {
     }    
     
     async borrarProducto(id:any): Promise<boolean> {
-        let resultado = true;
+        let resultado = false;
         try {
             const response = await knexSQLite3.from("productos")
             .where("id", "=", parseInt(id))
             .del();
             console.log("respuesta del delete", response)
+            if (response) {
+                resultado = true;
+            }
         }
         catch (error){
             console.log(error);
-            resultado = false;
         }
         return resultado;
     }

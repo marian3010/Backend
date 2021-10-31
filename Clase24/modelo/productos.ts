@@ -75,10 +75,12 @@ class Productos {
                 console.log("lista productos", listaProductos)
                 return listaProductos;
             }    
-            if (filtro === 'nombre')
-               return listaProductos.find(producto => producto.title === valorDesde)
+            if (filtro === 'nombre') 
+                return [listaProductos.find(producto => producto.title === valorDesde)]
+            
             if (filtro === 'codigo')
-               return listaProductos.find(producto => producto.code === valorDesde )
+                return [listaProductos.find(producto => producto.code === valorDesde )]
+                
             if (filtro === 'precio')
                 return listaProductos.filter(producto => producto.price > valorDesde && producto.price < valorHasta)
             if (filtro === 'stock')
