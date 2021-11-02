@@ -27,7 +27,6 @@ app.use('/productos', productosRouter);
 app.use('/carrito', carritoRouter);
 app.use('/ecommerce', loginRouter);
 app.use(notFoundMiddleware); 
-//app.use(sessionHandler);
 
 app.set("view engine", "hbs");
 app.set("views", path.join(__dirname, 'views'));

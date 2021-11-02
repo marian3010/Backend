@@ -45,7 +45,6 @@ var express_session_1 = __importDefault(require("express-session"));
 exports.loginRouter = express_1.default.Router();
 var path_1 = __importDefault(require("path"));
 var __dirname = path_1.default.resolve();
-var app = (0, express_1.default)();
 exports.sessionHandler = (0, express_session_1.default)({
     secret: 'secreto',
     resave: true,
@@ -54,29 +53,31 @@ exports.sessionHandler = (0, express_session_1.default)({
         maxAge: 60000,
     },
 });
-app.use(exports.sessionHandler);
+exports.loginRouter.use(exports.sessionHandler);
 exports.loginRouter.get('/login', function (req, res) {
-    res.sendFile(__dirname + "/public/formLogin.html");
+    if (req.session.nombre) {
+        return res.sendFile(__dirname + "/public/agregoProd.html");
+        //res.render("welcome", {username: req.session.nombre, login: true})
+    }
+    else
+        res.sendFile(__dirname + "/public/formLogin.html");
 });
 exports.loginRouter.post('/login', function (req, res) {
-    console.log("estoy en el post del login");
     if (req.session.contador) {
-        console.log("muestro el contador", req.session.contador);
         req.session.contador += 1;
         if (!req.session.nombre) {
             return res.redirect('ecommerce/login');
         }
         return res.sendFile(__dirname + "/public/agregoProd.html");
     }
-    console.log("contador en 0");
     req.session.contador = 1;
-    var username = req.body.userName.username;
-    console.log("muestro el nombre ingresado", username);
+    var username = req.body.username;
     if (!username) {
         return res.send('Login failed');
     }
     req.session.nombre = username;
-    return res.sendFile(__dirname + "/public/agregoProd.html");
+    return res.render("welcome", { username: req.session.nombre, login: true });
+    //return res.sendFile(__dirname + "/public/agregoProd.html");
 });
 exports.loginRouter.get('/logout', function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
     var nombre;
@@ -89,7 +90,23 @@ exports.loginRouter.get('/logout', function (req, res) { return __awaiter(void 0
                     body: error,
                 });
             }
-            return res.sendFile(__dirname + "/public/deslogueo.html");
+            res.render("welcome", { username: nombre, login: false });
+        });
+        return [2 /*return*/];
+    });
+}); });
+exports.loginRouter.post('/logout', function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var nombre;
+    return __generator(this, function (_a) {
+        nombre = req.session.nombre;
+        req.session.destroy(function (error) {
+            if (error) {
+                return res.send({
+                    status: 'Logout error',
+                    body: error,
+                });
+            }
+            res.render("welcome", { username: nombre, login: false });
         });
         return [2 /*return*/];
     });

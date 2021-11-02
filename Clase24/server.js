@@ -83,7 +83,6 @@ app.use('/productos', products_1.default);
 app.use('/carrito', carts_1.default);
 app.use('/ecommerce', login_1.loginRouter);
 app.use(notFoundMiddleware);
-//app.use(sessionHandler);
 app.set("view engine", "hbs");
 app.set("views", path_1.default.join(__dirname, 'views'));
 app.engine("hbs", (0, express_handlebars_1.default)({
