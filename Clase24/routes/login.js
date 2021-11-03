@@ -56,28 +56,19 @@ exports.sessionHandler = (0, express_session_1.default)({
 exports.loginRouter.use(exports.sessionHandler);
 exports.loginRouter.get('/login', function (req, res) {
     if (req.session.nombre) {
-        return res.sendFile(__dirname + "/public/agregoProd.html");
-        //res.render("welcome", {username: req.session.nombre, login: true})
+        return res.render("welcome", { username: req.session.nombre });
     }
     else
         res.sendFile(__dirname + "/public/formLogin.html");
 });
 exports.loginRouter.post('/login', function (req, res) {
-    if (req.session.contador) {
-        req.session.contador += 1;
-        if (!req.session.nombre) {
-            return res.redirect('ecommerce/login');
-        }
-        return res.sendFile(__dirname + "/public/agregoProd.html");
-    }
-    req.session.contador = 1;
     var username = req.body.username;
     if (!username) {
         return res.send('Login failed');
     }
     req.session.nombre = username;
-    return res.render("welcome", { username: req.session.nombre, login: true });
-    //return res.sendFile(__dirname + "/public/agregoProd.html");
+    console.log("usuario", req.session.nombre);
+    return res.redirect('/ecommerce/login');
 });
 exports.loginRouter.get('/logout', function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
     var nombre;
@@ -90,23 +81,7 @@ exports.loginRouter.get('/logout', function (req, res) { return __awaiter(void 0
                     body: error,
                 });
             }
-            res.render("welcome", { username: nombre, login: false });
-        });
-        return [2 /*return*/];
-    });
-}); });
-exports.loginRouter.post('/logout', function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var nombre;
-    return __generator(this, function (_a) {
-        nombre = req.session.nombre;
-        req.session.destroy(function (error) {
-            if (error) {
-                return res.send({
-                    status: 'Logout error',
-                    body: error,
-                });
-            }
-            res.render("welcome", { username: nombre, login: false });
+            res.render("byebye", { username: nombre });
         });
         return [2 /*return*/];
     });

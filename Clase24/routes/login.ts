@@ -3,7 +3,6 @@ import session from 'express-session';
 declare module "express-session" {
     interface Session {
       nombre: string;
-      contador: number;
     }
   }
 export const loginRouter = express.Router();
@@ -23,47 +22,22 @@ export const sessionHandler = session(
 loginRouter.use(sessionHandler);
 
 loginRouter.get('/login', (req: express.Request, res: express.Response) => {
-    if (req.session.nombre) {
-        return res.sendFile(__dirname + "/public/agregoProd.html");
-        //res.render("welcome", {username: req.session.nombre, login: true})
-    } else res.sendFile(__dirname + "/public/formLogin.html");
+  if (req.session.nombre) {
+    return res.render("welcome", {username: req.session.nombre})
+  } else res.sendFile(__dirname + "/public/formLogin.html");
 });
 
 loginRouter.post('/login', (req: express.Request, res: express.Response) => {
-
-    if (req.session.contador) {
-        req.session.contador += 1;
-        if (!req.session.nombre) {
-          return res.redirect('ecommerce/login');
-        }
-        return res.sendFile(__dirname + "/public/agregoProd.html");
-    }
-       
-    req.session.contador = 1;
-    const { username } = req.body;
-    if (!username) {
-        return res.send('Login failed');
-    }
-    req.session.nombre = username;
-    return res.render("welcome", {username: req.session.nombre, login: true})
-    //return res.sendFile(__dirname + "/public/agregoProd.html");
+  const { username } = req.body;
+  if (!username) {
+      return res.send('Login failed');
+  }
+  req.session.nombre = username;
+  console.log("usuario", req.session.nombre)
+  return res.redirect('/ecommerce/login');
 });
-  
+
 loginRouter.get('/logout', async (req: express.Request, res: express.Response) => {
-    const { nombre } = req.session;
-    req.session.destroy((error) => {
-        if (error) {
-          return res.send({
-              status: 'Logout error',
-              body: error,
-            });
-        }
-        res.render("welcome", {username: nombre, login: false})
-           
-    });
-});
-
-loginRouter.post('/logout', async (req: express.Request, res: express.Response) => {
   const { nombre } = req.session;
   req.session.destroy((error) => {
       if (error) {
@@ -72,9 +46,6 @@ loginRouter.post('/logout', async (req: express.Request, res: express.Response) 
             body: error,
           });
       }
-      res.render("welcome", {username: nombre, login: false})
-         
+      res.render("byebye", {username: nombre})
   });
 });
-
-
