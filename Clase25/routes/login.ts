@@ -21,7 +21,7 @@ export const sessionHandler = session(
     resave: true,
     saveUninitialized: true,
     cookie: {
-        maxAge: 6000,
+        maxAge: 60000,
       },
   },
 );
