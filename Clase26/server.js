@@ -69,6 +69,7 @@ exports.opcionCapa = DaoFactory_1.capaPersistencia.fileSys;
 var mensaje_1 = require("./modelo/mensaje");
 var products_1 = __importDefault(require("./routes/products"));
 var carts_1 = __importDefault(require("./routes/carts"));
+//import {loginRouter, sessionHandler} from './routes/login';
 var login_1 = require("./routes/login");
 var isAdmin = true;
 var __dirname = path_1.default.resolve();

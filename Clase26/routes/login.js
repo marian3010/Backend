@@ -39,14 +39,18 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.sessionHandler = exports.loginRouter = void 0;
+exports.loginRouter = void 0;
 var express_1 = __importDefault(require("express"));
-var express_session_1 = __importDefault(require("express-session"));
 var bCrypt = require('bcrypt');
 var passport = require('passport');
 var passportLocal = require('passport-local');
-var User = require('./model/users');
+var users_1 = require("../model/users");
 var mongoose = require("mongoose");
+exports.loginRouter = express_1.default.Router();
+var path_1 = __importDefault(require("path"));
+var __dirname = path_1.default.resolve();
+exports.loginRouter.use(passport.initialize());
+exports.loginRouter.use(passport.session());
 ////////
 function connectMongoose() {
     return __awaiter(this, void 0, void 0, function () {
@@ -61,7 +65,7 @@ function connectMongoose() {
                     return [4 /*yield*/, mongoose.connect("mongodb://localhost:27017/ecommerce")];
                 case 2:
                     _a.sent();
-                    console.log("Base de datos conectada");
+                    console.log("Base de datos Mongo conectada");
                     return [3 /*break*/, 4];
                 case 3:
                     error_1 = _a.sent();
@@ -80,7 +84,7 @@ var signUpStrategyName = 'signup';
 passport.use(loginStrategyName, new passportLocal.Strategy({
     passReqToCallback: true,
 }, function (_request, username, password, done) {
-    User.findOne({
+    users_1.Users.findOne({
         username: username,
     }, function (error, user) {
         if (error) {
@@ -100,9 +104,10 @@ passport.use(loginStrategyName, new passportLocal.Strategy({
 passport.use(signUpStrategyName, new passportLocal.Strategy({
     passReqToCallback: true,
 }, function (request, username, password, done) {
-    User.findOne({
+    users_1.Users.findOne({
         username: username,
     }, function (error, user) {
+        console.log("verificando errores linea 78");
         if (error) {
             console.log("Error in SignUp: " + error);
             return done(error);
@@ -111,7 +116,8 @@ passport.use(signUpStrategyName, new passportLocal.Strategy({
             console.log('User already exists');
             return done(null, false);
         }
-        var newUser = new User();
+        console.log("creando objeto usuario");
+        var newUser = new users_1.Users();
         newUser.username = username;
         newUser.password = createHash(password);
         newUser.email = request.body.email;
@@ -131,45 +137,38 @@ passport.serializeUser(function (user, done) {
     done(null, user._id);
 });
 passport.deserializeUser(function (id, done) {
-    User.findById(id, function (error, user) { return done(error, user); });
+    users_1.Users.findById(id, function (error, user) { return done(error, user); });
 });
-/// ///////////////////
-//const checkAuthentication = (request: express.Request, response: express.Response, next: any) => {
-//  if (request.isAuthenticated()) {
-//    return next();
-//  }
-//  return response
-//    .redirect(302, '/login');
-//};
-///////////////////
-connectMongoose();
-var connect_mongo_1 = __importDefault(require("connect-mongo"));
+////////////////////////
+var checkAuthentication = function (request, response, next) {
+    if (request.isAuthenticated()) {
+        return next();
+    }
+    return response
+        .redirect(302, '/login');
+};
 var advancedOptions = { useNewUrlParser: true, useUnifiedTopology: true };
-exports.loginRouter = express_1.default.Router();
-var path_1 = __importDefault(require("path"));
-var __dirname = path_1.default.resolve();
-exports.sessionHandler = (0, express_session_1.default)({
-    store: connect_mongo_1.default.create({
-        mongoUrl: 'mongodb+srv://admin:12345@cluster0.jbzno.mongodb.net/ecommerce?retryWrites=true&w=majority',
-        mongoOptions: advancedOptions
-    }),
+/*export const sessionHandler = session(
+  {
+    store: MongoStore.create({
+      mongoUrl: 'mongodb+srv://admin:12345@cluster0.jbzno.mongodb.net/ecommerce?retryWrites=true&w=majority',
+      mongoOptions: advancedOptions}),
     secret: 'secreto',
     resave: true,
     saveUninitialized: true,
     cookie: {
         maxAge: 60000,
-    },
-});
-exports.loginRouter.use(exports.sessionHandler);
+      },
+  },
+);*/
+//loginRouter.use(sessionHandler);
 exports.loginRouter.get('/login', function (req, res) {
-    if (req.session.nombre) {
-        return res.render("welcome", { username: req.session.nombre });
-    }
-    else
-        res.sendFile(__dirname + "/public/formLogin.html");
+    //if (req.session.nombre) {
+    //return res.render("welcome", {username: req.session.nombre})
+    res.sendFile(__dirname + "/public/formLogin.html");
 });
 exports.loginRouter.post('/login', function (req, res) {
-    passport.authenticate(loginStrategyName, { failureRedirect: '/ecommerce/faillogin' });
+    //passport.authenticate(loginStrategyName, { failureRedirect: '/ecommerce/faillogin' })
     return res.redirect('/ecommerce/login');
 });
 exports.loginRouter.get('/faillogin', function (req, res) {
@@ -181,29 +180,35 @@ exports.loginRouter.get('/faillogin', function (req, res) {
 exports.loginRouter.get('/registro', function (req, res) {
     res.sendFile(__dirname + "/public/formRegistro.html");
 });
-exports.loginRouter.post('/registro', function (req, res) {
-    passport.authenticate(signUpStrategyName, { failureRedirect: '/ecommerce/failsignup' });
-    location.href = "/ecommerce/login";
-});
+exports.loginRouter.post('/registro', function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                console.log("va a conectar a mongoose para registrar");
+                return [4 /*yield*/, connectMongoose()];
+            case 1:
+                _a.sent();
+                console.log("mostrar el body del front", req.body.username);
+                //passport.authenticate(signUpStrategyName, { failureRedirect: '/ecommerce/failsignup' })
+                return [2 /*return*/, res.redirect('/ecommerce/login')];
+        }
+    });
+}); });
 exports.loginRouter.get('/failsignup', function (req, res) {
     console.log('error en signup');
     return res
         .status(500)
         .render('signup-error', {});
 });
-exports.loginRouter.get('/logout', function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var nombre;
-    return __generator(this, function (_a) {
-        nombre = req.session.nombre;
-        req.session.destroy(function (error) {
-            if (error) {
-                return res.send({
-                    status: 'Logout error',
-                    body: error,
-                });
-            }
-            res.render("byebye", { username: nombre });
-        });
-        return [2 /*return*/];
-    });
-}); });
+/*loginRouter.get('/logout', async (req: express.Request, res: express.Response) => {
+  const { nombre } = req.session;
+  req.session.destroy((error) => {
+      if (error) {
+        return res.send({
+            status: 'Logout error',
+            body: error,
+          });
+      }
+      res.render("byebye", {username: nombre})
+  });
+});*/

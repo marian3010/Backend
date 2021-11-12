@@ -1,4 +1,13 @@
 import mongoose from 'mongoose';
+import { Document } from 'mongoose';
+
+export interface IUsuario extends Document {
+    username?: string,
+    password?: string,
+    email?: string,
+    firstName?: string,
+    lastName?: string
+};    
 
 const userSchema = new mongoose.Schema({
     username: {
