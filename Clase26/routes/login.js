@@ -39,8 +39,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.loginRouter = void 0;
+exports.sessionHandler = exports.loginRouter = void 0;
 var express_1 = __importDefault(require("express"));
+var express_session_1 = __importDefault(require("express-session"));
 var bCrypt = require('bcrypt');
 var passport = require('passport');
 var passportLocal = require('passport-local');
@@ -49,6 +50,21 @@ var mongoose = require("mongoose");
 exports.loginRouter = express_1.default.Router();
 var path_1 = __importDefault(require("path"));
 var __dirname = path_1.default.resolve();
+var connect_mongo_1 = __importDefault(require("connect-mongo"));
+var advancedOptions = { useNewUrlParser: true, useUnifiedTopology: true };
+exports.sessionHandler = (0, express_session_1.default)({
+    store: connect_mongo_1.default.create({
+        mongoUrl: 'mongodb+srv://admin:12345@cluster0.jbzno.mongodb.net/ecommerce?retryWrites=true&w=majority',
+        mongoOptions: advancedOptions
+    }),
+    secret: 'secreto',
+    resave: true,
+    saveUninitialized: true,
+    cookie: {
+        maxAge: 60000,
+    },
+});
+exports.loginRouter.use(exports.sessionHandler);
 exports.loginRouter.use(passport.initialize());
 exports.loginRouter.use(passport.session());
 ////////
@@ -104,6 +120,7 @@ passport.use(loginStrategyName, new passportLocal.Strategy({
 passport.use(signUpStrategyName, new passportLocal.Strategy({
     passReqToCallback: true,
 }, function (request, username, password, done) {
+    console.log("va a verificar si existe");
     users_1.Users.findOne({
         username: username,
     }, function (error, user) {
@@ -147,28 +164,22 @@ var checkAuthentication = function (request, response, next) {
     return response
         .redirect(302, '/login');
 };
-var advancedOptions = { useNewUrlParser: true, useUnifiedTopology: true };
-/*export const sessionHandler = session(
-  {
-    store: MongoStore.create({
-      mongoUrl: 'mongodb+srv://admin:12345@cluster0.jbzno.mongodb.net/ecommerce?retryWrites=true&w=majority',
-      mongoOptions: advancedOptions}),
-    secret: 'secreto',
-    resave: true,
-    saveUninitialized: true,
-    cookie: {
-        maxAge: 60000,
-      },
-  },
-);*/
-//loginRouter.use(sessionHandler);
+////////////////////////
 exports.loginRouter.get('/login', function (req, res) {
-    //if (req.session.nombre) {
-    //return res.render("welcome", {username: req.session.nombre})
-    res.sendFile(__dirname + "/public/formLogin.html");
+    if (req.session.nombre) {
+        return res.render("welcome", { username: req.session.nombre });
+    }
+    else
+        res.sendFile(__dirname + "/public/formLogin.html");
 });
 exports.loginRouter.post('/login', function (req, res) {
-    //passport.authenticate(loginStrategyName, { failureRedirect: '/ecommerce/faillogin' })
+    passport.authenticate(loginStrategyName, { failureRedirect: '/ecommerce/faillogin' });
+    var username = req.body.username;
+    if (!username) {
+        return res.send('Login failed');
+    }
+    req.session.nombre = username;
+    console.log("usuario", req.session.nombre);
     return res.redirect('/ecommerce/login');
 });
 exports.loginRouter.get('/faillogin', function (req, res) {
@@ -189,7 +200,8 @@ exports.loginRouter.post('/registro', function (req, res) { return __awaiter(voi
             case 1:
                 _a.sent();
                 console.log("mostrar el body del front", req.body.username);
-                //passport.authenticate(signUpStrategyName, { failureRedirect: '/ecommerce/failsignup' })
+                passport.authenticate(signUpStrategyName, { failureRedirect: '/ecommerce/failsignup' });
+                console.log("salio del passport");
                 return [2 /*return*/, res.redirect('/ecommerce/login')];
         }
     });
@@ -200,15 +212,19 @@ exports.loginRouter.get('/failsignup', function (req, res) {
         .status(500)
         .render('signup-error', {});
 });
-/*loginRouter.get('/logout', async (req: express.Request, res: express.Response) => {
-  const { nombre } = req.session;
-  req.session.destroy((error) => {
-      if (error) {
-        return res.send({
-            status: 'Logout error',
-            body: error,
-          });
-      }
-      res.render("byebye", {username: nombre})
-  });
-});*/
+exports.loginRouter.get('/logout', function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var nombre;
+    return __generator(this, function (_a) {
+        nombre = req.session.nombre;
+        req.session.destroy(function (error) {
+            if (error) {
+                return res.send({
+                    status: 'Logout error',
+                    body: error,
+                });
+            }
+            res.render("byebye", { username: nombre });
+        });
+        return [2 /*return*/];
+    });
+}); });

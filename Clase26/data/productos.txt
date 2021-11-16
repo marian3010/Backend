@@ -18,5 +18,15 @@
 		"stock": "11",
 		"timestamp": 1635204861747,
 		"id": 3
+	},
+	{
+		"code": "A104",
+		"title": "lupa",
+		"description": "lupa de vidrio grande",
+		"price": "190",
+		"thumbnail": "www.lupa.com.ar",
+		"stock": "19",
+		"timestamp": 1637017401352,
+		"id": 4
 	}
 ]

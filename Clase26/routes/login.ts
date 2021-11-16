@@ -16,6 +16,23 @@ export const loginRouter = express.Router();
 import path from "path";
 const __dirname = path.resolve();
 
+
+import MongoStore from 'connect-mongo';
+const advancedOptions: any = {useNewUrlParser: true, useUnifiedTopology: true}
+export const sessionHandler = session(
+  {
+    store: MongoStore.create({
+      mongoUrl: 'mongodb+srv://admin:12345@cluster0.jbzno.mongodb.net/ecommerce?retryWrites=true&w=majority',
+      mongoOptions: advancedOptions}),
+    secret: 'secreto',
+    resave: true,
+    saveUninitialized: true,
+    cookie: {
+        maxAge: 60000,
+      },
+  },
+);
+loginRouter.use(sessionHandler);
 loginRouter.use(passport.initialize());
 loginRouter.use(passport.session());
 
@@ -76,6 +93,7 @@ passport.use(
       passReqToCallback: true,
     },
     (request: express.Request, username: string, password: string, done: any) => {
+      console.log("va a verificar si existe");
       Users.findOne(
         {
           username,
@@ -104,7 +122,7 @@ passport.use(
           newUser.email = request.body.email;
           newUser.firstName = request.body.firstName;
           newUser.lastName = request.body.lastName;
-
+     
           return newUser.save((error: any) => {
             if (error) {
               console.log(`Error in Saving user: ${error}`);
@@ -141,33 +159,22 @@ const checkAuthentication = (request: any, response: express.Response, next: any
 };
 ////////////////////////
 
-import MongoStore from 'connect-mongo';
-const advancedOptions: any = {useNewUrlParser: true, useUnifiedTopology: true}
-
-/*export const sessionHandler = session(
-  {
-    store: MongoStore.create({
-      mongoUrl: 'mongodb+srv://admin:12345@cluster0.jbzno.mongodb.net/ecommerce?retryWrites=true&w=majority',
-      mongoOptions: advancedOptions}),
-    secret: 'secreto',
-    resave: true,
-    saveUninitialized: true,
-    cookie: {
-        maxAge: 60000,
-      },
-  },
-);*/
-//loginRouter.use(sessionHandler);
-
 loginRouter.get('/login', (req: express.Request, res: express.Response) => {
-  //if (req.session.nombre) {
-    //return res.render("welcome", {username: req.session.nombre})
-   res.sendFile(__dirname + "/public/formLogin.html");
+  if (req.session.nombre) {
+    return res.render("welcome", {username: req.session.nombre})
+  } else res.sendFile(__dirname + "/public/formLogin.html");
 });
 
 loginRouter.post('/login', (req: express.Request, res: express.Response) => {
-  //passport.authenticate(loginStrategyName, { failureRedirect: '/ecommerce/faillogin' })
+  passport.authenticate(loginStrategyName, { failureRedirect: '/ecommerce/faillogin' })
+  const { username } = req.body;
+  if (!username) {
+      return res.send('Login failed');
+  }
+  req.session.nombre = username;
+  console.log("usuario", req.session.nombre)
   return res.redirect('/ecommerce/login');
+  
 });
 
 loginRouter.get('/faillogin', (req: express.Request, res: express.Response) => {
@@ -186,7 +193,8 @@ loginRouter.post('/registro', async (req: express.Request, res: express.Response
   console.log("va a conectar a mongoose para registrar");
   await connectMongoose();
   console.log("mostrar el body del front", req.body.username);
-  //passport.authenticate(signUpStrategyName, { failureRedirect: '/ecommerce/failsignup' })
+  passport.authenticate(signUpStrategyName, { failureRedirect: '/ecommerce/failsignup' })
+  console.log("salio del passport");
   return res.redirect('/ecommerce/login');
  
 });
@@ -199,7 +207,7 @@ loginRouter.get('/failsignup', (req: express.Request, res: express.Response) => 
   }
 );
 
-/*loginRouter.get('/logout', async (req: express.Request, res: express.Response) => {
+loginRouter.get('/logout', async (req: express.Request, res: express.Response) => {
   const { nombre } = req.session;
   req.session.destroy((error) => {
       if (error) {
@@ -210,4 +218,4 @@ loginRouter.get('/failsignup', (req: express.Request, res: express.Response) => 
       }
       res.render("byebye", {username: nombre})
   });
-});*/
+});

@@ -10,8 +10,8 @@ export const opcionCapa:number = capaPersistencia.fileSys;
 import {Mensajes} from "./modelo/mensaje";
 import productosRouter from './routes/products';
 import carritoRouter from './routes/carts';
-//import {loginRouter, sessionHandler} from './routes/login';
-import {loginRouter} from './routes/login';
+import {loginRouter, sessionHandler} from './routes/login';
+//import {loginRouter} from './routes/login';
 
 const isAdmin:boolean = true;
 const __dirname = path.resolve();
