@@ -14,8 +14,11 @@
         <form action="/ecommerce/logout" method="GET">
             <div class="form-row">
                 <div class="form-group col-md-6">
-                    {{#if username}}
-                        <h1 class="mt-3 mb-3 pl-3">Bienvenido {{username}}</h1>
+                    {{#if usuario}}
+                        <h1 class="mt-3 mb-3 pl-3">Bienvenido {{usuario}}</h1>
+                        <h3>Nombre: {{nombre}}</h3>
+                        <h3>Apellido: {{apellido}}</h3>
+                        <h3>Email: {{email}}</h3>
                     {{else}} 
                         <h1 class="mt-3 mb-3 pl-3">Bienvenido!</h1>
                     {{/if}}  

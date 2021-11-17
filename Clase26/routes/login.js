@@ -58,6 +58,7 @@ exports.sessionHandler = (0, express_session_1.default)({
         mongoOptions: advancedOptions
     }),
     secret: 'secreto',
+    rolling: true,
     resave: true,
     saveUninitialized: true,
     cookie: {
@@ -99,57 +100,74 @@ var loginStrategyName = 'login';
 var signUpStrategyName = 'signup';
 passport.use(loginStrategyName, new passportLocal.Strategy({
     passReqToCallback: true,
-}, function (_request, username, password, done) {
-    users_1.Users.findOne({
-        username: username,
-    }, function (error, user) {
-        if (error) {
-            return done(error);
+}, function (_request, username, password, done) { return __awaiter(void 0, void 0, void 0, function () {
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4 /*yield*/, connectMongoose()];
+            case 1:
+                _a.sent();
+                users_1.Users.findOne({
+                    username: username,
+                }, function (error, user) {
+                    if (error) {
+                        return done(error);
+                    }
+                    if (!user) {
+                        console.log("User Not Found with username " + username);
+                        return done(null, false);
+                    }
+                    if (!isValidPassword(user, password)) {
+                        console.log('Invalid Password');
+                        return done(null, false);
+                    }
+                    return done(null, user);
+                });
+                return [2 /*return*/];
         }
-        if (!user) {
-            console.log("User Not Found with username " + username);
-            return done(null, false);
-        }
-        if (!isValidPassword(user, password)) {
-            console.log('Invalid Password');
-            return done(null, false);
-        }
-        return done(null, user);
     });
-}));
+}); }));
 passport.use(signUpStrategyName, new passportLocal.Strategy({
     passReqToCallback: true,
-}, function (request, username, password, done) {
-    console.log("va a verificar si existe");
-    users_1.Users.findOne({
-        username: username,
-    }, function (error, user) {
-        console.log("verificando errores linea 78");
-        if (error) {
-            console.log("Error in SignUp: " + error);
-            return done(error);
+}, function (request, username, password, done) { return __awaiter(void 0, void 0, void 0, function () {
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                console.log("va a verificar si existe");
+                return [4 /*yield*/, connectMongoose()];
+            case 1:
+                _a.sent();
+                users_1.Users.findOne({
+                    username: username,
+                }, function (error, user) {
+                    console.log("verificando errores linea 78");
+                    if (error) {
+                        console.log("Error in SignUp: " + error);
+                        return done(error);
+                    }
+                    if (user) {
+                        console.log('User already exists');
+                        return done(null, false);
+                    }
+                    console.log("creando objeto usuario");
+                    var newUser = new users_1.Users();
+                    newUser.username = username;
+                    newUser.password = createHash(password);
+                    newUser.email = request.body.email;
+                    newUser.firstName = request.body.firstName;
+                    newUser.lastName = request.body.lastName;
+                    return newUser.save(function (error) {
+                        if (error) {
+                            console.log("Error in Saving user: " + error);
+                            throw error;
+                        }
+                        console.log('User Registration succesful');
+                        return done(null, newUser);
+                    });
+                });
+                return [2 /*return*/];
         }
-        if (user) {
-            console.log('User already exists');
-            return done(null, false);
-        }
-        console.log("creando objeto usuario");
-        var newUser = new users_1.Users();
-        newUser.username = username;
-        newUser.password = createHash(password);
-        newUser.email = request.body.email;
-        newUser.firstName = request.body.firstName;
-        newUser.lastName = request.body.lastName;
-        return newUser.save(function (error) {
-            if (error) {
-                console.log("Error in Saving user: " + error);
-                throw error;
-            }
-            console.log('User Registration succesful');
-            return done(null, newUser);
-        });
     });
-}));
+}); }));
 passport.serializeUser(function (user, done) {
     done(null, user._id);
 });
@@ -166,14 +184,27 @@ var checkAuthentication = function (request, response, next) {
 };
 ////////////////////////
 exports.loginRouter.get('/login', function (req, res) {
-    if (req.session.nombre) {
-        return res.render("welcome", { username: req.session.nombre });
+    //if (req.session.nombre) {
+    //  return res.render("welcome", {username: req.session.nombre})
+    //} else res.sendFile(__dirname + "/public/formLogin.html");
+    if (req.isAuthenticated()) {
+        var user = req.user;
+        console.log('user logueado');
+        return res
+            .status(200)
+            .render('welcome', {
+            usuario: user.username,
+            nombre: user.firstName,
+            apellido: user.lastName,
+            email: user.email,
+        });
     }
-    else
-        res.sendFile(__dirname + "/public/formLogin.html");
+    console.log('user NO logueado');
+    return res
+        .status(200)
+        .sendFile(__dirname + "/public/formlogin.html");
 });
-exports.loginRouter.post('/login', function (req, res) {
-    passport.authenticate(loginStrategyName, { failureRedirect: '/ecommerce/faillogin' });
+exports.loginRouter.post('/login', passport.authenticate(loginStrategyName, { failureRedirect: '/ecommerce/faillogin' }), function (req, res) {
     var username = req.body.username;
     if (!username) {
         return res.send('Login failed');
@@ -186,31 +217,28 @@ exports.loginRouter.get('/faillogin', function (req, res) {
     console.log('error en login');
     return res
         .status(500)
-        .render('login-error', {});
+        .render('error-login', {});
 });
 exports.loginRouter.get('/registro', function (req, res) {
     res.sendFile(__dirname + "/public/formRegistro.html");
 });
-exports.loginRouter.post('/registro', function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+exports.loginRouter.post('/registro', passport.authenticate(signUpStrategyName, { failureRedirect: '/ecommerce/failsignup' }), function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
     return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0:
-                console.log("va a conectar a mongoose para registrar");
-                return [4 /*yield*/, connectMongoose()];
-            case 1:
-                _a.sent();
-                console.log("mostrar el body del front", req.body.username);
-                passport.authenticate(signUpStrategyName, { failureRedirect: '/ecommerce/failsignup' });
-                console.log("salio del passport");
-                return [2 /*return*/, res.redirect('/ecommerce/login')];
-        }
+        return [2 /*return*/, res.redirect('/ecommerce/login')];
     });
 }); });
 exports.loginRouter.get('/failsignup', function (req, res) {
-    console.log('error en signup');
+    console.log('error en registro');
     return res
         .status(500)
-        .render('signup-error', {});
+        .render('error-registro', {});
+});
+exports.loginRouter.get('/ruta-protegida', checkAuthentication, function (req, res) {
+    var user = req.user;
+    console.log(user);
+    return res
+        .status(200)
+        .send('<h1>Ruta OK!</h1>');
 });
 exports.loginRouter.get('/logout', function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
     var nombre;

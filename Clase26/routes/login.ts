@@ -25,6 +25,7 @@ export const sessionHandler = session(
       mongoUrl: 'mongodb+srv://admin:12345@cluster0.jbzno.mongodb.net/ecommerce?retryWrites=true&w=majority',
       mongoOptions: advancedOptions}),
     secret: 'secreto',
+    rolling: true,
     resave: true,
     saveUninitialized: true,
     cookie: {
@@ -59,7 +60,8 @@ passport.use(
     {
       passReqToCallback: true,
     },
-    (_request: express.Request, username: string, password: string, done: any) => {
+    async (_request: express.Request, username: string, password: string, done: any) => {
+      await connectMongoose();
       Users.findOne({
         username,
       },
@@ -92,8 +94,9 @@ passport.use(
     {
       passReqToCallback: true,
     },
-    (request: express.Request, username: string, password: string, done: any) => {
+    async (request: express.Request, username: string, password: string, done: any) => {
       console.log("va a verificar si existe");
+      await connectMongoose();
       Users.findOne(
         {
           username,
@@ -159,14 +162,30 @@ const checkAuthentication = (request: any, response: express.Response, next: any
 };
 ////////////////////////
 
-loginRouter.get('/login', (req: express.Request, res: express.Response) => {
-  if (req.session.nombre) {
-    return res.render("welcome", {username: req.session.nombre})
-  } else res.sendFile(__dirname + "/public/formLogin.html");
+loginRouter.get('/login', (req: any, res: express.Response) => {
+  //if (req.session.nombre) {
+  //  return res.render("welcome", {username: req.session.nombre})
+  //} else res.sendFile(__dirname + "/public/formLogin.html");
+  if (req.isAuthenticated()) {
+    const { user } = req;
+    console.log('user logueado');
+    return res
+      .status(200)
+      .render('welcome', {
+        usuario: user.username,
+        nombre: user.firstName,
+        apellido: user.lastName,
+        email: user.email,
+      });
+  }
+  console.log('user NO logueado');
+  return res
+    .status(200)
+    .sendFile(`${__dirname}/public/formlogin.html`);
 });
 
-loginRouter.post('/login', (req: express.Request, res: express.Response) => {
-  passport.authenticate(loginStrategyName, { failureRedirect: '/ecommerce/faillogin' })
+loginRouter.post('/login',passport.authenticate(loginStrategyName, { failureRedirect: '/ecommerce/faillogin' }), (req: express.Request, res: express.Response) => {
+  
   const { username } = req.body;
   if (!username) {
       return res.send('Login failed');
@@ -181,7 +200,7 @@ loginRouter.get('/faillogin', (req: express.Request, res: express.Response) => {
     console.log('error en login');
     return res
       .status(500)
-      .render('login-error', {});
+      .render('error-login', {});
   }
 );
 
@@ -189,23 +208,25 @@ loginRouter.get('/registro', (req: express.Request, res: express.Response) => {
     res.sendFile(__dirname + "/public/formRegistro.html");
 });
 
-loginRouter.post('/registro', async (req: express.Request, res: express.Response) => {
-  console.log("va a conectar a mongoose para registrar");
-  await connectMongoose();
-  console.log("mostrar el body del front", req.body.username);
-  passport.authenticate(signUpStrategyName, { failureRedirect: '/ecommerce/failsignup' })
-  console.log("salio del passport");
+loginRouter.post('/registro', passport.authenticate(signUpStrategyName, { failureRedirect: '/ecommerce/failsignup' }), async (req: express.Request, res: express.Response) => {
   return res.redirect('/ecommerce/login');
- 
 });
 
 loginRouter.get('/failsignup', (req: express.Request, res: express.Response) => {
-    console.log('error en signup');
+    console.log('error en registro');
     return res
       .status(500)
-      .render('signup-error', {});
+      .render('error-registro', {});
   }
 );
+
+loginRouter.get('/ruta-protegida', checkAuthentication, (req: any, res: express.Response) => {
+  const { user } = req;
+  console.log(user);
+  return res
+    .status(200)
+    .send('<h1>Ruta OK!</h1>');
+});
 
 loginRouter.get('/logout', async (req: express.Request, res: express.Response) => {
   const { nombre } = req.session;
