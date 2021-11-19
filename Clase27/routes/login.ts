@@ -62,7 +62,7 @@ passport.use(
     {
       clientID: FACEBOOK_CLIENT_ID,
       clientSecret: FACEBOOK_CLIENT_SECRET,
-      callbackURL: '/auth/facebook/callback',
+      callbackURL: '/ecommerce/oklogin',
       profileFields: ['id', 'displayName', 'photos', 'emails'],
     },
     (_accessToken: any, _refreshToken: any, profile: any, done: any) => {
@@ -155,11 +155,9 @@ passport.use(
   ),
 );*/
 
-passport.serializeUser((user:any, done:any) => {
-  done(null, user._id);
-});
-
+passport.serializeUser((user:any, done:any) => done(null, user));
 passport.deserializeUser((user:any, done:any) => done(null, user));
+
 /*passport.deserializeUser((id: any, done: any) => {
   Users.findById(id, (error: string, user: any) => done(error, user));
 });*/
@@ -211,39 +209,40 @@ loginRouter.get('/', (req: any, res:express.Response) => {
       return res.render('datos', {
         id: req.user.id,
         nombre: req.user.displayName,
-        email: req.user.emails[0].value,
+        foto: req.user.photos[0].value,
       })
     }
     return res.render('registro');
   },
 );
 
-loginRouter.post('/login',passport.authenticate('facebook',
-{
-  successRedirect: '/datos',
-  failureRedirect: '/faillogin',
-},)
+loginRouter.post('/login',passport.authenticate('facebook', {
+  scope: 'email',
+  authType: 'reauthenticate',
+  authNonce: 'foo123'
+})
 );
 
 loginRouter.get('/oklogin',passport.authenticate(
     'facebook',
     {
-      successRedirect: '/datos',
-      failureRedirect: '/faillogin',
+      successRedirect: '/ecommerce/datos',
+      failureRedirect: '/ecommerce/faillogin',
     },
   ),
 );
 
 loginRouter.get('/datos', (req: any, res: express.Response) => {
     if (req.isAuthenticated()) {
+      console.log("entro a /datos", req.user.id)
       return res.render('datos', {
         id: req.user.id,
         nombre: req.user.displayName,
-        email: req.user.emails[0].value,
+        foto: req.user.photos[0].value,
       })
     }
 
-    return res.redirect('/');
+    return res.redirect('/ecommerce/');
   },
 );
 
@@ -292,9 +291,12 @@ loginRouter.post('/registro', passport.authenticate(signUpStrategyName, { failur
   });
 });*/
 
-loginRouter.get('/logout', (req: any, res: express.Response) => {
-    req.logOut();
 
-    return res.redirect('/');
+loginRouter.get('/logout', (req: any, res: express.Response) => {
+  let username =  req.profile.displayName;
+  console.log("usuario que se desloguea", username);
+  req.logOut();
+  res.render("byebye", {username}) 
+    //return res.redirect('/ecommerce/');
   },
 );

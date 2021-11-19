@@ -6,14 +6,19 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.sessionHandler = exports.loginRouter = void 0;
 var express_1 = __importDefault(require("express"));
 var express_session_1 = __importDefault(require("express-session"));
+//declare module "express-session" {
+/* interface Session {
+   nombre: string;
+ }*/
+//  }
 //const bCrypt = require('bcrypt');
 var passport = require('passport');
 //const passportLocal = require('passport-local');
 //import {Users, IUsuario} from '../model/users';
 //const mongoose = require("mongoose");
 exports.loginRouter = express_1.default.Router();
-var path_1 = __importDefault(require("path"));
-var __dirname = path_1.default.resolve();
+//import path from "path";
+//const __dirname = path.resolve();
 //import MongoStore from 'connect-mongo';
 //const advancedOptions: any = {useNewUrlParser: true, useUnifiedTopology: true}
 exports.sessionHandler = (0, express_session_1.default)({
@@ -52,7 +57,7 @@ var FACEBOOK_CLIENT_SECRET = 'bdc22f2dd51fd93cdaf053b722598c31';
 passport.use(new FacebookStrategy({
     clientID: FACEBOOK_CLIENT_ID,
     clientSecret: FACEBOOK_CLIENT_SECRET,
-    callbackURL: '/auth/facebook/callback',
+    callbackURL: '/ecommerce/oklogin',
     profileFields: ['id', 'displayName', 'photos', 'emails'],
 }, function (_accessToken, _refreshToken, profile, done) {
     console.log(profile);
@@ -138,9 +143,7 @@ passport.use(new FacebookStrategy({
     },
   ),
 );*/
-passport.serializeUser(function (user, done) {
-    done(null, user._id);
-});
+passport.serializeUser(function (user, done) { return done(null, user); });
 passport.deserializeUser(function (user, done) { return done(null, user); });
 /*passport.deserializeUser((id: any, done: any) => {
   Users.findById(id, (error: string, user: any) => done(error, user));
@@ -190,28 +193,30 @@ exports.loginRouter.get('/', function (req, res) {
         return res.render('datos', {
             id: req.user.id,
             nombre: req.user.displayName,
-            email: req.user.emails[0].value,
+            foto: req.user.photos[0].value,
         });
     }
     return res.render('registro');
 });
 exports.loginRouter.post('/login', passport.authenticate('facebook', {
-    successRedirect: '/datos',
-    failureRedirect: '/faillogin',
+    scope: 'email',
+    authType: 'reauthenticate',
+    authNonce: 'foo123'
 }));
 exports.loginRouter.get('/oklogin', passport.authenticate('facebook', {
-    successRedirect: '/datos',
-    failureRedirect: '/faillogin',
+    successRedirect: '/ecommerce/datos',
+    failureRedirect: '/ecommerce/faillogin',
 }));
 exports.loginRouter.get('/datos', function (req, res) {
     if (req.isAuthenticated()) {
+        console.log("entro a /datos", req.user.id);
         return res.render('datos', {
             id: req.user.id,
             nombre: req.user.displayName,
-            email: req.user.emails[0].value,
+            foto: req.user.photos[0].value,
         });
     }
-    return res.redirect('/');
+    return res.redirect('/ecommerce/');
 });
 exports.loginRouter.get('/faillogin', function (req, res) {
     console.log('error en login');
@@ -253,6 +258,9 @@ loginRouter.post('/registro', passport.authenticate(signUpStrategyName, { failur
   });
 });*/
 exports.loginRouter.get('/logout', function (req, res) {
+    var username = req.profile.displayName;
+    console.log("usuario que se desloguea", username);
     req.logOut();
-    return res.redirect('/');
+    res.render("byebye", { username: username });
+    //return res.redirect('/ecommerce/');
 });
