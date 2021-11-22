@@ -221,12 +221,10 @@ passport.deserializeUser((user:any, done:any) => done(null, user));
   
 });*/
 
-let username:string;
 
 loginRouter.get('/', (req: any, res:express.Response) => {
     if (req.isAuthenticated()) {
-      username = req.user.displayName
-      return res.render('datos', {
+        return res.render('datos', {
         id: req.user.id,
         nombre: req.user.displayName,
         foto: req.user.photos[0].value,

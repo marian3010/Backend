@@ -202,10 +202,8 @@ passport.deserializeUser(function (user, done) { return done(null, user); });
   return res.redirect('/ecommerce/login');
   
 });*/
-var username;
 exports.loginRouter.get('/', function (req, res) {
     if (req.isAuthenticated()) {
-        username = req.user.displayName;
         return res.render('datos', {
             id: req.user.id,
             nombre: req.user.displayName,
