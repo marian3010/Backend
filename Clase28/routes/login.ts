@@ -1,5 +1,7 @@
 import express from "express";
 import session from 'express-session';
+const { fork } = require('child_process');
+
 //declare module "express-session" {
    /* interface Session {
       nombre: string;
@@ -52,8 +54,20 @@ loginRouter.use(passport.session());
 //const isValidPassword = (user: any, password: string) => bCrypt.compareSync(password, user.password);
 
 const FacebookStrategy = require('passport-facebook').Strategy;
-const FACEBOOK_CLIENT_ID = '273751394685780';
-const FACEBOOK_CLIENT_SECRET = 'bdc22f2dd51fd93cdaf053b722598c31';
+/*let FACEBOOK_CLIENT_ID:string = '273751394685780';
+if (process.argv[3]){
+  FACEBOOK_CLIENT_ID = process.argv[3].toString()
+}
+let FACEBOOK_CLIENT_SECRET:string = 'bdc22f2dd51fd93cdaf053b722598c31';
+if (process.argv[4]){
+  FACEBOOK_CLIENT_SECRET = process.argv[4].toString()
+}*/
+const FACEBOOK_CLIENT_ID = Number(process.argv[3]) || '273751394685780';
+const FACEBOOK_CLIENT_SECRET = Number(process.argv[4]) || 'bdc22f2dd51fd93cdaf053b722598c31';
+console.log("facebook client ID", FACEBOOK_CLIENT_ID);
+console.log("tipo - facebook client ID", typeof(FACEBOOK_CLIENT_ID));
+console.log("facebook client secret", FACEBOOK_CLIENT_SECRET);
+console.log("tipo - facebook client secret", typeof(FACEBOOK_CLIENT_SECRET));
 //const loginStrategyName = 'login';
 //const signUpStrategyName = 'signup';
 
@@ -173,6 +187,8 @@ passport.deserializeUser((user:any, done:any) => done(null, user));
 };*/
 ////////////////////////
 
+//process.on('exit', (code) => console.log('exit ${code}'),);
+
 /*loginRouter.get('/login', (req: any, res: express.Response) => {
 
   if (req.isAuthenticated()) {
@@ -204,8 +220,12 @@ passport.deserializeUser((user:any, done:any) => done(null, user));
   return res.redirect('/ecommerce/login');
   
 });*/
+
+let username:string;
+
 loginRouter.get('/', (req: any, res:express.Response) => {
     if (req.isAuthenticated()) {
+      username = req.user.displayName
       return res.render('datos', {
         id: req.user.id,
         nombre: req.user.displayName,
@@ -234,8 +254,7 @@ loginRouter.get('/oklogin',passport.authenticate(
 
 loginRouter.get('/datos', (req: any, res: express.Response) => {
     if (req.isAuthenticated()) {
-      console.log("entro a /datos", req.user.id)
-      return res.render('datos', {
+        return res.render('datos', {
         id: req.user.id,
         nombre: req.user.displayName,
         foto: req.user.photos[0].value,
@@ -299,3 +318,31 @@ loginRouter.get('/logout', (req: any, res: express.Response) => {
     //return res.redirect('/ecommerce/');
   },
 );
+
+loginRouter.get('/info', (req:express.Request, res: express.Response) => {
+  res.render("datosProceso", {
+    argumentos: process.argv.slice(2),
+    plataforma: process.platform,
+    version: process.version,
+    usomemo: JSON.stringify(process.memoryUsage()),
+    path: process.execPath,
+    pid:process.pid,
+  });
+});
+
+loginRouter.get('/random/:cant?', (req:express.Request, res: express.Response) => {
+  let cant = 100000;
+  if (req.params.cant) {
+    cant = parseInt(req.params.cant)
+  }
+ 
+  const child = fork('./random.js');
+  console.log("parametro a enviar", cant);
+  child.send(cant, () => {console.log("max parametro enviado por el padre", cant)},)
+
+  child.on(
+    'message',
+    (message:[]) => {
+      res.json({message})}
+  );  
+});
