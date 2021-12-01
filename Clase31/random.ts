@@ -1,3 +1,5 @@
+import {consoleLogger, errorLogger, warningLogger} from './logger.js'
+
 let min:number = 1;
 let numRandom: number;
 let cant: number;
@@ -9,7 +11,7 @@ function numAleatorio(min:number, max:number) {
 process.on(
     'message',
     (cant:number) => { 
-        console.log("max recibido del proceso padre", cant);
+        consoleLogger.info(`valor max recibido del proceso padre ${cant}`);
         let resultado:any = {};
         for (let i=1; i< cant; i++) {
             numAleatorio(min,cant);

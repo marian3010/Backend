@@ -39,35 +39,31 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.prods = void 0;
+exports.miCarrito = void 0;
 var express_1 = __importDefault(require("express"));
-var productosRouter = express_1.default.Router();
-var productos_js_1 = __importDefault(require("../modelo/productos.js"));
-var authorization_js_1 = require("../middleware/authorization.js");
-exports.prods = new productos_js_1.default();
-var path_1 = __importDefault(require("path"));
-var __dirname = path_1.default.resolve();
-productosRouter.get('/', function (req, res) {
-    res.sendFile(__dirname + "/public/listoProds.html");
-});
-productosRouter.get('/listar/:id?', function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+var carritoRouter = express_1.default.Router();
+var carrito_js_1 = __importDefault(require("../modelo/carrito.js"));
+exports.miCarrito = new carrito_js_1.default();
+var logger_js_1 = require("../logger.js");
+//listar carrito
+carritoRouter.get('/listar/:id?', function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
     var idBuscar, producto, productos, err_1;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
                 _a.trys.push([0, 5, , 6]);
                 idBuscar = (req.params.id);
-                console.log("parametro a buscar idBuscar", idBuscar);
+                logger_js_1.consoleLogger.info("parametro a buscar idBuscar " + idBuscar);
                 if (!idBuscar) return [3 /*break*/, 2];
-                console.log("va a buscar productos por id");
-                return [4 /*yield*/, exports.prods.buscarProducto(idBuscar)];
+                logger_js_1.consoleLogger.info("va a buscar productos al carrito por id");
+                return [4 /*yield*/, exports.miCarrito.buscarProdCarrito(idBuscar)];
             case 1:
                 producto = _a.sent();
                 res.json(producto);
                 return [3 /*break*/, 4];
             case 2:
-                console.log("va a buscar productos sin parametro");
-                return [4 /*yield*/, exports.prods.listarProductos(req.body.filtro, req.body.valorDesde, req.body.valorHasta)];
+                logger_js_1.consoleLogger.info("va a buscar productos sin parametro al carrito");
+                return [4 /*yield*/, exports.miCarrito.listarProdsCarrito()];
             case 3:
                 productos = _a.sent();
                 res.json(productos);
@@ -75,45 +71,49 @@ productosRouter.get('/listar/:id?', function (req, res) { return __awaiter(void 
             case 4: return [3 /*break*/, 6];
             case 5:
                 err_1 = _a.sent();
-                console.log(err_1);
+                logger_js_1.errorLogger.error(err_1);
+                logger_js_1.consoleLogger.error(err_1);
                 return [3 /*break*/, 6];
-            case 6:
-                ;
-                return [2 /*return*/];
+            case 6: return [2 /*return*/];
         }
     });
 }); });
-//guardo un nuevo producto
-productosRouter.get('/guardar', (0, authorization_js_1.authorizationMiddleware)(), function (req, res) {
-    res.sendFile(__dirname + "/public/agregoProd.html");
-});
-productosRouter.post('/guardar', (0, authorization_js_1.authorizationMiddleware)(), function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+//agrego producto al carrito
+carritoRouter.post('/agregar/:id_producto', function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
     var prod, err_2;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
-                _a.trys.push([0, 2, , 3]);
-                return [4 /*yield*/, exports.prods.agregarProducto(req.body.code, req.body.title, req.body.description, req.body.price, req.body.thumbnail, req.body.stock)];
+                _a.trys.push([0, 4, , 5]);
+                if (!req.params.id_producto) return [3 /*break*/, 2];
+                return [4 /*yield*/, exports.miCarrito.agregarProdsCarrito(req.params.id_producto)];
             case 1:
                 prod = _a.sent();
                 res.json(prod);
                 return [3 /*break*/, 3];
             case 2:
+                logger_js_1.warningLogger.warn("falta el parámetro ID del producto a agregar al carrito");
+                logger_js_1.consoleLogger.warn("falta el parámetro ID del producto a agregar al carrito");
+                res.send({ error: 'debe indicar el id de producto a agregar' });
+                _a.label = 3;
+            case 3: return [3 /*break*/, 5];
+            case 4:
                 err_2 = _a.sent();
-                console.log(err_2);
-                return [3 /*break*/, 3];
-            case 3: return [2 /*return*/];
+                logger_js_1.errorLogger.error(err_2);
+                logger_js_1.consoleLogger.error(err_2);
+                return [3 /*break*/, 5];
+            case 5: return [2 /*return*/];
         }
     });
 }); });
-//busco un producto por id y lo borro
-productosRouter.delete('/borrar/:id', (0, authorization_js_1.authorizationMiddleware)(), function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+//borro producto del carrito
+carritoRouter.delete('/borrar/:id', function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
     var productoBorrado, err_3;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
                 _a.trys.push([0, 2, , 3]);
-                return [4 /*yield*/, exports.prods.borrarProducto(req.params.id)];
+                return [4 /*yield*/, exports.miCarrito.borrarProdsCarrito(req.params.id)];
             case 1:
                 productoBorrado = _a.sent();
                 if (productoBorrado) {
@@ -121,13 +121,16 @@ productosRouter.delete('/borrar/:id', (0, authorization_js_1.authorizationMiddle
                     return [2 /*return*/];
                 }
                 else {
+                    logger_js_1.warningLogger.warn("falta parámetro ID del producto a borrar");
+                    logger_js_1.consoleLogger.warn("falta parámetro ID del producto a borrar");
                     res.send(false);
                 }
                 ;
                 return [3 /*break*/, 3];
             case 2:
                 err_3 = _a.sent();
-                console.log("hubo un error", err_3);
+                logger_js_1.errorLogger.error(err_3);
+                logger_js_1.consoleLogger.error(err_3);
                 return [3 /*break*/, 3];
             case 3:
                 ;
@@ -135,31 +138,4 @@ productosRouter.delete('/borrar/:id', (0, authorization_js_1.authorizationMiddle
         }
     });
 }); });
-// busco un producto por id y lo actualizo
-productosRouter.put('/actualizar/:id', (0, authorization_js_1.authorizationMiddleware)(), function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var prodAct, err_4;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0:
-                _a.trys.push([0, 2, , 3]);
-                return [4 /*yield*/, exports.prods.actualizarProducto(req.body.code, req.body.title, req.body.description, req.body.price, req.body.thumbnail, req.body.stock, req.params.id)];
-            case 1:
-                prodAct = _a.sent();
-                if (prodAct) {
-                    res.json(prodAct);
-                    return [2 /*return*/];
-                }
-                else {
-                    res.send(false);
-                }
-                ;
-                return [3 /*break*/, 3];
-            case 2:
-                err_4 = _a.sent();
-                console.log("hubo un error", err_4);
-                return [3 /*break*/, 3];
-            case 3: return [2 /*return*/];
-        }
-    });
-}); });
-exports.default = productosRouter;
+exports.default = carritoRouter;

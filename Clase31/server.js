@@ -63,6 +63,7 @@ var express_1 = __importDefault(require("express"));
 var path_1 = __importDefault(require("path"));
 var express_handlebars_1 = __importDefault(require("express-handlebars"));
 var SocketIO = __importStar(require("socket.io"));
+var compression = require('compression');
 // Defino la opción de Base de Datos
 var DaoFactory_1 = require("./src/DaoFactory");
 exports.opcionCapa = DaoFactory_1.capaPersistencia.fileSys;
@@ -70,10 +71,9 @@ var mensaje_1 = require("./modelo/mensaje");
 var products_1 = __importDefault(require("./routes/products"));
 var carts_1 = __importDefault(require("./routes/carts"));
 var login_1 = require("./routes/login");
-//import {loginRouter} from './routes/login';
+var logger_js_1 = require("./logger.js");
 var numCPUs = require('os').cpus().length;
 var cluster = require('cluster');
-var fork = require('child_process').fork;
 var isAdmin = true;
 var __dirname = path_1.default.resolve();
 var app = (0, express_1.default)();
@@ -90,6 +90,7 @@ app.use('/productos', products_1.default);
 app.use('/carrito', carts_1.default);
 app.use('/ecommerce', login_1.loginRouter);
 app.use(notFoundMiddleware);
+app.use(compression());
 app.set("view engine", "hbs");
 app.set("views", path_1.default.join(__dirname, 'views'));
 app.engine("hbs", (0, express_handlebars_1.default)({
@@ -104,7 +105,8 @@ function msgSocket(server) {
     var _this = this;
     var io = new SocketIO.Server(server);
     server.on("error", function (error) {
-        console.error(error);
+        logger_js_1.consoleLogger.error(error);
+        logger_js_1.errorLogger.error(error);
     });
     var msgList = new mensaje_1.Mensajes();
     io.on('connection', function (socket) { return __awaiter(_this, void 0, void 0, function () {
@@ -113,7 +115,7 @@ function msgSocket(server) {
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
-                    console.log("se conectó el back");
+                    logger_js_1.consoleLogger.info("se conectó el back");
                     _a.label = 1;
                 case 1:
                     _a.trys.push([1, 3, , 4]);
@@ -128,8 +130,8 @@ function msgSocket(server) {
                                     case 0:
                                         messages_1.push(data);
                                         io.sockets.emit("messages", messages_1);
-                                        console.log("mensajes", messages_1);
-                                        console.log("mensaje a guardar - data", data);
+                                        logger_js_1.consoleLogger.info("mensajes " + messages_1);
+                                        logger_js_1.consoleLogger.info("mensaje a guardar - data " + data);
                                         return [4 /*yield*/, msgList.guardarMensajes(data)];
                                     case 1:
                                         _a.sent();
@@ -141,7 +143,8 @@ function msgSocket(server) {
                     return [3 /*break*/, 4];
                 case 3:
                     err_1 = _a.sent();
-                    console.log(err_1);
+                    logger_js_1.consoleLogger.error(err_1);
+                    logger_js_1.errorLogger.error(err_1);
                     return [3 /*break*/, 4];
                 case 4: return [2 /*return*/];
             }
@@ -151,20 +154,20 @@ function msgSocket(server) {
 ///funcion para iniciar server como cluster
 function serverCluster() {
     if (cluster.isMaster) {
-        console.log("Master " + process.pid + " is running");
-        console.log("Cantidad de CPUs: " + numCPUs);
+        logger_js_1.consoleLogger.info("Master " + process.pid + " is running");
+        logger_js_1.consoleLogger.info("Cantidad de CPUs: " + numCPUs);
         for (var index = 0; index < numCPUs; index += 1) {
             cluster.fork();
         }
         cluster.on('exit', function (worker) {
-            console.log("Worker " + worker.process.pid + " died");
+            logger_js_1.consoleLogger.info("Worker " + worker.process.pid + " died");
             cluster.fork();
         });
     }
     else {
-        console.log("Worker " + process.pid + " is running");
+        logger_js_1.consoleLogger.info("Worker " + process.pid + " is running");
         server = app.listen(port, function () {
-            console.log("servidor listo en puerto " + port + " | PID: " + process.pid);
+            logger_js_1.consoleLogger.info("servidor listo en puerto " + port + " | PID: " + process.pid);
         });
         msgSocket(server);
     }
@@ -177,7 +180,8 @@ if (modeChild === "cluster") {
 }
 else {
     server = app.listen(port, function () {
-        console.log("servidor listo en puerto " + port + " | PID: " + process.pid);
+        logger_js_1.consoleLogger.error("servidor listo en puerto " + port + " | PID: " + process.pid);
+        logger_js_1.errorLogger.error("servidor listo en puerto " + port + " | PID: " + process.pid);
     });
     msgSocket(server);
 }

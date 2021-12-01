@@ -1,4 +1,6 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+var logger_js_1 = require("./logger.js");
 var min = 1;
 var numRandom;
 var cant;
@@ -7,7 +9,7 @@ function numAleatorio(min, max) {
 }
 ;
 process.on('message', function (cant) {
-    console.log("max recibido del proceso padre", cant);
+    logger_js_1.consoleLogger.info("valor max recibido del proceso padre " + cant);
     var resultado = {};
     for (var i = 1; i < cant; i++) {
         numAleatorio(min, cant);

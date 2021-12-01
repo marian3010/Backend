@@ -1,32 +1,33 @@
-"use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.sessionHandler = exports.loginRouter = void 0;
-var express_1 = __importDefault(require("express"));
-var express_session_1 = __importDefault(require("express-session"));
-var numCPUs = require('os').cpus().length;
-var fork = require('child_process').fork;
+import express from "express";
+import session from 'express-session';
+const numCPUs = require ('os').cpus().length;
+const { fork } = require('child_process');
+import {consoleLogger, errorLogger, warningLogger} from '../logger.js'
+
 //declare module "express-session" {
-/* interface Session {
-   nombre: string;
- }*/
+   /* interface Session {
+      nombre: string;
+    }*/
 //  }
 //const bCrypt = require('bcrypt');
-var passport = require('passport');
+const passport = require('passport')
 //const passportLocal = require('passport-local');
+
 //import {Users, IUsuario} from '../model/users';
 //const mongoose = require("mongoose");
-exports.loginRouter = express_1.default.Router();
+
+export const loginRouter = express.Router();
 //import path from "path";
 //const __dirname = path.resolve();
+
+
 //import MongoStore from 'connect-mongo';
 //const advancedOptions: any = {useNewUrlParser: true, useUnifiedTopology: true}
-exports.sessionHandler = (0, express_session_1.default)({
-    /* store: MongoStore.create({
-       mongoUrl: 'mongodb+srv://admin:12345@cluster0.jbzno.mongodb.net/ecommerce?retryWrites=true&w=majority',
-       mongoOptions: advancedOptions}),*/
+export const sessionHandler = session(
+  {
+   /* store: MongoStore.create({
+      mongoUrl: 'mongodb+srv://admin:12345@cluster0.jbzno.mongodb.net/ecommerce?retryWrites=true&w=majority',
+      mongoOptions: advancedOptions}),*/
     secret: 'secreto',
     rolling: true,
     resave: true,
@@ -34,10 +35,12 @@ exports.sessionHandler = (0, express_session_1.default)({
     /*cookie: {
         maxAge: 60000,
       },*/
-});
-exports.loginRouter.use(exports.sessionHandler);
-exports.loginRouter.use(passport.initialize());
-exports.loginRouter.use(passport.session());
+  },
+);
+loginRouter.use(sessionHandler);
+loginRouter.use(passport.initialize());
+loginRouter.use(passport.session());
+
 ////////
 /*async function connectMongoose() {
     console.log("conexión a mongoLocal");
@@ -46,12 +49,13 @@ exports.loginRouter.use(passport.session());
         console.log("Base de datos Mongo conectada");
     } catch(error) {
         console.log(error)
-    }
+    }    
 }*/
 ///////
 //const createHash = (password: string) => bCrypt.hashSync(password, bCrypt.genSaltSync(10));
 //const isValidPassword = (user: any, password: string) => bCrypt.compareSync(password, user.password);
-var FacebookStrategy = require('passport-facebook').Strategy;
+
+const FacebookStrategy = require('passport-facebook').Strategy;
 /*let FACEBOOK_CLIENT_ID:string = '273751394685780';
 if (process.argv[3]){
   FACEBOOK_CLIENT_ID = process.argv[3].toString()
@@ -60,49 +64,57 @@ let FACEBOOK_CLIENT_SECRET:string = 'bdc22f2dd51fd93cdaf053b722598c31';
 if (process.argv[4]){
   FACEBOOK_CLIENT_SECRET = process.argv[4].toString()
 }*/
-var FACEBOOK_CLIENT_ID = Number(process.argv[3]) || '273751394685780';
-var FACEBOOK_CLIENT_SECRET = Number(process.argv[4]) || 'bdc22f2dd51fd93cdaf053b722598c31';
-console.log("facebook client ID", FACEBOOK_CLIENT_ID);
-console.log("tipo - facebook client ID", typeof (FACEBOOK_CLIENT_ID));
-console.log("facebook client secret", FACEBOOK_CLIENT_SECRET);
-console.log("tipo - facebook client secret", typeof (FACEBOOK_CLIENT_SECRET));
+const FACEBOOK_CLIENT_ID = Number(process.argv[3]) || '273751394685780';
+const FACEBOOK_CLIENT_SECRET = Number(process.argv[4]) || 'bdc22f2dd51fd93cdaf053b722598c31';
+consoleLogger.info(`facebook client ID ${FACEBOOK_CLIENT_ID}`);
+consoleLogger.info(`facebook client secret ${FACEBOOK_CLIENT_SECRET}`);
+
 //const loginStrategyName = 'login';
 //const signUpStrategyName = 'signup';
-passport.use(new FacebookStrategy({
-    clientID: FACEBOOK_CLIENT_ID,
-    clientSecret: FACEBOOK_CLIENT_SECRET,
-    callbackURL: '/ecommerce/oklogin',
-    profileFields: ['id', 'displayName', 'photos', 'emails'],
-}, function (_accessToken, _refreshToken, profile, done) {
-    console.log(profile);
-    return done(null, profile);
-})
-/*async (_request: express.Request, username: string, password: string, done: any) => {
-  await connectMongoose();
-  Users.findOne({
-    username,
-  },
-  (error: string, user: any) => {
-    if (error) {
-      return done(error);
-    }
 
-    if (!user) {
-      console.log(`User Not Found with username ${username}`);
+passport.use(
+  new FacebookStrategy(
+    {
+      clientID: FACEBOOK_CLIENT_ID,
+      clientSecret: FACEBOOK_CLIENT_SECRET,
+      callbackURL: '/ecommerce/oklogin',
+      profileFields: ['id', 'displayName', 'photos', 'emails'],
+    },
+    (_accessToken: any, _refreshToken: any, profile: any, done: any) => {
+      consoleLogger.info(`profile ${profile}`);
+     
+      return done(
+        null,
+        profile,
+      );
+    })
+    /*async (_request: express.Request, username: string, password: string, done: any) => {
+      await connectMongoose();
+      Users.findOne({
+        username,
+      },
+      (error: string, user: any) => {
+        if (error) {
+          return done(error);
+        }
 
-      return done(null, false);
-    }
+        if (!user) {
+          console.log(`User Not Found with username ${username}`);
 
-    if (!isValidPassword(user, password)) {
-      console.log('Invalid Password');
+          return done(null, false);
+        }
 
-      return done(null, false);
-    }
+        if (!isValidPassword(user, password)) {
+          console.log('Invalid Password');
 
-    return done(null, user);
-  });
-},*/
+          return done(null, false);
+        }
+
+        return done(null, user);
+      });
+    },*/
 );
+
 /*passport.use(
   signUpStrategyName,
   new passportLocal.Strategy(
@@ -157,11 +169,14 @@ passport.use(new FacebookStrategy({
     },
   ),
 );*/
-passport.serializeUser(function (user, done) { return done(null, user); });
-passport.deserializeUser(function (user, done) { return done(null, user); });
+
+passport.serializeUser((user:any, done:any) => done(null, user));
+passport.deserializeUser((user:any, done:any) => done(null, user));
+
 /*passport.deserializeUser((id: any, done: any) => {
   Users.findById(id, (error: string, user: any) => done(error, user));
 });*/
+
 ////////////////////////
 /*const checkAuthentication = (request: any, response: express.Response, next: any) => {
   if (request.isAuthenticated()) {
@@ -172,7 +187,9 @@ passport.deserializeUser(function (user, done) { return done(null, user); });
     .redirect(302, '/login');
 };*/
 ////////////////////////
+
 //process.on('exit', (code) => console.log('exit ${code}'),);
+
 /*loginRouter.get('/login', (req: any, res: express.Response) => {
 
   if (req.isAuthenticated()) {
@@ -192,6 +209,7 @@ passport.deserializeUser(function (user, done) { return done(null, user); });
     .status(200)
     .sendFile(`${__dirname}/public/formlogin.html`);
 });*/
+
 /*loginRouter.post('/login',passport.authenticate(loginStrategyName, { failureRedirect: '/ecommerce/faillogin' }), (req: express.Request, res: express.Response) => {
   
   const { username } = req.body;
@@ -203,41 +221,58 @@ passport.deserializeUser(function (user, done) { return done(null, user); });
   return res.redirect('/ecommerce/login');
   
 });*/
-exports.loginRouter.get('/', function (req, res) {
+
+
+loginRouter.get('/', (req: any, res:express.Response) => {
     if (req.isAuthenticated()) {
         return res.render('datos', {
-            id: req.user.id,
-            nombre: req.user.displayName,
-            foto: req.user.photos[0].value,
-        });
+        id: req.user.id,
+        nombre: req.user.displayName,
+        foto: req.user.photos[0].value,
+      })
     }
     return res.render('registro');
-});
-exports.loginRouter.post('/login', passport.authenticate('facebook', {
-    scope: 'email',
-    authType: 'reauthenticate',
-    authNonce: 'foo123'
-}));
-exports.loginRouter.get('/oklogin', passport.authenticate('facebook', {
-    successRedirect: '/ecommerce/datos',
-    failureRedirect: '/ecommerce/faillogin',
-}));
-exports.loginRouter.get('/datos', function (req, res) {
+  },
+);
+
+loginRouter.post('/login',passport.authenticate('facebook', {
+  scope: 'email',
+  authType: 'reauthenticate',
+  authNonce: 'foo123'
+})
+);
+
+loginRouter.get('/oklogin',passport.authenticate(
+    'facebook',
+    {
+      successRedirect: '/ecommerce/datos',
+      failureRedirect: '/ecommerce/faillogin',
+    },
+  ),
+);
+
+loginRouter.get('/datos', (req: any, res: express.Response) => {
     if (req.isAuthenticated()) {
         return res.render('datos', {
-            id: req.user.id,
-            nombre: req.user.displayName,
-            foto: req.user.photos[0].value,
-        });
+        id: req.user.id,
+        nombre: req.user.displayName,
+        foto: req.user.photos[0].value,
+      })
     }
+
     return res.redirect('/ecommerce/');
-});
-exports.loginRouter.get('/faillogin', function (req, res) {
-    console.log('error en login');
+  },
+);
+
+loginRouter.get('/faillogin', (req: express.Request, res: express.Response) => {
+  consoleLogger.info('error en login'); 
+  warningLogger.warn('hubo un error en el login'); 
     return res
-        .status(500)
-        .render('error-login', {});
-});
+      .status(500)
+      .render('error-login', {});
+  }
+);
+
 /*loginRouter.get('/registro', (req: express.Request, res: express.Response) => {
     res.sendFile(__dirname + "/public/formRegistro.html");
 });
@@ -245,6 +280,7 @@ exports.loginRouter.get('/faillogin', function (req, res) {
 loginRouter.post('/registro', passport.authenticate(signUpStrategyName, { failureRedirect: '/ecommerce/failsignup' }), async (req: express.Request, res: express.Response) => {
   return res.redirect('/ecommerce/login');
 });*/
+
 /*loginRouter.get('/failsignup', (req: express.Request, res: express.Response) => {
     console.log('error en registro');
     return res
@@ -252,6 +288,7 @@ loginRouter.post('/registro', passport.authenticate(signUpStrategyName, { failur
       .render('error-registro', {});
   }
 );*/
+
 /*loginRouter.get('/ruta-protegida', checkAuthentication, (req: any, res: express.Response) => {
   const { user } = req;
   console.log(user);
@@ -259,6 +296,7 @@ loginRouter.post('/registro', passport.authenticate(signUpStrategyName, { failur
     .status(200)
     .send('<h1>Ruta OK!</h1>');
 });*/
+
 /*loginRouter.get('/logout', async (req: express.Request, res: express.Response) => {
   const { nombre } = req.session;
   req.session.destroy((error) => {
@@ -271,32 +309,41 @@ loginRouter.post('/registro', passport.authenticate(signUpStrategyName, { failur
       res.render("byebye", {username: nombre})
   });
 });*/
-exports.loginRouter.get('/logout', function (req, res) {
-    var username = req.user.displayName;
-    req.logOut();
-    res.render("byebye", { username: username });
+
+
+loginRouter.get('/logout', (req: any, res: express.Response) => {
+  let username =  req.user.displayName;
+  req.logOut();
+  res.render("byebye", {username}) 
     //return res.redirect('/ecommerce/');
+  },
+);
+
+loginRouter.get('/info', (req:express.Request, res: express.Response) => {
+  res.render("datosProceso", {
+    argumentos: process.argv.slice(2),
+    plataforma: process.platform,
+    version: process.version,
+    usomemo: JSON.stringify(process.memoryUsage()),
+    path: process.execPath,
+    pid:process.pid,
+    numCPUs: numCPUs,
+  });
 });
-exports.loginRouter.get('/info', function (req, res) {
-    res.render("datosProceso", {
-        argumentos: process.argv.slice(2),
-        plataforma: process.platform,
-        version: process.version,
-        usomemo: JSON.stringify(process.memoryUsage()),
-        path: process.execPath,
-        pid: process.pid,
-        numCPUs: numCPUs,
-    });
-});
-exports.loginRouter.get('/random/:cant?', function (req, res) {
-    var cant = 100000;
-    if (req.params.cant) {
-        cant = parseInt(req.params.cant);
-    }
-    var child = fork('./random.js');
-    console.log("parametro a enviar", cant);
-    child.send(cant, function () { console.log("max parametro enviado por el padre", cant); });
-    child.on('message', function (message) {
-        res.json({ message: message });
-    });
+
+loginRouter.get('/random/:cant?', (req:express.Request, res: express.Response) => {
+  let cant = 100000;
+  if (req.params.cant) {
+    cant = parseInt(req.params.cant)
+  }
+  const child = fork('./random.js');
+  consoleLogger.info(`parametro a enviar ${cant}`);
+  child.send(cant, () => {consoleLogger.info(`parametro enviado por el padre ${cant}`)},)
+  
+  child.on(
+    'message',
+    (message:[]) => {
+      res.json({message})}
+  );  
+   
 });
