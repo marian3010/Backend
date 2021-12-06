@@ -1,0 +1,157 @@
+Statistical profiling result from infoForkConConsoleLog.log, (50231 ticks, 1 unaccounted, 0 excluded).
+
+ [Shared libraries]:
+   ticks  total  nonlib   name
+  49618   98.8%          C:\WINDOWS\SYSTEM32\ntdll.dll
+    589    1.2%          C:\Program Files\nodejs\node.exe
+      1    0.0%          C:\WINDOWS\System32\KERNEL32.DLL
+
+ [JavaScript]:
+   ticks  total  nonlib   name
+      3    0.0%   13.0%  LazyCompile: *wrap C:\Users\Mariana\Documents\Coder\Backend\Proyecto-Backend\Clase32\node_modules\handlebars\dist\cjs\handlebars\compiler\code-gen.js:101:22
+      2    0.0%    8.7%  LazyCompile: *resolve path.js:153:10
+      2    0.0%    8.7%  LazyCompile: *SourceNode_walk C:\Users\Mariana\Documents\Coder\Backend\Proyecto-Backend\Clase32\node_modules\source-map\lib\source-node.js:221:53
+      1    0.0%    4.3%  RegExp: ^(?:\{\{(~)?\^)
+      1    0.0%    4.3%  RegExp: ^(?:\.(?=([=~}\s\/.)|])))
+      1    0.0%    4.3%  RegExp: (^|\r?\n)\s*?$
+      1    0.0%    4.3%  LazyCompile: *setupParams C:\Users\Mariana\Documents\Coder\Backend\Proyecto-Backend\Clase32\node_modules\handlebars\dist\cjs\handlebars\compiler\javascript-compiler.js:1034:36
+      1    0.0%    4.3%  LazyCompile: *remove internal/linkedlist.js:15:16
+      1    0.0%    4.3%  LazyCompile: *pushAsyncContext internal/async_hooks.js:506:26
+      1    0.0%    4.3%  LazyCompile: *next C:\Users\Mariana\Documents\Coder\Backend\Proyecto-Backend\Clase32\node_modules\handlebars\dist\cjs\handlebars\compiler\parser.js:478:32
+      1    0.0%    4.3%  LazyCompile: *next C:\Users\Mariana\Documents\Coder\Backend\Proyecto-Backend\Clase32\node_modules\express\lib\router\index.js:176:16
+      1    0.0%    4.3%  LazyCompile: *hasHooks internal/async_hooks.js:441:18
+      1    0.0%    4.3%  LazyCompile: *handle C:\Users\Mariana\Documents\Coder\Backend\Proyecto-Backend\Clase32\node_modules\express\lib\router\layer.js:86:49
+      1    0.0%    4.3%  LazyCompile: *extname path.js:827:10
+      1    0.0%    4.3%  LazyCompile: *createNewLookupObject C:\Users\Mariana\Documents\Coder\Backend\Proyecto-Backend\Clase32\node_modules\handlebars\dist\cjs\handlebars\internal\create-new-lookup-object.js:15:31
+      1    0.0%    4.3%  LazyCompile: *castChunk C:\Users\Mariana\Documents\Coder\Backend\Proyecto-Backend\Clase32\node_modules\handlebars\dist\cjs\handlebars\compiler\code-gen.js:52:19
+      1    0.0%    4.3%  LazyCompile: *SourceNode_add C:\Users\Mariana\Documents\Coder\Backend\Proyecto-Backend\Clase32\node_modules\source-map\lib\source-node.js:172:51
+      1    0.0%    4.3%  LazyCompile: *PathExpression C:\Users\Mariana\Documents\Coder\Backend\Proyecto-Backend\Clase32\node_modules\handlebars\dist\cjs\handlebars\compiler\compiler.js:289:42
+
+ [C++]:
+   ticks  total  nonlib   name
+
+ [Summary]:
+   ticks  total  nonlib   name
+     22    0.0%   95.7%  JavaScript
+      0    0.0%    0.0%  C++
+     19    0.0%   82.6%  GC
+  50208  100.0%          Shared libraries
+      1    0.0%          Unaccounted
+
+ [C++ entry points]:
+   ticks    cpp   total   name
+
+ [Bottom up (heavy) profile]:
+  Note: percentage shows a share of a particular caller in the total
+  amount of its parent calls.
+  Callers occupying less than 1.0% are not shown.
+
+   ticks parent  name
+  49618   98.8%  C:\WINDOWS\SYSTEM32\ntdll.dll
+
+    589    1.2%  C:\Program Files\nodejs\node.exe
+    404   68.6%    C:\Program Files\nodejs\node.exe
+    148   36.6%      LazyCompile: ~writeSync fs.js:708:19
+    148  100.0%        LazyCompile: ~actualWrite C:\Users\Mariana\Documents\Coder\Backend\Proyecto-Backend\Clase32\node_modules\sonic-boom\index.js:367:22
+    148  100.0%          LazyCompile: ~SonicBoom.write C:\Users\Mariana\Documents\Coder\Backend\Proyecto-Backend\Clase32\node_modules\sonic-boom\index.js:217:38
+    148  100.0%            LazyCompile: ~write C:\Users\Mariana\Documents\Coder\Backend\Proyecto-Backend\Clase32\node_modules\pino\lib\proto.js:161:16
+     53   13.1%      LazyCompile: ~readSync fs.js:577:18
+     53  100.0%        LazyCompile: ~tryReadSync fs.js:379:21
+     53  100.0%          LazyCompile: ~readFileSync fs.js:391:22
+     53  100.0%            LazyCompile: ~Module._extensions..js internal/modules/cjs/loader.js:1094:37
+     18    4.5%      LazyCompile: ~stat internal/modules/cjs/loader.js:146:14
+     11   61.1%        LazyCompile: ~Module._findPath internal/modules/cjs/loader.js:462:28
+     11  100.0%          LazyCompile: ~Module._resolveFilename internal/modules/cjs/loader.js:817:35
+     11  100.0%            LazyCompile: ~Module._load internal/modules/cjs/loader.js:725:24
+      7   38.9%        LazyCompile: ~tryFile internal/modules/cjs/loader.js:352:17
+      7  100.0%          LazyCompile: ~tryExtensions internal/modules/cjs/loader.js:368:23
+      7  100.0%            LazyCompile: ~Module._findPath internal/modules/cjs/loader.js:462:28
+     16    4.0%      LazyCompile: ~read internal/modules/package_json_reader.js:16:14
+     16  100.0%        LazyCompile: ~readPackage internal/modules/cjs/loader.js:258:21
+     15   93.8%          LazyCompile: ~resolveExports internal/modules/cjs/loader.js:440:24
+     15  100.0%            LazyCompile: ~Module._findPath internal/modules/cjs/loader.js:462:28
+      1    6.3%          LazyCompile: ~readPackageScope internal/modules/cjs/loader.js:289:26
+      1  100.0%            LazyCompile: ~Module._extensions..js internal/modules/cjs/loader.js:1094:37
+     14    3.5%      LazyCompile: ~wrapSafe internal/modules/cjs/loader.js:986:18
+     14  100.0%        LazyCompile: ~Module._compile internal/modules/cjs/loader.js:1039:37
+     14  100.0%          LazyCompile: ~Module._extensions..js internal/modules/cjs/loader.js:1094:37
+     14  100.0%            LazyCompile: ~Module.load internal/modules/cjs/loader.js:938:33
+     14    3.5%      LazyCompile: ~realpathSync fs.js:1718:22
+     14  100.0%        LazyCompile: ~toRealPath internal/modules/cjs/loader.js:361:20
+     14  100.0%          LazyCompile: ~tryFile internal/modules/cjs/loader.js:352:17
+     13   92.9%            LazyCompile: ~tryExtensions internal/modules/cjs/loader.js:368:23
+      1    7.1%            LazyCompile: ~tryPackage internal/modules/cjs/loader.js:306:20
+     10    2.5%      LazyCompile: ~compileForInternalLoader internal/bootstrap/loaders.js:273:27
+      8   80.0%        LazyCompile: ~nativeModuleRequire internal/bootstrap/loaders.js:306:29
+      1   12.5%          Eval: ~<anonymous> internal/timers.js:1:1
+      1  100.0%            LazyCompile: ~compileForInternalLoader internal/bootstrap/loaders.js:273:27
+      1   12.5%          Eval: ~<anonymous> internal/process/task_queues.js:1:1
+      1  100.0%            LazyCompile: ~compileForInternalLoader internal/bootstrap/loaders.js:273:27
+      1   12.5%          Eval: ~<anonymous> internal/modules/esm/get_source.js:1:1
+      1  100.0%            LazyCompile: ~compileForInternalLoader internal/bootstrap/loaders.js:273:27
+      1   12.5%          Eval: ~<anonymous> https.js:1:1
+      1  100.0%            LazyCompile: ~compileForInternalLoader internal/bootstrap/loaders.js:273:27
+      1   12.5%          Eval: ~<anonymous> http.js:1:1
+      1  100.0%            LazyCompile: ~compileForInternalLoader internal/bootstrap/loaders.js:273:27
+      1   12.5%          Eval: ~<anonymous> fs.js:1:1
+      1  100.0%            LazyCompile: ~compileForInternalLoader internal/bootstrap/loaders.js:273:27
+      1   12.5%          Eval: ~<anonymous> events.js:1:1
+      1  100.0%            LazyCompile: ~compileForInternalLoader internal/bootstrap/loaders.js:273:27
+      1   12.5%          Eval: ~<anonymous> crypto.js:1:1
+      1  100.0%            LazyCompile: ~compileForInternalLoader internal/bootstrap/loaders.js:273:27
+      2   20.0%        LazyCompile: ~compileForPublicLoader internal/bootstrap/loaders.js:220:25
+      2  100.0%          LazyCompile: ~loadNativeModule internal/modules/cjs/helpers.js:35:26
+      2  100.0%            LazyCompile: ~Module._load internal/modules/cjs/loader.js:725:24
+      8    2.0%      LazyCompile: ~closeSync fs.js:456:19
+      8  100.0%        LazyCompile: ~closeSync C:\Users\Mariana\Documents\Coder\Backend\Proyecto-Backend\Clase32\node_modules\graceful-fs\graceful-fs.js:72:24
+      8  100.0%          LazyCompile: ~readFileSync fs.js:391:22
+      8  100.0%            LazyCompile: ~Module._extensions..js internal/modules/cjs/loader.js:1094:37
+      8    2.0%      C:\Program Files\nodejs\node.exe
+      1   12.5%        LazyCompile: ~stat internal/modules/cjs/loader.js:146:14
+      1  100.0%          LazyCompile: ~Module._findPath internal/modules/cjs/loader.js:462:28
+      1  100.0%            LazyCompile: ~Module._resolveFilename internal/modules/cjs/loader.js:817:35
+      1   12.5%        LazyCompile: ~readPackage internal/modules/cjs/loader.js:258:21
+      1  100.0%          LazyCompile: ~readPackageScope internal/modules/cjs/loader.js:289:26
+      1  100.0%            LazyCompile: ~trySelf internal/modules/cjs/loader.js:409:17
+      1   12.5%        LazyCompile: ~createError C:\Users\Mariana\Documents\Coder\Backend\Proyecto-Backend\Clase32\node_modules\http-errors\index.js:48:22
+      1  100.0%          LazyCompile: ~error C:\Users\Mariana\Documents\Coder\Backend\Proyecto-Backend\Clase32\node_modules\send\index.js:267:45
+      1  100.0%            LazyCompile: ~onStatError C:\Users\Mariana\Documents\Coder\Backend\Proyecto-Backend\Clase32\node_modules\send\index.js:416:57
+      1   12.5%        LazyCompile: ~FastBuffer internal/buffer.js:955:14
+      1  100.0%          LazyCompile: ~createUnsafeBuffer buffer.js:149:28
+      1  100.0%            LazyCompile: ~createPool buffer.js:158:20
+      1   12.5%        LazyCompile: *quotedString C:\Users\Mariana\Documents\Coder\Backend\Proyecto-Backend\Clase32\node_modules\handlebars\dist\cjs\handlebars\compiler\code-gen.js:118:38
+      1  100.0%          LazyCompile: ~quotedString C:\Users\Mariana\Documents\Coder\Backend\Proyecto-Backend\Clase32\node_modules\handlebars\dist\cjs\handlebars\compiler\javascript-compiler.js:998:38
+      1  100.0%            LazyCompile: ~setupParams C:\Users\Mariana\Documents\Coder\Backend\Proyecto-Backend\Clase32\node_modules\handlebars\dist\cjs\handlebars\compiler\javascript-compiler.js:1034:36
+      1   12.5%        LazyCompile: *compile C:\Users\Mariana\Documents\Coder\Backend\Proyecto-Backend\Clase32\node_modules\handlebars\dist\cjs\handlebars\compiler\javascript-compiler.js:73:28
+      1  100.0%          LazyCompile: ~compileInput C:\Users\Mariana\Documents\Coder\Backend\Proyecto-Backend\Clase32\node_modules\handlebars\dist\cjs\handlebars\compiler\compiler.js:507:24
+      1  100.0%            LazyCompile: ~ret C:\Users\Mariana\Documents\Coder\Backend\Proyecto-Backend\Clase32\node_modules\handlebars\dist\cjs\handlebars\compiler\compiler.js:515:15
+      1   12.5%        Eval: ~<anonymous> net.js:1:1
+      1  100.0%          LazyCompile: ~compileForInternalLoader internal/bootstrap/loaders.js:273:27
+      1  100.0%            LazyCompile: ~nativeModuleRequire internal/bootstrap/loaders.js:306:29
+      7    1.7%      LazyCompile: ~writevGeneric internal/stream_base_commons.js:118:23
+      7  100.0%        LazyCompile: ~Socket._writeGeneric net.js:761:42
+      7  100.0%          LazyCompile: ~Socket._writev net.js:793:36
+      7  100.0%            LazyCompile: ~doWrite internal/streams/writable.js:367:17
+      6    1.5%      LazyCompile: ~render C:\Users\Mariana\Documents\Coder\Backend\Proyecto-Backend\Clase32\node_modules\express-handlebars\lib\express-handlebars.js:150:15
+      6  100.0%        C:\Program Files\nodejs\node.exe
+      5    1.2%      LazyCompile: ~setupHelperArgs C:\Users\Mariana\Documents\Coder\Backend\Proyecto-Backend\Clase32\node_modules\handlebars\dist\cjs\handlebars\compiler\javascript-compiler.js:1104:44
+      4   80.0%        LazyCompile: *invokeAmbiguous C:\Users\Mariana\Documents\Coder\Backend\Proyecto-Backend\Clase32\node_modules\handlebars\dist\cjs\handlebars\compiler\javascript-compiler.js:699:44
+      3   75.0%          LazyCompile: *compile C:\Users\Mariana\Documents\Coder\Backend\Proyecto-Backend\Clase32\node_modules\handlebars\dist\cjs\handlebars\compiler\javascript-compiler.js:73:28
+      3  100.0%            LazyCompile: ~compileInput C:\Users\Mariana\Documents\Coder\Backend\Proyecto-Backend\Clase32\node_modules\handlebars\dist\cjs\handlebars\compiler\compiler.js:507:24
+      1   25.0%          LazyCompile: ~compile C:\Users\Mariana\Documents\Coder\Backend\Proyecto-Backend\Clase32\node_modules\handlebars\dist\cjs\handlebars\compiler\javascript-compiler.js:73:28
+      1  100.0%            LazyCompile: ~compileInput C:\Users\Mariana\Documents\Coder\Backend\Proyecto-Backend\Clase32\node_modules\handlebars\dist\cjs\handlebars\compiler\compiler.js:507:24
+      1   20.0%        LazyCompile: ~setupHelper C:\Users\Mariana\Documents\Coder\Backend\Proyecto-Backend\Clase32\node_modules\handlebars\dist\cjs\handlebars\compiler\javascript-compiler.js:1020:36
+      1  100.0%          LazyCompile: ~invokeAmbiguous C:\Users\Mariana\Documents\Coder\Backend\Proyecto-Backend\Clase32\node_modules\handlebars\dist\cjs\handlebars\compiler\javascript-compiler.js:699:44
+      1  100.0%            LazyCompile: ~compile C:\Users\Mariana\Documents\Coder\Backend\Proyecto-Backend\Clase32\node_modules\handlebars\dist\cjs\handlebars\compiler\javascript-compiler.js:73:28
+      5    1.2%      LazyCompile: ~handleWriteReq internal/stream_base_commons.js:47:24
+      5  100.0%        LazyCompile: ~writeGeneric internal/stream_base_commons.js:143:22
+      5  100.0%          LazyCompile: ~Socket._writeGeneric net.js:761:42
+      5  100.0%            LazyCompile: ~Socket._write net.js:798:35
+      9    1.5%    LazyCompile: ~processTimers internal/timers.js:485:25
+      9    1.5%    LazyCompile: ~listOnTimeout internal/timers.js:505:25
+      9  100.0%      LazyCompile: ~processTimers internal/timers.js:485:25
+      7    1.2%    LazyCompile: ~check C:\Users\Mariana\Documents\Coder\Backend\Proyecto-Backend\Clase32\node_modules\tarn\dist\Pool.js:155:10
+      7  100.0%      LazyCompile: ~<anonymous> C:\Users\Mariana\Documents\Coder\Backend\Proyecto-Backend\Clase32\node_modules\tarn\dist\Pool.js:451:41
+      7  100.0%        LazyCompile: ~listOnTimeout internal/timers.js:505:25
+      7  100.0%          LazyCompile: ~processTimers internal/timers.js:485:25
+
