@@ -1,0 +1,191 @@
+Started phase 0, duration: 1s @ 16:47:11(-0300) 2021-12-04
+Report @ 16:47:21(-0300) 2021-12-04
+Elapsed time: 11 seconds
+  Scenarios launched:  45
+  Scenarios completed: 0
+  Requests completed:  76
+  Mean response/sec: 11.08
+  Response time (msec):
+    min: 1423
+    max: 4458
+    median: 2613
+    p95: 3921.4
+    p99: 4444.7
+  Codes:
+    200: 76
+
+Report @ 16:47:32(-0300) 2021-12-04
+Elapsed time: 21 seconds
+  Scenarios launched:  5
+  Scenarios completed: 0
+  Requests completed:  94
+  Mean response/sec: 10.38
+  Response time (msec):
+    min: 2549
+    max: 8120
+    median: 4812.5
+    p95: 6794.8
+    p99: 7729.3
+  Codes:
+    200: 94
+
+Report @ 16:47:42(-0300) 2021-12-04
+Elapsed time: 32 seconds
+  Scenarios launched:  0
+  Scenarios completed: 0
+  Requests completed:  81
+  Mean response/sec: 9.08
+  Response time (msec):
+    min: 4221
+    max: 8991
+    median: 5875
+    p95: 8144.3
+    p99: 8732.1
+  Codes:
+    200: 81
+
+Report @ 16:47:52(-0300) 2021-12-04
+Elapsed time: 42 seconds
+  Scenarios launched:  0
+  Scenarios completed: 0
+  Requests completed:  61
+  Mean response/sec: 8.7
+  Response time (msec):
+    min: 4839
+    max: 10237
+    median: 5355
+    p95: 6706.5
+    p99: 9899.4
+  Codes:
+    200: 61
+  Errors:
+    ETIMEDOUT: 7
+
+Report @ 16:48:03(-0300) 2021-12-04
+Elapsed time: 52 seconds
+  Scenarios launched:  0
+  Scenarios completed: 0
+  Requests completed:  59
+  Mean response/sec: 6.02
+  Response time (msec):
+    min: 3432
+    max: 9245
+    median: 4497
+    p95: 7927.6
+    p99: 9155.1
+  Codes:
+    200: 59
+
+Report @ 16:48:14(-0300) 2021-12-04
+Elapsed time: 1 minute, 3 seconds
+  Scenarios launched:  0
+  Scenarios completed: 0
+  Requests completed:  82
+  Mean response/sec: 7.96
+  Response time (msec):
+    min: 4484
+    max: 9355
+    median: 6626.5
+    p95: 8694.8
+    p99: 9355
+  Codes:
+    200: 82
+
+Report @ 16:48:26(-0300) 2021-12-04
+Elapsed time: 1 minute, 16 seconds
+  Scenarios launched:  0
+  Scenarios completed: 0
+  Requests completed:  40
+  Mean response/sec: 2.83
+  Response time (msec):
+    min: 5432
+    max: 11004
+    median: 7838
+    p95: 10938
+    p99: 11004
+  Codes:
+    200: 40
+  Errors:
+    ETIMEDOUT: 14
+
+Report @ 16:48:36(-0300) 2021-12-04
+Elapsed time: 1 minute, 25 seconds
+  Scenarios launched:  0
+  Scenarios completed: 0
+  Requests completed:  26
+  Mean response/sec: 3.77
+  Response time (msec):
+    min: 552
+    max: 11578
+    median: 1031
+    p95: 9930
+    p99: 11578
+  Codes:
+    200: 26
+  Errors:
+    ETIMEDOUT: 25
+
+Report @ 16:48:46(-0300) 2021-12-04
+Elapsed time: 1 minute, 35 seconds
+  Scenarios launched:  0
+  Scenarios completed: 0
+  Requests completed:  42
+  Mean response/sec: 4.26
+  Response time (msec):
+    min: 501
+    max: 1837
+    median: 883
+    p95: 1584.6
+    p99: 1837
+  Codes:
+    200: 42
+
+Report @ 16:48:56(-0300) 2021-12-04
+Elapsed time: 1 minute, 45 seconds
+  Scenarios launched:  0
+  Scenarios completed: 1
+  Requests completed:  38
+  Mean response/sec: 3.68
+  Response time (msec):
+    min: 425
+    max: 2690
+    median: 771.5
+    p95: 2611.2
+    p99: 2690
+  Codes:
+    200: 38
+
+Report @ 16:48:58(-0300) 2021-12-04
+Elapsed time: 1 minute, 47 seconds
+  Scenarios launched:  0
+  Scenarios completed: 3
+  Requests completed:  10
+  Mean response/sec: 4.58
+  Response time (msec):
+    min: 287
+    max: 884
+    median: 357
+    p95: 884
+    p99: 884
+  Codes:
+    200: 10
+
+All virtual users finished
+Summary report @ 16:48:58(-0300) 2021-12-04
+  Scenarios launched:  50
+  Scenarios completed: 4
+  Requests completed:  609
+  Mean response/sec: 6.03
+  Response time (msec):
+    min: 287
+    max: 11578
+    median: 4979
+    p95: 8688.1
+    p99: 10501.4
+  Scenario counts:
+    0: 50 (100%)
+  Codes:
+    200: 609
+  Errors:
+    ETIMEDOUT: 46
+
