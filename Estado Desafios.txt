@@ -1,0 +1,4 @@
+Desafio 32 - falta grafico flama, no me lo creo
+Desafio 33 - está hecho el deploy en Heroku pero tiene errores 
+Desafio 35 - está listo, pero no puedo pushear porque tengo lio con las ramas (master)
+Desafio 36 - empezar
