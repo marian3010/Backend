@@ -7,18 +7,13 @@ const compression = require('compression');
 // Defino la opción de Base de Datos
 import {capaPersistencia} from './src/DaoFactory';
 export const opcionCapa:number = capaPersistencia.fileSys;
+import { smsMensajeAdmin } from "./comunicacion";
 
 import {Mensajes} from "./modelo/mensaje";
 import productosRouter from './routes/products';
 import carritoRouter from './routes/carts';
 import {loginRouter, sessionHandler} from './routes/login';
 import {consoleLogger, errorLogger, warningLogger} from './logger.js'
-const twilio = require('twilio');
-
-const client = twilio(
-  'AC330b46057cc4a08728f3f09fcec2a142',
-  '455d464c770ed76c218de4703a38ebcd',
-);
 
 const numCPUs = require ('os').cpus().length;
 const cluster = require ('cluster');
@@ -71,17 +66,10 @@ function msgSocket(server:any) {
           socket.emit("messages", messages);
           socket.on("new-message", async (data) => {
             const texto = data.text
+            const autor = data.author
             if (texto.indexOf("administrador")>= 0) {
-              client.messages.create(
-                {
-                  body: `Mensaje recibido de ${data.author} - texto recibido: ${data.text}`,
-                  from: '+17404956791',
-                  to: '+5401130252875',
-                },
-              )
-                .then((message:any) => console.log(message.sid))
-                .catch((error:any) => console.log(error));
-            }
+              smsMensajeAdmin(texto, autor);
+            }  
             messages.push(data);
             io.sockets.emit("messages", messages);
             consoleLogger.info(`mensaje a guardar - data ${data}`);

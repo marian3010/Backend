@@ -67,13 +67,12 @@ var compression = require('compression');
 // Defino la opción de Base de Datos
 var DaoFactory_1 = require("./src/DaoFactory");
 exports.opcionCapa = DaoFactory_1.capaPersistencia.fileSys;
+var comunicacion_1 = require("./comunicacion");
 var mensaje_1 = require("./modelo/mensaje");
 var products_1 = __importDefault(require("./routes/products"));
 var carts_1 = __importDefault(require("./routes/carts"));
 var login_1 = require("./routes/login");
 var logger_js_1 = require("./logger.js");
-var twilio = require('twilio');
-var client = twilio('AC330b46057cc4a08728f3f09fcec2a142', '455d464c770ed76c218de4703a38ebcd');
 var numCPUs = require('os').cpus().length;
 var cluster = require('cluster');
 var isAdmin = true;
@@ -127,19 +126,14 @@ function msgSocket(server) {
                     if (messages_1) {
                         socket.emit("messages", messages_1);
                         socket.on("new-message", function (data) { return __awaiter(_this, void 0, void 0, function () {
-                            var texto;
+                            var texto, autor;
                             return __generator(this, function (_a) {
                                 switch (_a.label) {
                                     case 0:
                                         texto = data.text;
+                                        autor = data.author;
                                         if (texto.indexOf("administrador") >= 0) {
-                                            client.messages.create({
-                                                body: "Mensaje recibido de " + data.author + " - texto recibido: " + data.text,
-                                                from: '+17404956791',
-                                                to: '+5401130252875',
-                                            })
-                                                .then(function (message) { return console.log(message.sid); })
-                                                .catch(function (error) { return console.log(error); });
+                                            (0, comunicacion_1.smsMensajeAdmin)(texto, autor);
                                         }
                                         messages_1.push(data);
                                         io.sockets.emit("messages", messages_1);

@@ -4,51 +4,7 @@ import fs from "fs";
 const numCPUs = require ('os').cpus().length;
 const { fork } = require('child_process');
 import {consoleLogger, errorLogger, warningLogger} from '../logger.js'
-const mailAdmin = 'mhiba3010@gmail.com';
-const nodemailer = require('nodemailer');
-
-const transporter = nodemailer.createTransport(
-  {
-    host: 'smtp.ethereal.email',
-    port: 587,
-    auth: {
-      user: 'mateo.hilll92@ethereal.email',
-      pass: 'MhDabT9mADsA5e8zPK',
-    },
-  },
-);
-
-const mailOptions = {
-  from: 'Servidor Node.js',
-  to: mailAdmin,
-  subject: '',
-  html: '',
-};
-
-const transporterGmail = nodemailer.createTransport(
-  {
-    service: 'gmail',
-    auth: {
-      user: mailAdmin,
-      // ! Con 2FA, necesario Contraseña de Aplicación
-      // ! Sin 2FA Aplicacion Poco Segura https://www.google.com/settings/security/lesssecureapps
-      pass: 'andtleriqhfvcvhv',
-    },
-  },
-);
-
-const mailOptionsGmail = {
-  from: 'Servidor Node.js',
-  to: mailAdmin,
-  subject: '',
-  html: '',
-  attachments: [
-    {
-      path: '',
-    },
-  ],
-};
-
+import {emailLogout, gmailRegistro} from '../comunicacion';
 
 declare module "express-session" {
     interface Session {
@@ -101,6 +57,7 @@ async function connectMongoose() {
 const createHash = (password: string) => bCrypt.hashSync(password, bCrypt.genSaltSync(10));
 const isValidPassword = (user: any, password: string) => bCrypt.compareSync(password, user.password);
 
+let usuario:any = "";
 //const FacebookStrategy = require('passport-facebook').Strategy;
 //const FACEBOOK_CLIENT_ID = Number(process.argv[3]) || '273751394685780';
 //const FACEBOOK_CLIENT_SECRET = Number(process.argv[4]) || 'bdc22f2dd51fd93cdaf053b722598c31';
@@ -226,6 +183,11 @@ loginRouter.get('/login', (req: any, res: express.Response) => {
 
   if (req.isAuthenticated()) {
     const { user } = req;
+    usuario = {
+      nombre: user.username,
+      email: user.email,
+      telefono: user.phone      
+    };
     console.log('user logueado');
     return res
       .status(200)
@@ -253,6 +215,11 @@ loginRouter.post('/login',passport.authenticate(loginStrategyName, { failureRedi
   }
   req.session.nombre = username;
   console.log("usuario", req.session.nombre)
+  usuario = {
+    nombre: username,
+    email: "", 
+    telefono: "",
+  }
   return res.redirect('/ecommerce/login');
   
 });
@@ -271,26 +238,7 @@ loginRouter.get('/registro', (req: express.Request, res: express.Response) => {
 });
 
 loginRouter.post('/registro', passport.authenticate(signUpStrategyName, { failureRedirect: '/ecommerce/failsignup' }), async (req: express.Request, res: express.Response) => {
-  mailOptionsGmail.to = mailAdmin;
-  mailOptionsGmail.subject = 'Nuevo registro';
-  mailOptionsGmail.html = `<h1> Se ha registrado un nuevo usuario con los siguientes datos: </h1>
-    <h2>Nombre: ${req.body.firstName}</h2>
-    <h2>Apellido: ${req.body.lastName}</h2>
-    <h2>eMail: ${req.body.email}</h2>
-    <h2>Dirección: ${req.body.address}</h2>
-    <h2>Teléfono: ${req.body.phone}</h2>
-    <h2>Edad: ${req.body.age}</h2>`;
-  //mailOptionsGmail.attachments[0].path = req.body.avatar;
-  transporterGmail.sendMail(
-    mailOptionsGmail,
-    (error:any, info:any) => {
-      if (error) {
-        console.log(error);
-        return error;
-      }
-      return console.log(info);
-    },
-  );  
+  gmailRegistro(req.body.firstName,req.body.lastName,req.body.email,req.body.address,req.body.phone,req.body.age)
   fs.promises.writeFile(`./public/${req.body.avatar}`, req.body.avatar, "utf-8");
   return res.redirect('/ecommerce/login');
 });
@@ -313,18 +261,7 @@ loginRouter.get('/ruta-protegida', checkAuthentication, (req: any, res: express.
 
 loginRouter.get('/logout', async (req: express.Request, res: express.Response) => {
   const { nombre } = req.session;
-  mailOptions.subject = 'Log out';
-  mailOptions.html = `<h1> ${nombre} - ${Date()} </h1>`;
-  transporter.sendMail(
-    mailOptions,
-    (error:any, info:any) => {
-      if (error) {
-        console.log(error);
-        return error;
-      }
-      return console.log(info);
-    },
-  );
+  emailLogout(nombre);
   req.session.destroy((error) => {
       if (error) {
         return res.send({
@@ -368,3 +305,5 @@ loginRouter.get('/random/:cant?', (req:express.Request, res: express.Response) =
   );  
    
 });
+
+export default usuario;

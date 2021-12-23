@@ -14,5 +14,6 @@ export interface Operaciones {
     buscarProdCarrito(id:any): any
     agregarProdsCarrito(id:any): Promise<boolean>
     borrarProdsCarrito(id:any): Promise<boolean>
+    
 }
 

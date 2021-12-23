@@ -46,42 +46,7 @@ var fs_1 = __importDefault(require("fs"));
 var numCPUs = require('os').cpus().length;
 var fork = require('child_process').fork;
 var logger_js_1 = require("../logger.js");
-var mailAdmin = 'mhiba3010@gmail.com';
-var nodemailer = require('nodemailer');
-var transporter = nodemailer.createTransport({
-    host: 'smtp.ethereal.email',
-    port: 587,
-    auth: {
-        user: 'mateo.hilll92@ethereal.email',
-        pass: 'MhDabT9mADsA5e8zPK',
-    },
-});
-var mailOptions = {
-    from: 'Servidor Node.js',
-    to: mailAdmin,
-    subject: '',
-    html: '',
-};
-var transporterGmail = nodemailer.createTransport({
-    service: 'gmail',
-    auth: {
-        user: mailAdmin,
-        // ! Con 2FA, necesario Contraseña de Aplicación
-        // ! Sin 2FA Aplicacion Poco Segura https://www.google.com/settings/security/lesssecureapps
-        pass: 'andtleriqhfvcvhv',
-    },
-});
-var mailOptionsGmail = {
-    from: 'Servidor Node.js',
-    to: mailAdmin,
-    subject: '',
-    html: '',
-    attachments: [
-        {
-            path: '',
-        },
-    ],
-};
+var comunicacion_1 = require("../comunicacion");
 var bCrypt = require('bcrypt');
 var passport = require('passport');
 var passportLocal = require('passport-local');
@@ -136,6 +101,7 @@ function connectMongoose() {
 ///////
 var createHash = function (password) { return bCrypt.hashSync(password, bCrypt.genSaltSync(10)); };
 var isValidPassword = function (user, password) { return bCrypt.compareSync(password, user.password); };
+var usuario = "";
 //const FacebookStrategy = require('passport-facebook').Strategy;
 //const FACEBOOK_CLIENT_ID = Number(process.argv[3]) || '273751394685780';
 //const FACEBOOK_CLIENT_SECRET = Number(process.argv[4]) || 'bdc22f2dd51fd93cdaf053b722598c31';
@@ -233,6 +199,11 @@ process.on('exit', function (code) { return console.log('exit ${code}'); });
 exports.loginRouter.get('/login', function (req, res) {
     if (req.isAuthenticated()) {
         var user = req.user;
+        usuario = {
+            nombre: user.username,
+            email: user.email,
+            telefono: user.phone
+        };
         console.log('user logueado');
         return res
             .status(200)
@@ -258,6 +229,11 @@ exports.loginRouter.post('/login', passport.authenticate(loginStrategyName, { fa
     }
     req.session.nombre = username;
     console.log("usuario", req.session.nombre);
+    usuario = {
+        nombre: username,
+        email: "",
+        telefono: "",
+    };
     return res.redirect('/ecommerce/login');
 });
 exports.loginRouter.get('/faillogin', function (req, res) {
@@ -272,17 +248,7 @@ exports.loginRouter.get('/registro', function (req, res) {
 });
 exports.loginRouter.post('/registro', passport.authenticate(signUpStrategyName, { failureRedirect: '/ecommerce/failsignup' }), function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
     return __generator(this, function (_a) {
-        mailOptionsGmail.to = mailAdmin;
-        mailOptionsGmail.subject = 'Nuevo registro';
-        mailOptionsGmail.html = "<h1> Se ha registrado un nuevo usuario con los siguientes datos: </h1>\n    <h2>Nombre: " + req.body.firstName + "</h2>\n    <h2>Apellido: " + req.body.lastName + "</h2>\n    <h2>eMail: " + req.body.email + "</h2>\n    <h2>Direcci\u00F3n: " + req.body.address + "</h2>\n    <h2>Tel\u00E9fono: " + req.body.phone + "</h2>\n    <h2>Edad: " + req.body.age + "</h2>";
-        //mailOptionsGmail.attachments[0].path = req.body.avatar;
-        transporterGmail.sendMail(mailOptionsGmail, function (error, info) {
-            if (error) {
-                console.log(error);
-                return error;
-            }
-            return console.log(info);
-        });
+        (0, comunicacion_1.gmailRegistro)(req.body.firstName, req.body.lastName, req.body.email, req.body.address, req.body.phone, req.body.age);
         fs_1.default.promises.writeFile("./public/" + req.body.avatar, req.body.avatar, "utf-8");
         return [2 /*return*/, res.redirect('/ecommerce/login')];
     });
@@ -304,15 +270,7 @@ exports.loginRouter.get('/logout', function (req, res) { return __awaiter(void 0
     var nombre;
     return __generator(this, function (_a) {
         nombre = req.session.nombre;
-        mailOptions.subject = 'Log out';
-        mailOptions.html = "<h1> " + nombre + " - " + Date() + " </h1>";
-        transporter.sendMail(mailOptions, function (error, info) {
-            if (error) {
-                console.log(error);
-                return error;
-            }
-            return console.log(info);
-        });
+        (0, comunicacion_1.emailLogout)(nombre);
         req.session.destroy(function (error) {
             if (error) {
                 return res.send({
@@ -351,3 +309,4 @@ exports.loginRouter.get('/random/:cant?', function (req, res) {
         res.json({ message: message });
     });
 });
+exports.default = usuario;

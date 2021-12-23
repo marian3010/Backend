@@ -72,7 +72,7 @@ class Carrito {
           console.log(error);
       }
     };
-  
+      
 };
 
 export default Carrito;
