@@ -41,10 +41,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var sqlite3_1 = __importDefault(require("../../db/sqlite3"));
 var knex_1 = __importDefault(require("knex"));
+var logger_js_1 = require("../../logger.js");
 var knexSQLite3 = (0, knex_1.default)(sqlite3_1.default);
 knexSQLite3.schema.hasTable("productos")
     .then(function (response) {
-    console.log("respuesta al create table productos", response);
+    logger_js_1.consoleLogger.info("respuesta al create table productos " + response);
     if (!response) {
         knexSQLite3.schema.createTable("productos", function (table) {
             table.increments("id", { primaryKey: true });
@@ -56,53 +57,53 @@ knexSQLite3.schema.hasTable("productos")
             table.integer("stock");
             table.integer("timestamp");
         })
-            .then(function () { return console.log("tabla productos creada en SQLite"); })
+            .then(function () { return logger_js_1.consoleLogger.info("tabla productos creada en SQLite"); })
             .catch(function (error) {
-            console.log(error);
+            logger_js_1.errorLogger.error(error);
         });
     }
 });
 knexSQLite3.schema.hasTable("mensajes")
     .then(function (res) {
-    console.log("respuesta al create table mensajes", res);
+    logger_js_1.consoleLogger.info("respuesta al create table mensajes " + res);
     if (!res) {
         knexSQLite3.schema.createTable("mensajes", function (table) {
             table.string("author");
             table.string("fecha");
             table.string("text");
         })
-            .then(function () { return console.log("tabla mensajes creada en SQLite"); })
+            .then(function () { return logger_js_1.consoleLogger.info("tabla mensajes creada en SQLite"); })
             .catch(function (error) {
-            console.log(error);
+            logger_js_1.errorLogger.error(error);
         });
     }
 });
 knexSQLite3.schema.hasTable("carrito")
     .then(function (resp) {
-    console.log("respuesta al create table carrito", resp);
+    logger_js_1.consoleLogger.info("respuesta al create table carrito " + resp);
     if (!resp) {
         knexSQLite3.schema.createTable("carrito", function (table) {
             table.increments("id", { primaryKey: true });
             table.integer("timestamp");
         })
-            .then(function () { return console.log("tabla carrito creada en SQLite"); })
+            .then(function () { return logger_js_1.consoleLogger.info("tabla carrito creada en SQLite"); })
             .catch(function (error) {
-            console.log(error);
+            logger_js_1.errorLogger.error(error);
         });
     }
 });
 knexSQLite3.schema.hasTable("productosCarrito")
     .then(function (respo) {
-    console.log("respuesta al create table productosCarrito", respo);
+    logger_js_1.consoleLogger.info("respuesta al create table productosCarrito " + respo);
     if (!respo) {
         knexSQLite3.schema.createTable("productosCarrito", function (table) {
             table.increments("id", { primaryKey: true });
             table.integer('idCarrito').notNullable();
             table.integer('idProducto').notNullable();
         })
-            .then(function () { return console.log("tabla productosCarrito creada en SQLite"); })
+            .then(function () { return logger_js_1.consoleLogger.info("tabla productosCarrito creada en SQLite"); })
             .catch(function (error) {
-            console.log(error);
+            logger_js_1.errorLogger.error(error);
         });
     }
 });
@@ -119,16 +120,16 @@ var Sqlite3Dao = /** @class */ (function () {
                         _a.label = 1;
                     case 1:
                         _a.trys.push([1, 3, , 4]);
-                        console.log('agregar por SQLite3');
+                        logger_js_1.consoleLogger.info('agregar por SQLite3');
                         return [4 /*yield*/, knexSQLite3("productos").insert(producto)];
                     case 2:
                         response = _a.sent();
-                        console.log("Id del producto agregado", response);
+                        logger_js_1.consoleLogger.info("Id del producto agregado " + response);
                         return [3 /*break*/, 4];
                     case 3:
                         error_1 = _a.sent();
                         resultado = false;
-                        console.log(error_1);
+                        logger_js_1.errorLogger.error(error_1);
                         return [3 /*break*/, 4];
                     case 4: return [2 /*return*/, resultado];
                 }
@@ -142,18 +143,18 @@ var Sqlite3Dao = /** @class */ (function () {
                 switch (_a.label) {
                     case 0:
                         _a.trys.push([0, 2, , 3]);
-                        console.log('buscar por SQLite3');
+                        logger_js_1.consoleLogger.info('buscar por SQLite3');
                         return [4 /*yield*/, knexSQLite3.from("productos")
                                 .select("*")
                                 .where("id", "=", parseInt(id))];
                     case 1:
                         prod = _a.sent();
-                        console.log("producto encontrado", prod);
+                        logger_js_1.consoleLogger.info("producto encontrado " + prod);
                         //productos.push(prod)
                         return [2 /*return*/, prod];
                     case 2:
                         error_2 = _a.sent();
-                        console.log(error_2);
+                        logger_js_1.errorLogger.error(error_2);
                         return [3 /*break*/, 3];
                     case 3: return [2 /*return*/];
                 }
@@ -167,16 +168,16 @@ var Sqlite3Dao = /** @class */ (function () {
                 switch (_a.label) {
                     case 0:
                         _a.trys.push([0, 2, , 3]);
-                        console.log("listar productos por SQLite3");
+                        logger_js_1.consoleLogger.info("listar productos por SQLite3");
                         return [4 /*yield*/, knexSQLite3.from("productos")
                                 .select("*")];
                     case 1:
                         rows = _a.sent();
-                        console.log("productos encontrados", rows);
+                        logger_js_1.consoleLogger.info("productos encontrados " + rows);
                         return [2 /*return*/, rows];
                     case 2:
                         error_3 = _a.sent();
-                        console.log(error_3);
+                        logger_js_1.errorLogger.error(error_3);
                         return [3 /*break*/, 3];
                     case 3: return [2 /*return*/];
                 }
@@ -198,14 +199,13 @@ var Sqlite3Dao = /** @class */ (function () {
                                 .del()];
                     case 2:
                         response = _a.sent();
-                        console.log("respuesta del delete", response);
                         if (response) {
                             resultado = true;
                         }
                         return [3 /*break*/, 4];
                     case 3:
                         error_4 = _a.sent();
-                        console.log(error_4);
+                        logger_js_1.errorLogger.error(error_4);
                         return [3 /*break*/, 4];
                     case 4: return [2 /*return*/, resultado];
                 }
@@ -232,7 +232,7 @@ var Sqlite3Dao = /** @class */ (function () {
                         return [3 /*break*/, 4];
                     case 3:
                         error_5 = _a.sent();
-                        console.log(error_5);
+                        logger_js_1.errorLogger.error(error_5);
                         resultado = false;
                         return [3 /*break*/, 4];
                     case 4: return [2 /*return*/, resultado];
@@ -251,11 +251,11 @@ var Sqlite3Dao = /** @class */ (function () {
                                 .select("*")];
                     case 1:
                         rows = _a.sent();
-                        console.log("mensajes encontrados", rows);
+                        logger_js_1.consoleLogger.info("mensajes encontrados " + rows);
                         return [2 /*return*/, rows];
                     case 2:
                         error_6 = _a.sent();
-                        console.log(error_6);
+                        logger_js_1.errorLogger.error(error_6);
                         return [3 /*break*/, 3];
                     case 3: return [2 /*return*/];
                 }
@@ -273,14 +273,14 @@ var Sqlite3Dao = /** @class */ (function () {
                         _a.label = 1;
                     case 1:
                         _a.trys.push([1, 3, , 4]);
-                        console.log('agregar mensaje por mariaDB');
+                        logger_js_1.consoleLogger.info('agregar mensaje por mariaDB');
                         return [4 /*yield*/, knexSQLite3("mensajes").insert(mensaje)];
                     case 2:
                         _a.sent();
                         return [3 /*break*/, 4];
                     case 3:
                         error_7 = _a.sent();
-                        console.log(error_7);
+                        logger_js_1.errorLogger.error(error_7);
                         response = false;
                         return [3 /*break*/, 4];
                     case 4: return [2 /*return*/, response];
@@ -303,7 +303,8 @@ var Sqlite3Dao = /** @class */ (function () {
                     case 2:
                         prodAgregar = _a.sent();
                         if (prodAgregar.length == 0) {
-                            console.log("producto no encontrado");
+                            logger_js_1.warningLogger.warn("producto no encontrado");
+                            logger_js_1.consoleLogger.warn("producto no encontrado");
                             response = false;
                             return [2 /*return*/, response];
                         }
@@ -311,7 +312,7 @@ var Sqlite3Dao = /** @class */ (function () {
                     case 3:
                         prodCart = _a.sent();
                         if (prodCart.length > 0) {
-                            console.log("el producto ingresado ya existe en el carrito");
+                            logger_js_1.consoleLogger.info("el producto ingresado ya existe en el carrito");
                             response = false;
                             return [2 /*return*/, response];
                         }
@@ -325,7 +326,6 @@ var Sqlite3Dao = /** @class */ (function () {
                         return [3 /*break*/, 7];
                     case 6:
                         prods = JSON.parse(JSON.stringify(carritoID));
-                        console.log("carritoID cuando existe el carrito", carritoID);
                         for (_i = 0, prods_1 = prods; _i < prods_1.length; _i++) {
                             prod = prods_1[_i];
                             carritoID = prod.id;
@@ -342,7 +342,7 @@ var Sqlite3Dao = /** @class */ (function () {
                         return [3 /*break*/, 10];
                     case 9:
                         error_8 = _a.sent();
-                        console.log(error_8);
+                        logger_js_1.errorLogger.error(error_8);
                         response = false;
                         return [3 /*break*/, 10];
                     case 10: return [2 /*return*/, response];
@@ -365,17 +365,16 @@ var Sqlite3Dao = /** @class */ (function () {
                     case 2:
                         productoCart = _a.sent();
                         if (productoCart.length == 0) {
-                            console.log("el producto no está en el carrito");
+                            logger_js_1.consoleLogger.warn("el producto no está en el carrito");
                             return [2 /*return*/, producto];
                         }
                         return [4 /*yield*/, knexSQLite3("productos").select("*").where("id", "=", parseInt(id))];
                     case 3:
                         producto = _a.sent();
-                        console.log("id producto encontrado", producto);
                         return [2 /*return*/, producto];
                     case 4:
                         error_9 = _a.sent();
-                        console.log(error_9);
+                        logger_js_1.errorLogger.error(error_9);
                         return [2 /*return*/, producto];
                     case 5: return [2 /*return*/];
                 }
@@ -393,7 +392,7 @@ var Sqlite3Dao = /** @class */ (function () {
                         _b.label = 1;
                     case 1:
                         _b.trys.push([1, 7, , 8]);
-                        console.log("listar productos carrito por SQLite");
+                        logger_js_1.consoleLogger.info("listar productos carrito por SQLite");
                         return [4 /*yield*/, knexSQLite3("productosCarrito").select("*")];
                     case 2:
                         rows = _b.sent();
@@ -427,7 +426,7 @@ var Sqlite3Dao = /** @class */ (function () {
                     case 6: return [3 /*break*/, 8];
                     case 7:
                         error_10 = _b.sent();
-                        console.log(error_10);
+                        logger_js_1.errorLogger.error(error_10);
                         return [3 /*break*/, 8];
                     case 8: return [2 /*return*/, productosArray];
                 }
@@ -456,7 +455,7 @@ var Sqlite3Dao = /** @class */ (function () {
                         return [3 /*break*/, 4];
                     case 3:
                         error_11 = _a.sent();
-                        console.log(error_11);
+                        logger_js_1.errorLogger.error(error_11);
                         return [3 /*break*/, 4];
                     case 4: return [2 /*return*/, response];
                 }

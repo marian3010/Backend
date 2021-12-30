@@ -10,6 +10,7 @@ var MariaDBDao_1 = __importDefault(require("./daos/MariaDBDao"));
 var Sqlite3Dao_1 = __importDefault(require("./daos/Sqlite3Dao"));
 var MongoDBDao_1 = __importDefault(require("./daos/MongoDBDao"));
 var FirebaseDao_1 = __importDefault(require("./daos/FirebaseDao"));
+var logger_js_1 = require("../logger.js");
 exports.capaPersistencia = {
     memory: 0,
     fileSys: 1,
@@ -24,7 +25,7 @@ var DaoFactory = /** @class */ (function () {
         this.tipo = tipo;
     }
     DaoFactory.prototype.elegirBD = function () {
-        console.log("tipo de BD", this.tipo);
+        logger_js_1.consoleLogger.info("tipo de BD " + this.tipo);
         switch (this.tipo) {
             case 0:
                 return new MemoryDao_1.default();

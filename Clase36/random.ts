@@ -2,7 +2,7 @@ import {consoleLogger, errorLogger, warningLogger} from './logger.js'
 
 let min:number = 1;
 let numRandom: number;
-let cant: number;
+
 
 function numAleatorio(min:number, max:number) {
     return numRandom = Math.floor(min + Math.random() * (max - min + 1));

@@ -1,12 +1,11 @@
-import usuario from './routes/login.js';
-console.log("usuario en comunicacion recibido de login", usuario);
+import {consoleLogger, errorLogger, warningLogger} from './logger.js'
 const nodemailer = require('nodemailer');
 const twilio = require('twilio');
 
 const mailAdmin = 'mhiba3010@gmail.com';
 const client = twilio(
     'AC330b46057cc4a08728f3f09fcec2a142',
-    '599cda18b6c7024e3546d80fb3171010',
+    '5edf226aa5e4fd516f9bc01ddaf0d689',
   );
 
 const transporter = nodemailer.createTransport(
@@ -58,10 +57,10 @@ export function emailLogout(nombre:string){
     mailOptions,
     (error:any, info:any) => {
       if (error) {
-        console.log(error);
+        errorLogger.error(error);
         return error;
       }
-      return console.log(info);
+      return consoleLogger.info(info);
     },
   );
 }
@@ -81,10 +80,10 @@ export function gmailRegistro(nom:string,ape:string,email:string,dire:string,fon
       mailOptionsGmail,
       (error:any, info:any) => {
         if (error) {
-          console.log(error);
+          errorLogger.error(error);
           return error;
         }
-        return console.log(info);
+        return consoleLogger.info(info);
       },
     );
 }
@@ -97,14 +96,14 @@ export function smsMensajeAdmin(texto:string, autor:string) {
             to: '+5401130252875',
         },
     )
-    .then((message:any) => console.log(message.sid))
-    .catch((error:any) => console.log(error));
+    .then((message:any) => consoleLogger.info(message.sid))
+    .catch((error:any) => errorLogger.error(error));
      
 }
 
-export function gmailCompra(productos:any) {
+export function gmailCompra(productos:any, nombre:string, email:string) {
     mailOptionsGmail.to = mailAdmin;
-    mailOptionsGmail.subject = `Nuevo pedido de ${usuario.nombre} - ${usuario.email}`;
+    mailOptionsGmail.subject = `Nuevo pedido de ${nombre} - ${email}`;
     mailOptionsGmail.html = `<h1> Se ha registrado un pedido con los siguientes productos: </h1>
       <h2>${productos}</h2>`;
     
@@ -112,35 +111,35 @@ export function gmailCompra(productos:any) {
       mailOptionsGmail,
       (error:any, info:any) => {
         if (error) {
-          console.log(error);
+          errorLogger.error(error);
           return error;
         }
-        return console.log(info);
+        return consoleLogger.info(info);
       },
     );
 }
 
-export function wappCompra(productos:any) {
+export function wappCompra(productos:any, nombre:string, email:string) {
     client.messages.create(
         {
-            body: `Nuevo pedido de ${usuario.nombre} - ${usuario.email} - lista de productos: ${productos}`,
+            body: `Nuevo pedido de ${nombre} - ${email} - lista de productos: ${productos}`,
             from: 'whatsapp:+14155238886',
-            to: 'whatsapp:+5491130252875',
-        },
+            to: 'whatsapp:+5491130252875'
+        }
     )
-    .then((message:any) => console.log(message.sid))
-    .catch((error:any) => console.log(error));
+    .then((message:any) => consoleLogger.info(message.sid))
+    .catch((error:any) => errorLogger.error(error));
 }
 
-export function smsCompra() {
+export function smsCompra(telefono:string) {
     client.messages.create(
         {
             body: `Su pedido ha sido recibido y se encuentra en proceso`,
             from: '+17404956791',
-            to: usuario.telefono,
+            to: telefono,
         },
     )
-    .then((message:any) => console.log(message.sid))
-    .catch((error:any) => console.log(error));
+    .then((message:any) => consoleLogger.info(message.sid))
+    .catch((error:any) => errorLogger.error(error));
 }
 

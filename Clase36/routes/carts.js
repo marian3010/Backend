@@ -43,6 +43,8 @@ exports.miCarrito = void 0;
 var express_1 = __importDefault(require("express"));
 var carritoRouter = express_1.default.Router();
 var carrito_js_1 = __importDefault(require("../modelo/carrito.js"));
+var login_js_1 = require("./login.js");
+var users_js_1 = require("../model/users.js");
 exports.miCarrito = new carrito_js_1.default();
 var logger_js_1 = require("../logger.js");
 var comunicacion_1 = require("../comunicacion");
@@ -140,14 +142,13 @@ carritoRouter.delete('/borrar/:id', function (req, res) { return __awaiter(void 
     });
 }); });
 //ruta para comprar el carrito
-//agrego producto al carrito
 carritoRouter.post('/comprar/:id', function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var productos, prodList, _i, productos_1, prod, err_4;
+    var productos, prodList, _i, productos_1, prod, user, err_4;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
-                _a.trys.push([0, 4, , 5]);
-                if (!req.params.id) return [3 /*break*/, 2];
+                _a.trys.push([0, 5, , 6]);
+                if (!req.params.id) return [3 /*break*/, 3];
                 return [4 /*yield*/, exports.miCarrito.listarProdsCarrito()];
             case 1:
                 productos = _a.sent();
@@ -156,23 +157,26 @@ carritoRouter.post('/comprar/:id', function (req, res) { return __awaiter(void 0
                     prod = productos_1[_i];
                     prodList = prodList + (prod.code + " - " + prod.description + ", ");
                 }
-                (0, comunicacion_1.gmailCompra)(prodList);
-                (0, comunicacion_1.wappCompra)(prodList);
-                (0, comunicacion_1.smsCompra)();
-                res.json(productos);
-                return [3 /*break*/, 3];
+                return [4 /*yield*/, (0, users_js_1.buscoDatosUser)(login_js_1.nombreUsuario)];
             case 2:
+                user = _a.sent();
+                (0, comunicacion_1.gmailCompra)(prodList, user.username, user.email);
+                (0, comunicacion_1.wappCompra)(prodList, user.username, user.email);
+                (0, comunicacion_1.smsCompra)(user.phone);
+                res.json(productos);
+                return [3 /*break*/, 4];
+            case 3:
                 logger_js_1.warningLogger.warn("falta el parámetro ID del carrito");
                 logger_js_1.consoleLogger.warn("falta el parámetro ID del carrito");
                 res.send({ error: 'debe indicar el id del carrito a comprar' });
-                _a.label = 3;
-            case 3: return [3 /*break*/, 5];
-            case 4:
+                _a.label = 4;
+            case 4: return [3 /*break*/, 6];
+            case 5:
                 err_4 = _a.sent();
                 logger_js_1.errorLogger.error(err_4);
                 logger_js_1.consoleLogger.error(err_4);
-                return [3 /*break*/, 5];
-            case 5: return [2 /*return*/];
+                return [3 /*break*/, 6];
+            case 6: return [2 /*return*/];
         }
     });
 }); });

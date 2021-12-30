@@ -36,10 +36,11 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+var logger_js_1 = require("../../logger.js");
 var MemoryDao = /** @class */ (function () {
     function MemoryDao() {
         if (typeof MemoryDao.instance === 'object') {
-            console.log("ya existe el objeto");
+            logger_js_1.consoleLogger.warn("ya existe el objeto");
             return MemoryDao.instance;
         }
         MemoryDao.instance = this;
@@ -83,7 +84,7 @@ var MemoryDao = /** @class */ (function () {
                 productos = [];
                 for (i = 0; i < this.productos.length; i++) {
                     if (this.productos[i].id == id) {
-                        console.log("producto encontrado", this.productos[i]);
+                        logger_js_1.consoleLogger.info("producto encontrado " + this.productos[i]);
                         productos.push(this.productos[i]);
                         return [2 /*return*/, productos];
                     }
@@ -98,7 +99,7 @@ var MemoryDao = /** @class */ (function () {
     MemoryDao.prototype.listarProductos = function () {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
-                console.log("lista de productos en memoria", this.productos);
+                logger_js_1.consoleLogger.info("lista de productos en memoria " + this.productos);
                 return [2 /*return*/, this.productos];
             });
         });
@@ -110,7 +111,7 @@ var MemoryDao = /** @class */ (function () {
             return __generator(this, function (_a) {
                 for (i = 0; i < this.productos.length; i++) {
                     if (this.productos[i].id == id) {
-                        console.log("producto borrado", this.productos[i]);
+                        logger_js_1.consoleLogger.info("producto borrado " + this.productos[i]);
                         this.productos.splice(i, 1);
                         return [2 /*return*/, true];
                     }
@@ -150,7 +151,7 @@ var MemoryDao = /** @class */ (function () {
     MemoryDao.prototype.leerMensajes = function () {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
-                console.log("lista de mensajes en memoria", this.messages);
+                logger_js_1.consoleLogger.info("lista de mensajes en memoria " + this.messages);
                 return [2 /*return*/, this.messages];
             });
         });
@@ -180,11 +181,11 @@ var MemoryDao = /** @class */ (function () {
             return __generator(this, function (_a) {
                 response = false;
                 try {
-                    console.log("cant productos en carrito", this.carrito.productos.length);
+                    logger_js_1.consoleLogger.info("cant productos en carrito " + this.carrito.productos.length);
                     if (this.carrito.productos.length > 0) {
                         for (i = 0; i < this.carrito.productos.length; i++) {
                             if (this.carrito.productos[i].id == parseInt(id)) {
-                                console.log("el producto ya se encuentra en el carrito");
+                                logger_js_1.consoleLogger.info("el producto ya se encuentra en el carrito");
                                 response = false;
                                 return [2 /*return*/, response];
                             }
@@ -210,10 +211,10 @@ var MemoryDao = /** @class */ (function () {
                     }
                     ;
                     response = false;
-                    console.log("producto no encontrado");
+                    logger_js_1.consoleLogger.warn("producto no encontrado");
                 }
                 catch (error) {
-                    console.log(error);
+                    logger_js_1.errorLogger.error(error);
                     response = false;
                 }
                 return [2 /*return*/, response];
@@ -226,7 +227,7 @@ var MemoryDao = /** @class */ (function () {
             var productos, _i, _a, prod, producto;
             return __generator(this, function (_b) {
                 productos = [];
-                console.log("entro a buscar por id");
+                logger_js_1.consoleLogger.info("entro a buscar por id");
                 if (this.carrito.productos.length > 0) {
                     for (_i = 0, _a = this.carrito.productos; _i < _a.length; _i++) {
                         prod = _a[_i];
@@ -244,11 +245,11 @@ var MemoryDao = /** @class */ (function () {
                             return [2 /*return*/, productos];
                         }
                     }
-                    console.log("no encontro el producto en el carrito");
+                    logger_js_1.consoleLogger.info("no encontro el producto en el carrito");
                     return [2 /*return*/, false];
                 }
                 else {
-                    console.log("el carrito no tiene productos");
+                    logger_js_1.consoleLogger.info("el carrito no tiene productos");
                     return [2 /*return*/, false];
                 }
                 return [2 /*return*/];
@@ -264,7 +265,7 @@ var MemoryDao = /** @class */ (function () {
                 try {
                     for (_i = 0, _a = this.carrito.productos; _i < _a.length; _i++) {
                         prod = _a[_i];
-                        console.log("productos del carrito", this.carrito.productos);
+                        logger_js_1.consoleLogger.info("productos del carrito " + this.carrito.productos);
                         producto = {
                             code: prod.code,
                             title: prod.title,
@@ -279,7 +280,7 @@ var MemoryDao = /** @class */ (function () {
                     return [2 /*return*/, productos];
                 }
                 catch (error) {
-                    console.log(error);
+                    logger_js_1.errorLogger.error(error);
                     return [2 /*return*/, productos];
                 }
                 return [2 /*return*/];
@@ -303,7 +304,7 @@ var MemoryDao = /** @class */ (function () {
                     ;
                 }
                 catch (error) {
-                    console.log(error);
+                    logger_js_1.errorLogger.error(error);
                 }
                 return [2 /*return*/, response];
             });

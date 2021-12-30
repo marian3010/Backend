@@ -6,7 +6,7 @@ const compression = require('compression');
 
 // Defino la opción de Base de Datos
 import {capaPersistencia} from './src/DaoFactory';
-export const opcionCapa:number = capaPersistencia.fileSys;
+export const opcionCapa:number = capaPersistencia.mongoAtlas;
 import { smsMensajeAdmin } from "./comunicacion";
 
 import {Mensajes} from "./modelo/mensaje";
@@ -111,12 +111,14 @@ function serverCluster() {
   }  
 };
 
-const modeChild = process.argv[5] || "fork";
-console.log(modeChild);
-if (modeChild === "cluster") {
+//const modeChild = process.argv[5] || "fork";
+const modeCluster = true;
+
+if (modeCluster) {
+    consoleLogger.info(`modo de ejecución cluster`);
     serverCluster();
-    
 } else {
+  consoleLogger.info(`modo de ejecución fork`);
   server = app.listen(port, () => {
     consoleLogger.info(`servidor listo en puerto ${port} | PID: ${process.pid}`)
     

@@ -40,6 +40,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var fs_1 = __importDefault(require("fs"));
+var logger_js_1 = require("../../logger.js");
 var fileProductos = "./data/productos.txt";
 var fileMensajes = "./data/mensajes.txt";
 var fileCarrito = "./data/carritos.txt";
@@ -70,7 +71,7 @@ var FsDao = /** @class */ (function () {
                         return [3 /*break*/, 4];
                     case 3:
                         error_1 = _c.sent();
-                        console.log(error_1);
+                        logger_js_1.errorLogger.error(error_1);
                         return [3 /*break*/, 4];
                     case 4:
                         nuevoId = 1;
@@ -87,7 +88,7 @@ var FsDao = /** @class */ (function () {
                             timestamp: producto.timestamp,
                             id: nuevoId
                         };
-                        console.log("prod a guardar", prod);
+                        logger_js_1.consoleLogger.info("prod a guardar " + prod);
                         productos.push(prod);
                         return [4 /*yield*/, fs_1.default.promises.writeFile(fileProductos, JSON.stringify(productos, null, "\t"), "utf-8")];
                     case 5:
@@ -108,7 +109,7 @@ var FsDao = /** @class */ (function () {
                         _c.label = 1;
                     case 1:
                         _c.trys.push([1, 3, , 4]);
-                        console.log('buscar prod en fs');
+                        logger_js_1.consoleLogger.info('buscar prod en fs');
                         _b = (_a = JSON).parse;
                         return [4 /*yield*/, fs_1.default.promises.readFile(fileProductos, "utf-8")];
                     case 2:
@@ -116,18 +117,17 @@ var FsDao = /** @class */ (function () {
                         for (i = 0; i < productos.length; i++) {
                             if (productos[i].id == parseInt(id)) {
                                 prod = productos[i];
-                                console.log("devuelve prod encontrado", prod);
                                 respuesta.push(prod);
                                 return [2 /*return*/, respuesta];
                             }
                             ;
                         }
                         ;
-                        console.log("no encontro el producto");
+                        logger_js_1.consoleLogger.info("no encontro el producto");
                         return [2 /*return*/, false];
                     case 3:
                         error_2 = _c.sent();
-                        console.log(error_2);
+                        logger_js_1.errorLogger.error(error_2);
                         return [2 /*return*/, false];
                     case 4: return [2 /*return*/];
                 }
@@ -145,15 +145,14 @@ var FsDao = /** @class */ (function () {
                         _c.label = 1;
                     case 1:
                         _c.trys.push([1, 3, , 4]);
-                        console.log("listar productos desde productos.txt");
+                        logger_js_1.consoleLogger.info("listar productos desde productos.txt");
                         _b = (_a = JSON).parse;
                         return [4 /*yield*/, fs_1.default.promises.readFile(fileProductos, "utf-8")];
                     case 2:
                         prods = _b.apply(_a, [_c.sent()]);
-                        console.log("productos encontrados", prods);
+                        logger_js_1.consoleLogger.info("productos encontrados " + prods);
                         for (_i = 0, prods_1 = prods; _i < prods_1.length; _i++) {
                             row = prods_1[_i];
-                            console.log("row", row);
                             producto = {
                                 code: row.code,
                                 title: row.title,
@@ -164,13 +163,12 @@ var FsDao = /** @class */ (function () {
                                 timestamp: row.timestamp,
                                 id: row.id
                             };
-                            console.log("prod a agregar al array", producto);
                             productos.push(producto);
                         }
                         return [3 /*break*/, 4];
                     case 3:
                         error_3 = _c.sent();
-                        console.log(error_3);
+                        logger_js_1.errorLogger.error(error_3);
                         return [3 /*break*/, 4];
                     case 4: return [2 /*return*/, productos];
                 }
@@ -213,7 +211,7 @@ var FsDao = /** @class */ (function () {
                         return [3 /*break*/, 9];
                     case 8:
                         error_4 = _c.sent();
-                        console.log(error_4);
+                        logger_js_1.errorLogger.error(error_4);
                         response = false;
                         return [3 /*break*/, 9];
                     case 9: return [2 /*return*/, response];
@@ -264,7 +262,7 @@ var FsDao = /** @class */ (function () {
                         return [3 /*break*/, 9];
                     case 8:
                         error_5 = _c.sent();
-                        console.log(error_5);
+                        logger_js_1.errorLogger.error(error_5);
                         response = false;
                         return [3 /*break*/, 9];
                     case 9: return [2 /*return*/, response];
@@ -283,16 +281,16 @@ var FsDao = /** @class */ (function () {
                         _c.label = 1;
                     case 1:
                         _c.trys.push([1, 3, , 4]);
-                        console.log("listar mensajes desde mensajes.txt");
+                        logger_js_1.consoleLogger.info("listar mensajes desde mensajes.txt");
                         _b = (_a = JSON).parse;
                         return [4 /*yield*/, fs_1.default.promises.readFile(fileMensajes, "utf-8")];
                     case 2:
                         mensajesArray = _b.apply(_a, [_c.sent()]);
-                        console.log("mensajes encontrados", mensajesArray);
+                        logger_js_1.consoleLogger.info("mensajes encontrados " + mensajesArray);
                         return [2 /*return*/, mensajesArray];
                     case 3:
                         error_6 = _c.sent();
-                        console.log(error_6);
+                        logger_js_1.errorLogger.error(error_6);
                         return [2 /*return*/, false];
                     case 4: return [2 /*return*/];
                 }
@@ -323,7 +321,7 @@ var FsDao = /** @class */ (function () {
                             fecha: mensaje.fecha,
                             text: mensaje.text
                         };
-                        console.log("mensaje a guardar", message);
+                        logger_js_1.consoleLogger.info("mensaje a guardar " + message);
                         mensajesArray.push(message);
                         _c.label = 3;
                     case 3:
@@ -334,7 +332,7 @@ var FsDao = /** @class */ (function () {
                         return [3 /*break*/, 6];
                     case 5:
                         error_7 = _c.sent();
-                        console.log(error_7);
+                        logger_js_1.errorLogger.error(error_7);
                         response = false;
                         return [3 /*break*/, 6];
                     case 6:
@@ -342,7 +340,7 @@ var FsDao = /** @class */ (function () {
                         return [3 /*break*/, 8];
                     case 7:
                         error_8 = _c.sent();
-                        console.log(error_8);
+                        logger_js_1.errorLogger.error(error_8);
                         response = false;
                         return [3 /*break*/, 8];
                     case 8: return [2 /*return*/, response];
@@ -370,7 +368,7 @@ var FsDao = /** @class */ (function () {
                         if (this.carrito.productos.length > 0) {
                             for (i = 0; i < this.carrito.productos.length; i++) {
                                 if (this.carrito.productos[i].id == id) {
-                                    console.log("el producto ya existe en el carrito");
+                                    logger_js_1.consoleLogger.info("el producto ya existe en el carrito");
                                     response = false;
                                     return [2 /*return*/, response];
                                 }
@@ -379,7 +377,7 @@ var FsDao = /** @class */ (function () {
                         return [3 /*break*/, 4];
                     case 3:
                         error_9 = _f.sent();
-                        console.log(error_9);
+                        logger_js_1.errorLogger.error(error_9);
                         return [3 /*break*/, 4];
                     case 4:
                         productos = [];
@@ -393,7 +391,7 @@ var FsDao = /** @class */ (function () {
                         return [3 /*break*/, 8];
                     case 7:
                         error_10 = _f.sent();
-                        console.log(error_10);
+                        logger_js_1.errorLogger.error(error_10);
                         return [3 /*break*/, 8];
                     case 8:
                         i = 0;
@@ -415,7 +413,7 @@ var FsDao = /** @class */ (function () {
                         return [4 /*yield*/, fs_1.default.promises.writeFile(fileCarrito, JSON.stringify(this.carrito, null, "\t"), "utf-8")];
                     case 10:
                         _f.sent();
-                        console.log("producto agregado al carrito", prod);
+                        logger_js_1.consoleLogger.info("producto agregado al carrito " + prod);
                         return [2 /*return*/, response];
                     case 11:
                         ;
@@ -426,7 +424,8 @@ var FsDao = /** @class */ (function () {
                     case 13:
                         ;
                         response = false;
-                        console.log("producto no encontrado");
+                        logger_js_1.consoleLogger.warn("producto no encontrado");
+                        logger_js_1.warningLogger.warn("producto no encontrado");
                         return [2 /*return*/, response];
                 }
             });
@@ -467,16 +466,15 @@ var FsDao = /** @class */ (function () {
                         _c.label = 1;
                     case 1:
                         _c.trys.push([1, 3, , 4]);
-                        console.log("listar productos del carrito desde carrito.txt");
+                        logger_js_1.consoleLogger.info("listar productos del carrito desde carrito.txt");
                         _b = (_a = JSON).parse;
                         return [4 /*yield*/, fs_1.default.promises.readFile(fileCarrito, "utf-8")];
                     case 2:
                         carrito = _b.apply(_a, [_c.sent()]);
-                        console.log("productos encontrados", carrito.productos);
                         return [2 /*return*/, carrito.productos];
                     case 3:
                         error_11 = _c.sent();
-                        console.log(error_11);
+                        logger_js_1.errorLogger.error(error_11);
                         return [2 /*return*/, false];
                     case 4: return [2 /*return*/];
                 }
@@ -520,7 +518,7 @@ var FsDao = /** @class */ (function () {
                         return [3 /*break*/, 9];
                     case 8:
                         error_12 = _c.sent();
-                        console.log(error_12);
+                        logger_js_1.errorLogger.error(error_12);
                         return [3 /*break*/, 9];
                     case 9: return [2 /*return*/, response];
                 }

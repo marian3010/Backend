@@ -2,6 +2,7 @@ import {Operaciones} from "../interfaces/Operaciones";
 import { Producto } from "../../modelo/productos";
 import { Mensaje, Mensajes } from "../../modelo/mensaje";
 import { opcionCapa } from "../../server";
+import {consoleLogger, errorLogger, warningLogger} from '../../logger.js'
 const mongoose = require("mongoose");
 const prodModel = require("../../model/prods");
 const modelMensajes = require("../../model/messages.js");
@@ -10,25 +11,25 @@ const cartProdModel = require("../../model/cartProd");
 const connectStrLocal =  "mongodb://localhost:27017/ecommerce"
 
 async function connectMongoose(connect:string) {
-    console.log("conexión a mongoLocal");
+    consoleLogger.info("conexión a mongoLocal");
     try {
         await mongoose.connect(connect)
-        console.log("Base de datos conectada");
+        consoleLogger.info("Base de datos conectada");
     } catch(error) {
-        console.log(error)
+        errorLogger.error(error);
     }    
 }
 
 async function connectMongooseAtlas() {
-    console.log("conexión a mongoAtlas");
+    consoleLogger.info("conexión a mongoAtlas");
     try {
         const dbname = 'ecommerce'
         const password = '12345'
         const user = 'admin'
         await mongoose.connect(`mongodb+srv://${user}:${password}@cluster0.jbzno.mongodb.net/${dbname}?retryWrites=true&w=majority`)
-        console.log("Base de datos conectada");
+        consoleLogger.info("Base de datos conectada");
     } catch(error) {
-        console.log(error)
+        errorLogger.error(error);
     }    
 }
 
@@ -37,21 +38,21 @@ class MongoDBDao implements Operaciones {
         let resultado = true;
         try {
             if (opcionCapa == 4) {
-                console.log('agregar producto por mongoDB')
+                consoleLogger.info('agregar producto por mongoDB')
                 await connectMongoose(connectStrLocal);
             } else {
-                console.log("agregar producto por mongoAtlas");
+                consoleLogger.info("agregar producto por mongoAtlas");
                 await connectMongooseAtlas()
                 
             }
             await prodModel.default.insertMany(producto);
         }
         catch (error) {
-            console.log(error);
+            errorLogger.error(error);
             resultado = false;
         } finally {
             mongoose.disconnect().then(() => {
-                console.log("Base de datos desconectada");
+                consoleLogger.info("Base de datos desconectada");
               });
               return resultado;
         }
@@ -61,19 +62,19 @@ class MongoDBDao implements Operaciones {
         let producto: Producto[] = []
         try {
             if (opcionCapa == 4) {
-                console.log('buscar producto por mongoDB')
+                consoleLogger.info('buscar producto por mongoDB')
                 await connectMongoose(connectStrLocal);
             } else {
-                console.log('buscar producto por mongoAtlas')
+                consoleLogger.info('buscar producto por mongoAtlas')
                 await connectMongooseAtlas()
             }
             producto = await prodModel.default.find({_id:id}, {_id:1, code:1, title:1, description:1, price:1, thumbnail:1, stock:1, timestamp:1})
         }
         catch(error) {
-             console.log(error);
+            errorLogger.error(error);
         } finally {
             mongoose.disconnect().then(() => {
-              console.log("Base de datos desconectada");
+              consoleLogger.info("Base de datos desconectada");
             });
             return producto;
         };
@@ -83,20 +84,20 @@ class MongoDBDao implements Operaciones {
         let productosArray: Producto[] = []
         try {
             if (opcionCapa == 4) {
-                console.log('listar productos por mongoDB')
+                consoleLogger.info('listar productos por mongoDB')
                 await connectMongoose(connectStrLocal);
             } else {
-                console.log("listar productos por mongoAtlas");
+                consoleLogger.info("listar productos por mongoAtlas");
                 await connectMongooseAtlas()
             }
             productosArray = await prodModel.default.find();
-            console.log("productos encontrados", productosArray);
+            consoleLogger.info(`productos encontrados ${productosArray}`);
         }
         catch(error) {
-             console.log(error);
+            errorLogger.error(error);
         } finally {
             mongoose.disconnect().then(() => {
-              console.log("Base de datos desconectada");
+              consoleLogger.info("Base de datos desconectada");
             });
             return productosArray;
             
@@ -107,24 +108,24 @@ class MongoDBDao implements Operaciones {
         let resultado = false;
         try {
             if (opcionCapa == 4) {
-                console.log('borrar producto por mongoDB')
+                consoleLogger.info('borrar producto por mongoDB')
                 await connectMongoose(connectStrLocal);
             } else {
-                console.log("borrar producto por mongoAtlas");
+                consoleLogger.info("borrar producto por mongoAtlas");
                 await connectMongooseAtlas()
             }
             const resp = await prodModel.default.deleteMany({_id: id})
-            console.log("producto borrado", resp.deletedCount);
+            consoleLogger.info(`producto borrado  ${resp.deletedCount}`);
             if (resp.deletedCount == 1) {
                 resultado = true;
             }
         }
         catch(error) {
-            console.log(error);
+            errorLogger.error(error);
             resultado = false;
         } finally {
             mongoose.disconnect().then(() => {
-            console.log("Base de datos desconectada");
+            consoleLogger.info("Base de datos desconectada");
             });
             return resultado;
         };
@@ -134,23 +135,23 @@ class MongoDBDao implements Operaciones {
         let resultado = false;
         try {
             if (opcionCapa == 4) {
-                console.log('actualizar producto por mongoDB')
+                consoleLogger.info('actualizar producto por mongoDB')
                 await connectMongoose(connectStrLocal);
             } else {
-                console.log("actualizar producto por mongoAtlas");
+                consoleLogger.info("actualizar producto por mongoAtlas");
                 await connectMongooseAtlas()
             }
             const resp = await prodModel.default.findByIdAndUpdate(id,producto)
-            console.log("producto actualizado", resp)
+            consoleLogger.info(`producto actualizado ${resp}`)
             if (resp) {
                 resultado = true;
             }
         }
         catch (error) {
-            console.log(error);
+            errorLogger.error(error);
         } finally {
             mongoose.disconnect().then(() => {
-                console.log("Base de datos desconectada");
+                consoleLogger.info("Base de datos desconectada");
             });
             return resultado;
         };
@@ -160,20 +161,20 @@ class MongoDBDao implements Operaciones {
         let mensajesArray: Mensajes[] = []
         try {
             if (opcionCapa == 4) {
-                console.log('listar mensajes por mongoDB')
+                consoleLogger.info('listar mensajes por mongoDB')
                 await connectMongoose(connectStrLocal);
             } else {
-                console.log("listar mensajes por mongoAtlas");
+                consoleLogger.info("listar mensajes por mongoAtlas");
                 await connectMongooseAtlas()
             }
             mensajesArray = await modelMensajes.default.find();
             return mensajesArray;
         }
         catch(error) {
-             console.log(error);
+            errorLogger.error(error);
         } finally {
             mongoose.disconnect().then(() => {
-              console.log("Base de datos desconectada");
+              consoleLogger.info("Base de datos desconectada");
             });
         };
     };  
@@ -182,21 +183,21 @@ class MongoDBDao implements Operaciones {
         let resultado = true;
         try {
             if (opcionCapa == 4) {
-                console.log('listar mensajes por mongoDB')
+                consoleLogger.info('listar mensajes por mongoDB')
                 await connectMongoose(connectStrLocal);
             } else {
-                console.log("listar mensajes por mongoAtlas");
+                consoleLogger.info("listar mensajes por mongoAtlas");
                 await connectMongooseAtlas()
             }
-            console.log("mensaje a insertar en Mongodb", mensaje);
+            consoleLogger.info(`mensaje a insertar en Mongodb ${mensaje}`);
             await modelMensajes.default.insertMany(mensaje) 
         }
         catch(error) {
-             console.log(error);
-             resultado = false;
+            errorLogger.error(error);
+            resultado = false;
         } finally {
             mongoose.disconnect().then(() => {
-              console.log("Base de datos desconectada");
+              consoleLogger.info("Base de datos desconectada");
             });
             return resultado;
         };
@@ -206,27 +207,25 @@ class MongoDBDao implements Operaciones {
         let resultado = false;
         try {
             if (opcionCapa == 4) {
-                console.log('agregar producto en carrito por mongoDB')
+                consoleLogger.info('agregar producto en carrito por mongoDB')
                 await connectMongoose(connectStrLocal);
             } else {
-                console.log("agregar producto en carrito por mongoAtlas");
+                consoleLogger.info("agregar producto en carrito por mongoAtlas");
                 await connectMongooseAtlas()
             }
             //me fijo si existe el producto a agregar
             const prodAgregar =  await prodModel.default.find({_id: id}, {_id:1})
-            console.log("resultado de buscar el producto", prodAgregar)
-            console.log("long del array de prodAgregar", prodAgregar.length)
             if (prodAgregar.length > 0){
                 let carritoID = await cartModel.default.find({}, { _id:1 })
                 if (carritoID.length == 0) {
-                    console.log("no encontró carrito, va a crear uno")
+                    consoleLogger.info("no encontró carrito, va a crear uno")
                     await cartModel.default.insertMany({timestamp: Date.now()});
                     carritoID = await cartModel.default.find({}, { _id:1 })
                 } else {
                     //verifico si el producto ya está en el carrito
                     const prodExist = await cartProdModel.default.find({idProd:id});
                     if (prodExist.length>0) {
-                        console.log ("el producto ya existe en el carrito");
+                        consoleLogger.info("el producto ya existe en el carrito");
                         
                     } else {
                         carritoID = JSON.parse(JSON.stringify(carritoID))
@@ -235,7 +234,6 @@ class MongoDBDao implements Operaciones {
                             idProd: id
                         }
                         const result = await cartProdModel.default.insertMany(producto);
-                        console.log("resultado de agregar el prod al carrito", result)
                         if (result) {
                             resultado = true;
                         }
@@ -245,10 +243,10 @@ class MongoDBDao implements Operaciones {
             
         }
         catch (error) {
-            console.log(error);
+            errorLogger.error(error);
         } finally {
             mongoose.disconnect().then(() => {
-                console.log("Base de datos desconectada");
+                consoleLogger.info("Base de datos desconectada");
               });
               return resultado;
         }
@@ -258,25 +256,25 @@ class MongoDBDao implements Operaciones {
         let producto:Producto[] = [] 
         try {
             if (opcionCapa == 4) {
-                console.log('buscar producto por mongoDB')
+                consoleLogger.info('buscar producto por mongoDB')
                 await connectMongoose(connectStrLocal);
             } else {
-                console.log("buscar producto por mongoAtlas");
+                consoleLogger.info("buscar producto por mongoAtlas");
                 await connectMongooseAtlas()
             }
             const prodID = await cartProdModel.default.find({idProd: id}, {_id:1})
             if (prodID.length == 0) {
-                console.log("el producto no está en el carrito");
+                consoleLogger.warn("el producto no está en el carrito");
             } else {
                 producto = await prodModel.default.find({_id:id}, {_id:1, code:1, title:1, description:1, price:1, thumbnail:1, stock:1, timestamp:1})
-                console.log("producto encontrado", producto);
+                
             }
         }
         catch(error) {
-             console.log(error);
+            errorLogger.error(error);
         } finally {
             mongoose.disconnect().then(() => {
-              console.log("Base de datos desconectada");
+              consoleLogger.info("Base de datos desconectada");
             });
             return producto;
         };
@@ -286,10 +284,10 @@ class MongoDBDao implements Operaciones {
         let productosArray: Producto[] = []
         try {
             if (opcionCapa == 4) {
-                console.log('listar productos por mongoDB')
+                consoleLogger.info('listar productos por mongoDB')
                 await connectMongoose(connectStrLocal);
             } else {
-                console.log("listar productos por mongoAtlas");
+                consoleLogger.info("listar productos por mongoAtlas");
                 await connectMongooseAtlas()
             }
             const rows = await cartProdModel.default.find({}, {idProd:1});
@@ -309,10 +307,10 @@ class MongoDBDao implements Operaciones {
             }
         }
         catch(error) {
-             console.log(error);
+            errorLogger.error(error);
         } finally {
             mongoose.disconnect().then(() => {
-              console.log("Base de datos desconectada");
+              consoleLogger.info("Base de datos desconectada");
             });
             return productosArray;
         };
@@ -322,23 +320,23 @@ class MongoDBDao implements Operaciones {
         let resultado = false;
         try {
             if (opcionCapa == 4) {
-                console.log('borrar producto del carrito por mongoDB')
+                consoleLogger.info('borrar producto del carrito por mongoDB')
                 await connectMongoose(connectStrLocal);
             } else {
-                console.log("borrar producto del carrito por mongoAtlas");
+                consoleLogger.info("borrar producto del carrito por mongoAtlas");
                 await connectMongooseAtlas()
             }
             const resp = await cartProdModel.default.deleteMany({idProd: id})
-            console.log("producto borrado", resp.deletedCount);
+            consoleLogger.info(`producto borrado ${resp.deletedCount}`);
             if (resp.deletedCount == 1) {
                 resultado = true;
             }
         }
         catch(error) {
-            console.log(error);
+            errorLogger.error(error);
         } finally {
             mongoose.disconnect().then(() => {
-            console.log("Base de datos desconectada");
+            consoleLogger.info("Base de datos desconectada");
             });
             return resultado;
         };

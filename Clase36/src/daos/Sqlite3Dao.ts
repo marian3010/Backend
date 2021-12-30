@@ -3,11 +3,12 @@ import { Producto } from "../../modelo/productos";
 import { Mensaje } from "../../modelo/mensaje";
 import options from '../../db/sqlite3';
 import knex from "knex";
+import {consoleLogger, errorLogger, warningLogger} from '../../logger.js'
 const knexSQLite3 = knex(options);
 
 knexSQLite3.schema.hasTable("productos")
     .then(response => {
-        console.log("respuesta al create table productos",response)
+        consoleLogger.info(`respuesta al create table productos ${response}`)
         if(!response) {
             knexSQLite3.schema.createTable("productos", (table:any) => {
                 table.increments("id",{primaryKey:true})
@@ -19,44 +20,44 @@ knexSQLite3.schema.hasTable("productos")
                 table.integer("stock");
                 table.integer("timestamp");
             })
-        .then(() => console.log("tabla productos creada en SQLite"))
+        .then(() => consoleLogger.info("tabla productos creada en SQLite"))
         .catch((error) => {
-            console.log(error);
+            errorLogger.error(error);
             })
         }
     });
 knexSQLite3.schema.hasTable("mensajes")
     .then(res => {
-        console.log("respuesta al create table mensajes",res)
+        consoleLogger.info(`respuesta al create table mensajes ${res}`)
         if(!res) {
             knexSQLite3.schema.createTable("mensajes", (table:any) => {
                 table.string("author");
                 table.string("fecha");
                 table.string("text");
             })
-        .then(() => console.log("tabla mensajes creada en SQLite"))
+        .then(() => consoleLogger.info("tabla mensajes creada en SQLite"))
         .catch((error) => {
-            console.log(error);
+            errorLogger.error(error);
             })
         }
     });
 knexSQLite3.schema.hasTable("carrito")
     .then(resp => {
-        console.log("respuesta al create table carrito",resp)
+        consoleLogger.info(`respuesta al create table carrito ${resp}`)
         if(!resp) {
             knexSQLite3.schema.createTable("carrito", (table:any) => {
                 table.increments("id",{primaryKey:true});
                 table.integer("timestamp");
             })
-        .then(() => console.log("tabla carrito creada en SQLite"))
+        .then(() => consoleLogger.info("tabla carrito creada en SQLite"))
         .catch((error) => {
-            console.log(error);
+            errorLogger.error(error);
             })
         }
     });
 knexSQLite3.schema.hasTable("productosCarrito")
     .then(respo => {
-        console.log("respuesta al create table productosCarrito",respo)
+        consoleLogger.info(`respuesta al create table productosCarrito ${respo}`)
         if(!respo) {
             knexSQLite3.schema.createTable("productosCarrito", (table:any) => {
                 table.increments("id",{primaryKey:true});
@@ -64,9 +65,9 @@ knexSQLite3.schema.hasTable("productosCarrito")
                 table.integer('idProducto').notNullable();
                 
             })
-        .then(() => console.log("tabla productosCarrito creada en SQLite"))
+        .then(() => consoleLogger.info("tabla productosCarrito creada en SQLite"))
         .catch((error) => {
-            console.log(error);
+            errorLogger.error(error);
             })
         }
     });
@@ -76,13 +77,13 @@ class Sqlite3Dao implements Operaciones {
     async agregarProducto(producto: Producto): Promise<boolean> {
         let resultado = true;
         try {
-            console.log('agregar por SQLite3')
+            consoleLogger.info('agregar por SQLite3')
             const response = await knexSQLite3("productos").insert(producto);
-            console.log("Id del producto agregado", response)
+            consoleLogger.info(`Id del producto agregado ${response}`)
         }
         catch (error) {
             resultado = false;
-            console.log(error);
+            errorLogger.error(error);
         }
         return resultado;
     }
@@ -90,29 +91,29 @@ class Sqlite3Dao implements Operaciones {
     async buscarProducto(id:any) {
         //let productos = [];
         try {
-            console.log('buscar por SQLite3')
+            consoleLogger.info('buscar por SQLite3')
             const prod = await knexSQLite3.from("productos")
             .select("*")
             .where("id", "=", parseInt(id))
-            console.log("producto encontrado", prod)
+            consoleLogger.info(`producto encontrado ${prod}`)
             //productos.push(prod)
             return prod;
         }
         catch (error) {
-            console.log(error);
+            errorLogger.error(error);
         }
     }
 
     async listarProductos() {
         try {
-            console.log("listar productos por SQLite3")
+            consoleLogger.info("listar productos por SQLite3")
             const rows = await knexSQLite3.from("productos")
             .select("*")
-            console.log("productos encontrados", rows)
+            consoleLogger.info(`productos encontrados ${rows}`)
             return rows;
         } 
         catch (error) {
-            console.log(error)
+            errorLogger.error(error);
         }
     }    
     
@@ -122,13 +123,12 @@ class Sqlite3Dao implements Operaciones {
             const response = await knexSQLite3.from("productos")
             .where("id", "=", parseInt(id))
             .del();
-            console.log("respuesta del delete", response)
             if (response) {
                 resultado = true;
             }
         }
         catch (error){
-            console.log(error);
+            errorLogger.error(error);
         }
         return resultado;
     }
@@ -143,7 +143,7 @@ class Sqlite3Dao implements Operaciones {
             }
         }
         catch (error) {
-            console.log(error);
+            errorLogger.error(error);
             resultado = false;
         }
         return resultado;
@@ -153,22 +153,22 @@ class Sqlite3Dao implements Operaciones {
         try {
             const rows = await knexSQLite3.from("mensajes")
             .select("*")
-            console.log("mensajes encontrados", rows)
+            consoleLogger.info(`mensajes encontrados ${rows}`)
             return rows;
         }
         catch(error) {
-             console.log(error);
+            errorLogger.error(error);
         } 
     };   
 
     async guardarMensajes(mensaje: Mensaje): Promise<boolean> {
         let response = true;
         try {
-            console.log('agregar mensaje por mariaDB')
+            consoleLogger.info('agregar mensaje por mariaDB')
             await knexSQLite3("mensajes").insert(mensaje);
         }
         catch (error) {
-            console.log(error);
+            errorLogger.error(error);
             response = false;
         }
         return response;
@@ -180,14 +180,15 @@ class Sqlite3Dao implements Operaciones {
             //verifico si el producto existe
             const prodAgregar = await knexSQLite3("productos").select("id").where("id", "=", parseInt(id));
             if (prodAgregar.length == 0){
-                console.log("producto no encontrado")
+                warningLogger.warn("producto no encontrado")
+                consoleLogger.warn("producto no encontrado")
                 response = false;
                 return response;
             }
             //verifico si el producto ya existe en el carrito
             const prodCart = await knexSQLite3("productosCarrito").select("id").where("idProducto", "=", parseInt(id));
             if (prodCart.length > 0) {
-                console.log("el producto ingresado ya existe en el carrito");
+                consoleLogger.info("el producto ingresado ya existe en el carrito");
                 response = false;
                 return response;
             }
@@ -198,7 +199,6 @@ class Sqlite3Dao implements Operaciones {
                 carritoID = await knexSQLite3("carrito").insert({timestamp: Date.now()}).returning('id');
             } else {
                 let prods=JSON.parse(JSON.stringify(carritoID))
-                console.log("carritoID cuando existe el carrito",carritoID)
                 for (const prod of prods) {
                     carritoID = prod.id
                 }
@@ -209,7 +209,7 @@ class Sqlite3Dao implements Operaciones {
             }
             await knexSQLite3("productosCarrito").insert(producto)
         } catch (error){
-            console.log(error);
+            errorLogger.error(error);
             response = false;
         }
         return response;
@@ -220,15 +220,14 @@ class Sqlite3Dao implements Operaciones {
         try {
             const productoCart = await knexSQLite3("productosCarrito").select("id").where("idProducto", "=", parseInt(id))
             if (productoCart.length == 0) {
-                console.log("el producto no está en el carrito")
+                consoleLogger.warn("el producto no está en el carrito")
                 return producto;
             } 
             producto = await knexSQLite3("productos").select("*").where("id", "=", parseInt(id))
-            console.log("id producto encontrado", producto)
             return producto;
         }
         catch (error) {
-            console.log(error);
+            errorLogger.error(error);
             return producto;
         }
     }; 
@@ -236,7 +235,7 @@ class Sqlite3Dao implements Operaciones {
     async listarProdsCarrito() {
         let productosArray: Producto [] = [];
         try {
-            console.log("listar productos carrito por SQLite")
+            consoleLogger.info("listar productos carrito por SQLite")
             const rows = await knexSQLite3("productosCarrito").select("*")
             let productoInsert
             for (const row of rows) {
@@ -257,7 +256,7 @@ class Sqlite3Dao implements Operaciones {
             }
         } 
         catch (error) {
-            console.log(error)
+            errorLogger.error(error);
         }
         return productosArray;
     };
@@ -273,7 +272,7 @@ class Sqlite3Dao implements Operaciones {
             }    
         }
         catch (error){
-            console.log(error);
+            errorLogger.error(error);
         }
         return response;
     };

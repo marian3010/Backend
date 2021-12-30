@@ -1,7 +1,7 @@
 import {Operaciones} from "../interfaces/Operaciones";
 import { Producto } from "../../modelo/productos";
 import { Mensaje } from "../../modelo/mensaje";
-import { database } from "firebase-admin";
+import {consoleLogger, errorLogger, warningLogger} from '../../logger.js'
 
 const admin = require("firebase-admin");
 const serviceAccount = require("../../data/ecommerce-43372-firebase-adminsdk-sakea-fd16d38086.json");
@@ -9,7 +9,7 @@ admin.initializeApp({
     credential: admin.credential.cert(serviceAccount),
     databaseURL: "https://ecommerce-43372.firebaseio.com",
   });
-console.log("Base de datos conectada");
+consoleLogger.info("Base de datos conectada");
 const firestoreAdmin = admin.firestore();
 
 class FirebaseDao implements Operaciones {
@@ -18,11 +18,11 @@ class FirebaseDao implements Operaciones {
         let resultado = true;
         const collection = firestoreAdmin.collection("productos");
         try {
-            console.log("agregar por firebase");
+            consoleLogger.info("agregar por firebase");
             await collection.doc().create(producto);
         }
         catch (error) {
-            console.log(error);
+            errorLogger.error(error);
             resultado = false;
         } finally {
             return resultado;
@@ -51,12 +51,13 @@ class FirebaseDao implements Operaciones {
                 }
             });
             if (productosArray.length === 0) {
-                console.log("no encontro el producto");
+                warningLogger.warn("no encontro el producto");
+                consoleLogger.warn("no encontró el producto");
             }
             return productosArray;
         }
         catch(error) {
-             console.log(error);
+            errorLogger.error(error);
         };
     };
 
@@ -82,7 +83,7 @@ class FirebaseDao implements Operaciones {
             return productosArray;
         }
         catch(error) {
-             console.log(error);
+            errorLogger.error(error);
         };
     };   
     
@@ -103,7 +104,7 @@ class FirebaseDao implements Operaciones {
             });
         }
         catch(error) {
-            console.log(error);
+            errorLogger.error(error);
         } finally {
             return resultado;
         };
@@ -125,7 +126,7 @@ class FirebaseDao implements Operaciones {
             });
         }
         catch (error) {
-            console.log(error);
+            errorLogger.error(error);
         } finally {
             return resultado;
         };
@@ -150,7 +151,7 @@ class FirebaseDao implements Operaciones {
             return mensajesArray;
         }
         catch(error) {
-             console.log(error);
+            errorLogger.error(error);
         };
     };   
 
@@ -158,11 +159,11 @@ class FirebaseDao implements Operaciones {
         let resultado = true;
         const collection = firestoreAdmin.collection("mensajes");
         try {
-            console.log("agregar por firebase");
+            consoleLogger.info("agregar por firebase");
             await collection.doc().create(mensaje);
         }
         catch (error) {
-            console.log(error);
+            errorLogger.error(error);
             resultado = false;
         } finally {
             return resultado;
@@ -175,16 +176,16 @@ class FirebaseDao implements Operaciones {
             const collProds = firestoreAdmin.collection("productos");
             const collCart = firestoreAdmin.collection("carrito");
             const collCartProd = firestoreAdmin.collection("productosCarrito");
-            console.log("Base de datos conectada");
+            consoleLogger.info("Base de datos conectada");
             //me fijo primero si el producto a agregar existe en colección de productos
             const query = await collProds.get();
             let existe;
             const datosProductos = query.docs.map ((doc:any) => {
                 const datos = doc.data();
-                console.log("datos de producto", datos);
-                console.log("id del producto", doc.id);
+                consoleLogger.info(`datos de producto ${datos}`);
+                consoleLogger.info(`id del producto ${doc.id}`);
                 if (doc.id == id) {
-                    console.log ("el producto existe")
+                    consoleLogger.info ("el producto existe")
                     existe = true;
                 }
             });
@@ -197,13 +198,13 @@ class FirebaseDao implements Operaciones {
                 })
                 let existeCart
                 if (carritoID) {
-                    console.log("existe el carrito", carritoID)
+                    consoleLogger.info(`existe el carrito ${carritoID}`)
                     //me fijo si el producto a agregar ya existe en el carrito
                     const query = await collCartProd.get();
                     const datosCarrito = query.docs.map ((doc:any) => {
                         const datos = doc.data();
                         if (datos.idProd == id) {
-                            console.log("el producto ya existe en el carrito")
+                            consoleLogger.info("el producto ya existe en el carrito")
                             existeCart = true;
                             return;
                         }
@@ -221,7 +222,7 @@ class FirebaseDao implements Operaciones {
                         idProd: id
                     }
                     const resp = await collCartProd.doc().create(producto);
-                    console.log("respuesta de agregar prod en carrito", resp)
+                    consoleLogger.info(`respuesta de agregar prod en carrito ${resp}`);
                     if (resp) {
                         resultado = true;
                     }    
@@ -229,7 +230,7 @@ class FirebaseDao implements Operaciones {
             }
         }    
         catch (error) {
-            console.log(error);
+            errorLogger.error(error);
             resultado = false;
         } finally {
             return resultado;
@@ -281,8 +282,8 @@ class FirebaseDao implements Operaciones {
             return productosArray;
         }
         catch(error) {
-             console.log(error);
-             return productosArray;
+            errorLogger.error(error);
+            return productosArray;
         };
     };
      
@@ -313,7 +314,7 @@ class FirebaseDao implements Operaciones {
                 // chequeo si hay coincidencia usando el indexOf para obtener el index.
                 const indexProdc = prodsIds.indexOf(datos.idProd);
                 if (indexProdc === -1) {
-                    console.log('no existe')
+                    consoleLogger.info('no existe')
                 } else {
                     const data = newQuery.docs[indexProdc].data();
                     const producto = {
@@ -332,8 +333,8 @@ class FirebaseDao implements Operaciones {
             return productosArray;
         }
         catch(error) {
-             console.log(error);
-             return productosArray;
+            errorLogger.error(error);
+            return productosArray;
         };
     };
  
@@ -352,7 +353,7 @@ class FirebaseDao implements Operaciones {
                 }
             });
         } catch(error) {
-             console.log(error);
+            errorLogger.error(error);
         };
         return resultado;
     };

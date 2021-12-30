@@ -5,6 +5,7 @@ import MariaDBDao from "./daos/MariaDBDao";
 import Sqlite3Dao from "./daos/Sqlite3Dao";
 import MongoDBDao from "./daos/MongoDBDao";
 import FirebaseDao from "./daos/FirebaseDao";
+import {consoleLogger, errorLogger, warningLogger} from '../logger.js'
 
 export const capaPersistencia = {
     memory: 0,
@@ -24,7 +25,7 @@ class DaoFactory {
     }
 
     elegirBD(): Operaciones {
-        console.log("tipo de BD", this.tipo)
+        consoleLogger.info(`tipo de BD ${this.tipo}`)
         switch (this.tipo) {
             case 0:
                 return new MemoryDao()

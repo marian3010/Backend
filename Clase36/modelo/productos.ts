@@ -5,10 +5,11 @@ import Sqlite3Dao from '../src/daos/Sqlite3Dao';
 import FsDao from '../src/daos/FsDao';
 import MemoryDao from '../src/daos/MemoryDao';
 import { opcionCapa } from "../server"
+import {consoleLogger, errorLogger, warningLogger} from '../logger.js'
 
 const daoFact = new DaoFactory(opcionCapa);
 const dao: MongoDBDao | Sqlite3Dao | MariaDBDao | FsDao | MemoryDao = daoFact.elegirBD()
-console.log("Dao", dao);
+consoleLogger.info("Dao", dao);
 
 export interface Producto {
     id?: number;
@@ -37,11 +38,11 @@ class Productos {
                 timestamp 
             }
             const response = await dao.agregarProducto(producto);
-            console.log("función exitosa", response)
+            consoleLogger.info(`función exitosa ${response}`)
             return producto;
         }
         catch (error) {
-            console.log(error);
+            errorLogger.error(error);
         }
     };
 
@@ -49,10 +50,10 @@ class Productos {
         let productoEncontrado
         try {
             productoEncontrado = await dao.buscarProducto(id)
-            console.log("producto encontrado", productoEncontrado);
+            consoleLogger.info(`producto encontrado ${productoEncontrado}`);
         }
         catch (error) {
-            console.log(error);
+            errorLogger.error(error);
         }
         return productoEncontrado;
     };
@@ -66,13 +67,13 @@ class Productos {
                     listaProductos.push({code:row["code"],title:row["title"],description:row["description"],price:row["price"],thumbnail:row["thumbnail"],stock:row["stock"],timestamp:row["timestamp"],id:row["id"]});
                 };
             };
-            console.log("lista productos", listaProductos)
-            console.log("filtro", filtro);
-            console.log("valor desde", valorDesde);
-            console.log("valor hasta", valorHasta);
+            consoleLogger.info(`lista productos ${listaProductos}`)
+            consoleLogger.info(`filtro ${filtro}`);
+            consoleLogger.info(`valor desde ${valorDesde}`);
+            consoleLogger.info(`valor hasta ${valorHasta}`);
             if (!filtro) {
-                console.log("sin filtro")
-                console.log("lista productos", listaProductos)
+                consoleLogger.info("sin filtro")
+                consoleLogger.info(`lista productos ${listaProductos}`)
                 return listaProductos;
             }    
             if (filtro === 'nombre') 
@@ -88,7 +89,7 @@ class Productos {
           
         }
         catch (error) {
-            console.log(error);
+            errorLogger.error(error);
         }
         return listaProductos; 
     };            
@@ -99,7 +100,7 @@ class Productos {
             return response;
         } 
         catch (error) {
-            console.log(error);
+            errorLogger.error(error);
         }
     };
 
@@ -118,7 +119,7 @@ class Productos {
             return response;
         } 
         catch (error) {
-            console.log(error);
+            errorLogger.error(error);
         }
     };        
 };

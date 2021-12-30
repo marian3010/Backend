@@ -3,7 +3,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var logger_js_1 = require("./logger.js");
 var min = 1;
 var numRandom;
-var cant;
 function numAleatorio(min, max) {
     return numRandom = Math.floor(min + Math.random() * (max - min + 1));
 }

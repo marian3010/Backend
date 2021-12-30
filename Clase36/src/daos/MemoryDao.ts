@@ -1,6 +1,7 @@
 import {Operaciones} from "../interfaces/Operaciones";
 import { Producto } from "../../modelo/productos";
 import { Mensaje } from "../../modelo/mensaje";
+import {consoleLogger, errorLogger, warningLogger} from '../../logger.js'
 
 interface Cart {
     id: number;
@@ -19,7 +20,7 @@ class MemoryDao implements Operaciones {
     
     constructor() {
         if (typeof MemoryDao.instance === 'object' ) {
-            console.log("ya existe el objeto");
+            consoleLogger.warn("ya existe el objeto");
             return MemoryDao.instance;
         }
         MemoryDao.instance = this;
@@ -56,7 +57,7 @@ class MemoryDao implements Operaciones {
         let productos = [];
         for (let i = 0; i < this.productos.length; i++) {
             if (this.productos[i].id == id) {
-                console.log("producto encontrado", this.productos[i]);
+                consoleLogger.info(`producto encontrado ${this.productos[i]}`);
                 productos.push(this.productos[i])
                 return productos;
             };
@@ -65,14 +66,14 @@ class MemoryDao implements Operaciones {
     };
 
     async listarProductos() {
-        console.log("lista de productos en memoria",this.productos);
+        consoleLogger.info(`lista de productos en memoria ${this.productos}`);
         return this.productos;
     };
 
     async borrarProducto(id:any): Promise<boolean> {
         for (let i:number = 0; i < this.productos.length; i++) {
             if (this.productos[i].id == id) {
-                console.log("producto borrado", this.productos[i]);
+                consoleLogger.info(`producto borrado ${this.productos[i]}`);
                 this.productos.splice(i, 1);
                 return true;
             };
@@ -99,7 +100,7 @@ class MemoryDao implements Operaciones {
     };
 
     async leerMensajes() {
-        console.log("lista de mensajes en memoria",this.messages);
+        consoleLogger.info(`lista de mensajes en memoria ${this.messages}`);
         return this.messages;
     };
 
@@ -119,11 +120,11 @@ class MemoryDao implements Operaciones {
     async agregarProdsCarrito(id:any): Promise<boolean> {
         let response = false;
         try {
-            console.log("cant productos en carrito", this.carrito.productos.length);
+            consoleLogger.info(`cant productos en carrito ${this.carrito.productos.length}`);
             if (this.carrito.productos.length > 0) {
                 for (let i:number = 0; i < this.carrito.productos.length; i++) {
                     if (this.carrito.productos[i].id == parseInt(id)) {
-                        console.log("el producto ya se encuentra en el carrito")
+                        consoleLogger.info("el producto ya se encuentra en el carrito")
                         response = false;
                         return response;
                     }
@@ -147,10 +148,10 @@ class MemoryDao implements Operaciones {
                 };
             };
             response = false;
-            console.log ("producto no encontrado");
+            consoleLogger.warn ("producto no encontrado");
               
         } catch (error){
-            console.log(error);
+            errorLogger.error(error);
             response = false;
         }
         return response;
@@ -158,7 +159,7 @@ class MemoryDao implements Operaciones {
     
     async buscarProdCarrito(id:any) {
         let productos = [];
-        console.log("entro a buscar por id")
+        consoleLogger.info("entro a buscar por id")
         if (this.carrito.productos.length > 0) {
             for (const prod of this.carrito.productos) {
                 if (prod.id === parseInt(id)) {
@@ -175,10 +176,10 @@ class MemoryDao implements Operaciones {
                     return productos;
                 } 
             }
-            console.log("no encontro el producto en el carrito");
+            consoleLogger.info("no encontro el producto en el carrito");
             return false; 
         } else {
-            console.log ("el carrito no tiene productos");
+            consoleLogger.info ("el carrito no tiene productos");
             return false;
         }
         
@@ -188,7 +189,7 @@ class MemoryDao implements Operaciones {
         let productos = [];
         try {
             for (const prod of this.carrito.productos) {
-                console.log("productos del carrito", this.carrito.productos)
+                consoleLogger.info(`productos del carrito ${this.carrito.productos}`)
                 const producto = {
                     code: prod.code,
                     title: prod.title,
@@ -202,7 +203,7 @@ class MemoryDao implements Operaciones {
             } 
             return productos;
         } catch (error) {
-            console.log(error)
+            errorLogger.error(error);
             return productos;
         }
     };
@@ -218,7 +219,7 @@ class MemoryDao implements Operaciones {
             };
         }
         catch (error){
-            console.log(error);
+            errorLogger.error(error);
         }
         return response;
     };

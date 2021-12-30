@@ -2,8 +2,8 @@
 import {Operaciones} from "../interfaces/Operaciones";
 import { Producto } from "../../modelo/productos";
 import { Mensaje } from "../../modelo/mensaje";
-import Carrito from "../../modelo/carrito";
 import fs from "fs";
+import {consoleLogger, errorLogger, warningLogger} from '../../logger.js'
 
 const fileProductos = "./data/productos.txt";
 const fileMensajes = "./data/mensajes.txt";
@@ -35,7 +35,7 @@ class FsDao implements Operaciones {
             productos = JSON.parse(await fs.promises.readFile(fileProductos, "utf-8"))
         }
         catch (error) {
-            console.log(error);
+            errorLogger.error(error);
             
         } 
         let nuevoId = 1;
@@ -52,7 +52,7 @@ class FsDao implements Operaciones {
             timestamp: producto.timestamp,
             id: nuevoId
         };
-        console.log ("prod a guardar",prod);
+        consoleLogger.info (`prod a guardar ${prod}`);
         productos.push(prod);
         await fs.promises.writeFile(fileProductos, JSON.stringify(productos, null, "\t"), "utf-8");
         return response;
@@ -61,21 +61,20 @@ class FsDao implements Operaciones {
     async buscarProducto(id:any) {
         let respuesta = []
         try {
-            console.log('buscar prod en fs')
+            consoleLogger.info('buscar prod en fs')
             let productos = JSON.parse(await fs.promises.readFile(fileProductos, "utf-8"))
             for (let i:number = 0; i < productos.length; i++) {
                 if (productos[i].id == parseInt(id)) {
                     const prod: Producto = productos[i]
-                    console.log("devuelve prod encontrado", prod);
                     respuesta.push(prod)
                     return respuesta;
                 };
             };
-            console.log("no encontro el producto")
+            consoleLogger.info("no encontro el producto")
             return false;
         }
         catch (error) {
-            console.log(error);
+            errorLogger.error(error);
             return false;
         }
     };
@@ -83,11 +82,10 @@ class FsDao implements Operaciones {
     async listarProductos() {
         let productos = [];
         try {
-            console.log("listar productos desde productos.txt")
+            consoleLogger.info("listar productos desde productos.txt")
             const prods = JSON.parse(await fs.promises.readFile(fileProductos, "utf-8"))
-                console.log("productos encontrados", prods)
+                consoleLogger.info(`productos encontrados ${prods}`);
                 for (const row of prods) {
-                    console.log("row", row)
                     let producto = {
                         code: row.code,
                         title: row.title,
@@ -98,12 +96,11 @@ class FsDao implements Operaciones {
                         timestamp: row.timestamp,
                         id: row.id
                     }  
-                    console.log("prod a agregar al array", producto)
                     productos.push(producto);  
                 }
         } 
         catch (error) {
-            console.log(error)
+            errorLogger.error(error);
         }
         return productos;
     };    
@@ -120,7 +117,7 @@ class FsDao implements Operaciones {
             };
         }
         catch (error){
-            console.log(error);
+            errorLogger.error(error);
             response = false;
         }
         return response;
@@ -145,7 +142,7 @@ class FsDao implements Operaciones {
             };
         }
         catch (error) {
-            console.log(error);
+            errorLogger.error(error);
             response = false;
         }
         return response;
@@ -154,13 +151,13 @@ class FsDao implements Operaciones {
     async leerMensajes() {
         let mensajesArray: Mensaje[] = []
         try {
-            console.log("listar mensajes desde mensajes.txt")
+            consoleLogger.info("listar mensajes desde mensajes.txt")
             mensajesArray = JSON.parse(await fs.promises.readFile(fileMensajes, "utf-8"))
-                console.log("mensajes encontrados", mensajesArray)
+                consoleLogger.info(`mensajes encontrados ${mensajesArray}`)
                 return mensajesArray;
         } 
         catch (error) {
-            console.log(error)
+            errorLogger.error(error);
             return false;
         }
     };
@@ -178,17 +175,17 @@ class FsDao implements Operaciones {
                 fecha: mensaje.fecha,
                 text: mensaje.text
             };
-            console.log ("mensaje a guardar",message);
+            consoleLogger.info (`mensaje a guardar ${message}`);
             mensajesArray.push(message);
             try {
                 await fs.promises.writeFile(fileMensajes, JSON.stringify(mensajesArray, null, "\t"), "utf-8");
             } catch (error) {
-                console.log(error);
+                errorLogger.error(error);
                 response = false;
             };
         }
         catch (error) {
-            console.log(error);
+            errorLogger.error(error);
             response = false;
         } 
         return response;
@@ -202,20 +199,20 @@ class FsDao implements Operaciones {
             if (this.carrito.productos.length > 0) {
                 for (let i:number = 0; i < this.carrito.productos.length; i++) {
                     if (this.carrito.productos[i].id == id) {
-                        console.log("el producto ya existe en el carrito");
+                        consoleLogger.info("el producto ya existe en el carrito");
                         response = false;
                         return response;
                     }
                 } 
             }
         } catch (error){
-            console.log(error);
+            errorLogger.error(error);
         }
         let productos = []; 
         try {
             productos = JSON.parse(await fs.promises.readFile(fileProductos, "utf-8"))
         } catch(error) {
-            console.log(error);
+            errorLogger.error(error);
         }
         for (let i:number = 0; i < productos.length; i++) {
             if (productos[i].id == id) {
@@ -231,12 +228,13 @@ class FsDao implements Operaciones {
                 }
                 this.carrito.productos.push(prod);
                 await fs.promises.writeFile(fileCarrito, JSON.stringify(this.carrito, null, "\t"), "utf-8")
-                console.log("producto agregado al carrito", prod);
+                consoleLogger.info(`producto agregado al carrito ${prod}`);
                 return response;
             };
         };
         response = false;
-        console.log ("producto no encontrado");
+        consoleLogger.warn("producto no encontrado");
+        warningLogger.warn("producto no encontrado");
         return response;
     };
     
@@ -255,13 +253,12 @@ class FsDao implements Operaciones {
     async listarProdsCarrito() {
         let carrito = [];
         try {
-            console.log("listar productos del carrito desde carrito.txt")
+            consoleLogger.info("listar productos del carrito desde carrito.txt")
             carrito = JSON.parse(await fs.promises.readFile(fileCarrito, "utf-8"))
-                console.log("productos encontrados", carrito.productos)
                 return carrito.productos;
         } 
         catch (error) {
-            console.log(error)
+            errorLogger.error(error);
             return false;
         }
     };
@@ -279,7 +276,7 @@ class FsDao implements Operaciones {
             };
         }
         catch (error){
-            console.log(error);
+            errorLogger.error(error);
         }
         return response;
     };

@@ -1,7 +1,8 @@
 import express from "express";
-import session from 'express-session';
 const carritoRouter = express.Router();
 import Carrito from "../modelo/carrito.js";
+import {nombreUsuario} from "./login.js";
+import { buscoDatosUser } from "../model/users.js";
 export const miCarrito: Carrito = new Carrito();
 import {consoleLogger, errorLogger, warningLogger} from '../logger.js'
 import {gmailCompra, smsCompra, wappCompra} from '../comunicacion'
@@ -64,7 +65,6 @@ carritoRouter.delete('/borrar/:id', async (req: express.Request, res: express.Re
 });
 
 //ruta para comprar el carrito
-//agrego producto al carrito
 carritoRouter.post('/comprar/:id', async (req: express.Request, res: express.Response) => {
     try {
         if (req.params.id) {
@@ -72,10 +72,11 @@ carritoRouter.post('/comprar/:id', async (req: express.Request, res: express.Res
             let prodList = "";
             for (const prod of productos) {
                 prodList = prodList + `${prod.code} - ${prod.description}, `
-            }    
-            gmailCompra(prodList);
-            wappCompra(prodList);
-            smsCompra();
+            }  
+            const user = await buscoDatosUser(nombreUsuario);
+            gmailCompra(prodList,user.username, user.email);
+            wappCompra(prodList,user.username, user.email);
+            smsCompra(user.phone);
             res.json(productos);
         } else {
             warningLogger.warn("falta el parámetro ID del carrito");
@@ -88,6 +89,5 @@ carritoRouter.post('/comprar/:id', async (req: express.Request, res: express.Res
     }    
        
 });
-
 
 export default carritoRouter;

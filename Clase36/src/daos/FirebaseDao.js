@@ -36,13 +36,14 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+var logger_js_1 = require("../../logger.js");
 var admin = require("firebase-admin");
 var serviceAccount = require("../../data/ecommerce-43372-firebase-adminsdk-sakea-fd16d38086.json");
 admin.initializeApp({
     credential: admin.credential.cert(serviceAccount),
     databaseURL: "https://ecommerce-43372.firebaseio.com",
 });
-console.log("Base de datos conectada");
+logger_js_1.consoleLogger.info("Base de datos conectada");
 var firestoreAdmin = admin.firestore();
 var FirebaseDao = /** @class */ (function () {
     function FirebaseDao() {
@@ -58,14 +59,14 @@ var FirebaseDao = /** @class */ (function () {
                         _a.label = 1;
                     case 1:
                         _a.trys.push([1, 3, 4, 5]);
-                        console.log("agregar por firebase");
+                        logger_js_1.consoleLogger.info("agregar por firebase");
                         return [4 /*yield*/, collection.doc().create(producto)];
                     case 2:
                         _a.sent();
                         return [3 /*break*/, 5];
                     case 3:
                         error_1 = _a.sent();
-                        console.log(error_1);
+                        logger_js_1.errorLogger.error(error_1);
                         resultado = false;
                         return [3 /*break*/, 5];
                     case 4: return [2 /*return*/, resultado];
@@ -108,12 +109,13 @@ var FirebaseDao = /** @class */ (function () {
                             }
                         });
                         if (productosArray.length === 0) {
-                            console.log("no encontro el producto");
+                            logger_js_1.warningLogger.warn("no encontro el producto");
+                            logger_js_1.consoleLogger.warn("no encontró el producto");
                         }
                         return [2 /*return*/, productosArray];
                     case 3:
                         error_2 = _a.sent();
-                        console.log(error_2);
+                        logger_js_1.errorLogger.error(error_2);
                         return [3 /*break*/, 4];
                     case 4:
                         ;
@@ -154,7 +156,7 @@ var FirebaseDao = /** @class */ (function () {
                         return [2 /*return*/, productosArray];
                     case 3:
                         error_3 = _a.sent();
-                        console.log(error_3);
+                        logger_js_1.errorLogger.error(error_3);
                         return [3 /*break*/, 4];
                     case 4:
                         ;
@@ -190,7 +192,7 @@ var FirebaseDao = /** @class */ (function () {
                         return [3 /*break*/, 5];
                     case 3:
                         error_4 = _a.sent();
-                        console.log(error_4);
+                        logger_js_1.errorLogger.error(error_4);
                         return [3 /*break*/, 5];
                     case 4: return [2 /*return*/, resultado];
                     case 5:
@@ -226,7 +228,7 @@ var FirebaseDao = /** @class */ (function () {
                         return [3 /*break*/, 5];
                     case 3:
                         error_5 = _a.sent();
-                        console.log(error_5);
+                        logger_js_1.errorLogger.error(error_5);
                         return [3 /*break*/, 5];
                     case 4: return [2 /*return*/, resultado];
                     case 5:
@@ -265,7 +267,7 @@ var FirebaseDao = /** @class */ (function () {
                         return [2 /*return*/, mensajesArray];
                     case 3:
                         error_6 = _a.sent();
-                        console.log(error_6);
+                        logger_js_1.errorLogger.error(error_6);
                         return [3 /*break*/, 4];
                     case 4:
                         ;
@@ -286,14 +288,14 @@ var FirebaseDao = /** @class */ (function () {
                         _a.label = 1;
                     case 1:
                         _a.trys.push([1, 3, 4, 5]);
-                        console.log("agregar por firebase");
+                        logger_js_1.consoleLogger.info("agregar por firebase");
                         return [4 /*yield*/, collection.doc().create(mensaje)];
                     case 2:
                         _a.sent();
                         return [3 /*break*/, 5];
                     case 3:
                         error_7 = _a.sent();
-                        console.log(error_7);
+                        logger_js_1.errorLogger.error(error_7);
                         resultado = false;
                         return [3 /*break*/, 5];
                     case 4: return [2 /*return*/, resultado];
@@ -318,16 +320,16 @@ var FirebaseDao = /** @class */ (function () {
                         collProds = firestoreAdmin.collection("productos");
                         collCart = firestoreAdmin.collection("carrito");
                         collCartProd = firestoreAdmin.collection("productosCarrito");
-                        console.log("Base de datos conectada");
+                        logger_js_1.consoleLogger.info("Base de datos conectada");
                         return [4 /*yield*/, collProds.get()];
                     case 2:
                         query = _a.sent();
                         datosProductos = query.docs.map(function (doc) {
                             var datos = doc.data();
-                            console.log("datos de producto", datos);
-                            console.log("id del producto", doc.id);
+                            logger_js_1.consoleLogger.info("datos de producto " + datos);
+                            logger_js_1.consoleLogger.info("id del producto " + doc.id);
                             if (doc.id == id) {
-                                console.log("el producto existe");
+                                logger_js_1.consoleLogger.info("el producto existe");
                                 existe_1 = true;
                             }
                         });
@@ -339,14 +341,14 @@ var FirebaseDao = /** @class */ (function () {
                             carritoID_1 = docs.id;
                         });
                         if (!carritoID_1) return [3 /*break*/, 5];
-                        console.log("existe el carrito", carritoID_1);
+                        logger_js_1.consoleLogger.info("existe el carrito " + carritoID_1);
                         return [4 /*yield*/, collCartProd.get()];
                     case 4:
                         query_1 = _a.sent();
                         datosCarrito = query_1.docs.map(function (doc) {
                             var datos = doc.data();
                             if (datos.idProd == id) {
-                                console.log("el producto ya existe en el carrito");
+                                logger_js_1.consoleLogger.info("el producto ya existe en el carrito");
                                 existeCart_1 = true;
                                 return;
                             }
@@ -371,7 +373,7 @@ var FirebaseDao = /** @class */ (function () {
                         return [4 /*yield*/, collCartProd.doc().create(producto)];
                     case 9:
                         resp = _a.sent();
-                        console.log("respuesta de agregar prod en carrito", resp);
+                        logger_js_1.consoleLogger.info("respuesta de agregar prod en carrito " + resp);
                         if (resp) {
                             resultado = true;
                         }
@@ -379,7 +381,7 @@ var FirebaseDao = /** @class */ (function () {
                     case 10: return [3 /*break*/, 13];
                     case 11:
                         error_8 = _a.sent();
-                        console.log(error_8);
+                        logger_js_1.errorLogger.error(error_8);
                         resultado = false;
                         return [3 /*break*/, 13];
                     case 12: return [2 /*return*/, resultado];
@@ -444,7 +446,7 @@ var FirebaseDao = /** @class */ (function () {
                         return [2 /*return*/, productosArray];
                     case 4:
                         error_9 = _a.sent();
-                        console.log(error_9);
+                        logger_js_1.errorLogger.error(error_9);
                         return [2 /*return*/, productosArray];
                     case 5:
                         ;
@@ -487,7 +489,7 @@ var FirebaseDao = /** @class */ (function () {
                             // chequeo si hay coincidencia usando el indexOf para obtener el index.
                             var indexProdc = prodsIds_2.indexOf(datos.idProd);
                             if (indexProdc === -1) {
-                                console.log('no existe');
+                                logger_js_1.consoleLogger.info('no existe');
                             }
                             else {
                                 var data = newQuery_2.docs[indexProdc].data();
@@ -508,7 +510,7 @@ var FirebaseDao = /** @class */ (function () {
                         return [2 /*return*/, productosArray];
                     case 4:
                         error_10 = _a.sent();
-                        console.log(error_10);
+                        logger_js_1.errorLogger.error(error_10);
                         return [2 /*return*/, productosArray];
                     case 5:
                         ;
@@ -544,7 +546,7 @@ var FirebaseDao = /** @class */ (function () {
                         return [3 /*break*/, 4];
                     case 3:
                         error_11 = _a.sent();
-                        console.log(error_11);
+                        logger_js_1.errorLogger.error(error_11);
                         return [3 /*break*/, 4];
                     case 4:
                         ;

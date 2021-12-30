@@ -37,6 +37,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var server_1 = require("../../server");
+var logger_js_1 = require("../../logger.js");
 var mongoose = require("mongoose");
 var prodModel = require("../../model/prods");
 var modelMensajes = require("../../model/messages.js");
@@ -49,18 +50,18 @@ function connectMongoose(connect) {
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
-                    console.log("conexión a mongoLocal");
+                    logger_js_1.consoleLogger.info("conexión a mongoLocal");
                     _a.label = 1;
                 case 1:
                     _a.trys.push([1, 3, , 4]);
                     return [4 /*yield*/, mongoose.connect(connect)];
                 case 2:
                     _a.sent();
-                    console.log("Base de datos conectada");
+                    logger_js_1.consoleLogger.info("Base de datos conectada");
                     return [3 /*break*/, 4];
                 case 3:
                     error_1 = _a.sent();
-                    console.log(error_1);
+                    logger_js_1.errorLogger.error(error_1);
                     return [3 /*break*/, 4];
                 case 4: return [2 /*return*/];
             }
@@ -73,7 +74,7 @@ function connectMongooseAtlas() {
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
-                    console.log("conexión a mongoAtlas");
+                    logger_js_1.consoleLogger.info("conexión a mongoAtlas");
                     _a.label = 1;
                 case 1:
                     _a.trys.push([1, 3, , 4]);
@@ -83,11 +84,11 @@ function connectMongooseAtlas() {
                     return [4 /*yield*/, mongoose.connect("mongodb+srv://" + user + ":" + password + "@cluster0.jbzno.mongodb.net/" + dbname + "?retryWrites=true&w=majority")];
                 case 2:
                     _a.sent();
-                    console.log("Base de datos conectada");
+                    logger_js_1.consoleLogger.info("Base de datos conectada");
                     return [3 /*break*/, 4];
                 case 3:
                     error_2 = _a.sent();
-                    console.log(error_2);
+                    logger_js_1.errorLogger.error(error_2);
                     return [3 /*break*/, 4];
                 case 4: return [2 /*return*/];
             }
@@ -108,13 +109,13 @@ var MongoDBDao = /** @class */ (function () {
                     case 1:
                         _a.trys.push([1, 7, 8, 9]);
                         if (!(server_1.opcionCapa == 4)) return [3 /*break*/, 3];
-                        console.log('agregar producto por mongoDB');
+                        logger_js_1.consoleLogger.info('agregar producto por mongoDB');
                         return [4 /*yield*/, connectMongoose(connectStrLocal)];
                     case 2:
                         _a.sent();
                         return [3 /*break*/, 5];
                     case 3:
-                        console.log("agregar producto por mongoAtlas");
+                        logger_js_1.consoleLogger.info("agregar producto por mongoAtlas");
                         return [4 /*yield*/, connectMongooseAtlas()];
                     case 4:
                         _a.sent();
@@ -125,12 +126,12 @@ var MongoDBDao = /** @class */ (function () {
                         return [3 /*break*/, 9];
                     case 7:
                         error_3 = _a.sent();
-                        console.log(error_3);
+                        logger_js_1.errorLogger.error(error_3);
                         resultado = false;
                         return [3 /*break*/, 9];
                     case 8:
                         mongoose.disconnect().then(function () {
-                            console.log("Base de datos desconectada");
+                            logger_js_1.consoleLogger.info("Base de datos desconectada");
                         });
                         return [2 /*return*/, resultado];
                     case 9: return [2 /*return*/];
@@ -149,13 +150,13 @@ var MongoDBDao = /** @class */ (function () {
                     case 1:
                         _a.trys.push([1, 7, 8, 9]);
                         if (!(server_1.opcionCapa == 4)) return [3 /*break*/, 3];
-                        console.log('buscar producto por mongoDB');
+                        logger_js_1.consoleLogger.info('buscar producto por mongoDB');
                         return [4 /*yield*/, connectMongoose(connectStrLocal)];
                     case 2:
                         _a.sent();
                         return [3 /*break*/, 5];
                     case 3:
-                        console.log('buscar producto por mongoAtlas');
+                        logger_js_1.consoleLogger.info('buscar producto por mongoAtlas');
                         return [4 /*yield*/, connectMongooseAtlas()];
                     case 4:
                         _a.sent();
@@ -166,11 +167,11 @@ var MongoDBDao = /** @class */ (function () {
                         return [3 /*break*/, 9];
                     case 7:
                         error_4 = _a.sent();
-                        console.log(error_4);
+                        logger_js_1.errorLogger.error(error_4);
                         return [3 /*break*/, 9];
                     case 8:
                         mongoose.disconnect().then(function () {
-                            console.log("Base de datos desconectada");
+                            logger_js_1.consoleLogger.info("Base de datos desconectada");
                         });
                         return [2 /*return*/, producto];
                     case 9:
@@ -191,13 +192,13 @@ var MongoDBDao = /** @class */ (function () {
                     case 1:
                         _a.trys.push([1, 7, 8, 9]);
                         if (!(server_1.opcionCapa == 4)) return [3 /*break*/, 3];
-                        console.log('listar productos por mongoDB');
+                        logger_js_1.consoleLogger.info('listar productos por mongoDB');
                         return [4 /*yield*/, connectMongoose(connectStrLocal)];
                     case 2:
                         _a.sent();
                         return [3 /*break*/, 5];
                     case 3:
-                        console.log("listar productos por mongoAtlas");
+                        logger_js_1.consoleLogger.info("listar productos por mongoAtlas");
                         return [4 /*yield*/, connectMongooseAtlas()];
                     case 4:
                         _a.sent();
@@ -205,15 +206,15 @@ var MongoDBDao = /** @class */ (function () {
                     case 5: return [4 /*yield*/, prodModel.default.find()];
                     case 6:
                         productosArray = _a.sent();
-                        console.log("productos encontrados", productosArray);
+                        logger_js_1.consoleLogger.info("productos encontrados " + productosArray);
                         return [3 /*break*/, 9];
                     case 7:
                         error_5 = _a.sent();
-                        console.log(error_5);
+                        logger_js_1.errorLogger.error(error_5);
                         return [3 /*break*/, 9];
                     case 8:
                         mongoose.disconnect().then(function () {
-                            console.log("Base de datos desconectada");
+                            logger_js_1.consoleLogger.info("Base de datos desconectada");
                         });
                         return [2 /*return*/, productosArray];
                     case 9:
@@ -234,13 +235,13 @@ var MongoDBDao = /** @class */ (function () {
                     case 1:
                         _a.trys.push([1, 7, 8, 9]);
                         if (!(server_1.opcionCapa == 4)) return [3 /*break*/, 3];
-                        console.log('borrar producto por mongoDB');
+                        logger_js_1.consoleLogger.info('borrar producto por mongoDB');
                         return [4 /*yield*/, connectMongoose(connectStrLocal)];
                     case 2:
                         _a.sent();
                         return [3 /*break*/, 5];
                     case 3:
-                        console.log("borrar producto por mongoAtlas");
+                        logger_js_1.consoleLogger.info("borrar producto por mongoAtlas");
                         return [4 /*yield*/, connectMongooseAtlas()];
                     case 4:
                         _a.sent();
@@ -248,19 +249,19 @@ var MongoDBDao = /** @class */ (function () {
                     case 5: return [4 /*yield*/, prodModel.default.deleteMany({ _id: id })];
                     case 6:
                         resp = _a.sent();
-                        console.log("producto borrado", resp.deletedCount);
+                        logger_js_1.consoleLogger.info("producto borrado  " + resp.deletedCount);
                         if (resp.deletedCount == 1) {
                             resultado = true;
                         }
                         return [3 /*break*/, 9];
                     case 7:
                         error_6 = _a.sent();
-                        console.log(error_6);
+                        logger_js_1.errorLogger.error(error_6);
                         resultado = false;
                         return [3 /*break*/, 9];
                     case 8:
                         mongoose.disconnect().then(function () {
-                            console.log("Base de datos desconectada");
+                            logger_js_1.consoleLogger.info("Base de datos desconectada");
                         });
                         return [2 /*return*/, resultado];
                     case 9:
@@ -281,13 +282,13 @@ var MongoDBDao = /** @class */ (function () {
                     case 1:
                         _a.trys.push([1, 7, 8, 9]);
                         if (!(server_1.opcionCapa == 4)) return [3 /*break*/, 3];
-                        console.log('actualizar producto por mongoDB');
+                        logger_js_1.consoleLogger.info('actualizar producto por mongoDB');
                         return [4 /*yield*/, connectMongoose(connectStrLocal)];
                     case 2:
                         _a.sent();
                         return [3 /*break*/, 5];
                     case 3:
-                        console.log("actualizar producto por mongoAtlas");
+                        logger_js_1.consoleLogger.info("actualizar producto por mongoAtlas");
                         return [4 /*yield*/, connectMongooseAtlas()];
                     case 4:
                         _a.sent();
@@ -295,18 +296,18 @@ var MongoDBDao = /** @class */ (function () {
                     case 5: return [4 /*yield*/, prodModel.default.findByIdAndUpdate(id, producto)];
                     case 6:
                         resp = _a.sent();
-                        console.log("producto actualizado", resp);
+                        logger_js_1.consoleLogger.info("producto actualizado " + resp);
                         if (resp) {
                             resultado = true;
                         }
                         return [3 /*break*/, 9];
                     case 7:
                         error_7 = _a.sent();
-                        console.log(error_7);
+                        logger_js_1.errorLogger.error(error_7);
                         return [3 /*break*/, 9];
                     case 8:
                         mongoose.disconnect().then(function () {
-                            console.log("Base de datos desconectada");
+                            logger_js_1.consoleLogger.info("Base de datos desconectada");
                         });
                         return [2 /*return*/, resultado];
                     case 9:
@@ -328,13 +329,13 @@ var MongoDBDao = /** @class */ (function () {
                     case 1:
                         _a.trys.push([1, 7, 8, 9]);
                         if (!(server_1.opcionCapa == 4)) return [3 /*break*/, 3];
-                        console.log('listar mensajes por mongoDB');
+                        logger_js_1.consoleLogger.info('listar mensajes por mongoDB');
                         return [4 /*yield*/, connectMongoose(connectStrLocal)];
                     case 2:
                         _a.sent();
                         return [3 /*break*/, 5];
                     case 3:
-                        console.log("listar mensajes por mongoAtlas");
+                        logger_js_1.consoleLogger.info("listar mensajes por mongoAtlas");
                         return [4 /*yield*/, connectMongooseAtlas()];
                     case 4:
                         _a.sent();
@@ -345,11 +346,11 @@ var MongoDBDao = /** @class */ (function () {
                         return [2 /*return*/, mensajesArray];
                     case 7:
                         error_8 = _a.sent();
-                        console.log(error_8);
+                        logger_js_1.errorLogger.error(error_8);
                         return [3 /*break*/, 9];
                     case 8:
                         mongoose.disconnect().then(function () {
-                            console.log("Base de datos desconectada");
+                            logger_js_1.consoleLogger.info("Base de datos desconectada");
                         });
                         return [7 /*endfinally*/];
                     case 9:
@@ -371,31 +372,31 @@ var MongoDBDao = /** @class */ (function () {
                     case 1:
                         _a.trys.push([1, 7, 8, 9]);
                         if (!(server_1.opcionCapa == 4)) return [3 /*break*/, 3];
-                        console.log('listar mensajes por mongoDB');
+                        logger_js_1.consoleLogger.info('listar mensajes por mongoDB');
                         return [4 /*yield*/, connectMongoose(connectStrLocal)];
                     case 2:
                         _a.sent();
                         return [3 /*break*/, 5];
                     case 3:
-                        console.log("listar mensajes por mongoAtlas");
+                        logger_js_1.consoleLogger.info("listar mensajes por mongoAtlas");
                         return [4 /*yield*/, connectMongooseAtlas()];
                     case 4:
                         _a.sent();
                         _a.label = 5;
                     case 5:
-                        console.log("mensaje a insertar en Mongodb", mensaje);
+                        logger_js_1.consoleLogger.info("mensaje a insertar en Mongodb " + mensaje);
                         return [4 /*yield*/, modelMensajes.default.insertMany(mensaje)];
                     case 6:
                         _a.sent();
                         return [3 /*break*/, 9];
                     case 7:
                         error_9 = _a.sent();
-                        console.log(error_9);
+                        logger_js_1.errorLogger.error(error_9);
                         resultado = false;
                         return [3 /*break*/, 9];
                     case 8:
                         mongoose.disconnect().then(function () {
-                            console.log("Base de datos desconectada");
+                            logger_js_1.consoleLogger.info("Base de datos desconectada");
                         });
                         return [2 /*return*/, resultado];
                     case 9:
@@ -417,13 +418,13 @@ var MongoDBDao = /** @class */ (function () {
                     case 1:
                         _a.trys.push([1, 15, 16, 17]);
                         if (!(server_1.opcionCapa == 4)) return [3 /*break*/, 3];
-                        console.log('agregar producto en carrito por mongoDB');
+                        logger_js_1.consoleLogger.info('agregar producto en carrito por mongoDB');
                         return [4 /*yield*/, connectMongoose(connectStrLocal)];
                     case 2:
                         _a.sent();
                         return [3 /*break*/, 5];
                     case 3:
-                        console.log("agregar producto en carrito por mongoAtlas");
+                        logger_js_1.consoleLogger.info("agregar producto en carrito por mongoAtlas");
                         return [4 /*yield*/, connectMongooseAtlas()];
                     case 4:
                         _a.sent();
@@ -431,14 +432,12 @@ var MongoDBDao = /** @class */ (function () {
                     case 5: return [4 /*yield*/, prodModel.default.find({ _id: id }, { _id: 1 })];
                     case 6:
                         prodAgregar = _a.sent();
-                        console.log("resultado de buscar el producto", prodAgregar);
-                        console.log("long del array de prodAgregar", prodAgregar.length);
                         if (!(prodAgregar.length > 0)) return [3 /*break*/, 14];
                         return [4 /*yield*/, cartModel.default.find({}, { _id: 1 })];
                     case 7:
                         carritoID = _a.sent();
                         if (!(carritoID.length == 0)) return [3 /*break*/, 10];
-                        console.log("no encontró carrito, va a crear uno");
+                        logger_js_1.consoleLogger.info("no encontró carrito, va a crear uno");
                         return [4 /*yield*/, cartModel.default.insertMany({ timestamp: Date.now() })];
                     case 8:
                         _a.sent();
@@ -450,7 +449,7 @@ var MongoDBDao = /** @class */ (function () {
                     case 11:
                         prodExist = _a.sent();
                         if (!(prodExist.length > 0)) return [3 /*break*/, 12];
-                        console.log("el producto ya existe en el carrito");
+                        logger_js_1.consoleLogger.info("el producto ya existe en el carrito");
                         return [3 /*break*/, 14];
                     case 12:
                         carritoID = JSON.parse(JSON.stringify(carritoID));
@@ -461,7 +460,6 @@ var MongoDBDao = /** @class */ (function () {
                         return [4 /*yield*/, cartProdModel.default.insertMany(producto)];
                     case 13:
                         result = _a.sent();
-                        console.log("resultado de agregar el prod al carrito", result);
                         if (result) {
                             resultado = true;
                         }
@@ -469,11 +467,11 @@ var MongoDBDao = /** @class */ (function () {
                     case 14: return [3 /*break*/, 17];
                     case 15:
                         error_10 = _a.sent();
-                        console.log(error_10);
+                        logger_js_1.errorLogger.error(error_10);
                         return [3 /*break*/, 17];
                     case 16:
                         mongoose.disconnect().then(function () {
-                            console.log("Base de datos desconectada");
+                            logger_js_1.consoleLogger.info("Base de datos desconectada");
                         });
                         return [2 /*return*/, resultado];
                     case 17: return [2 /*return*/];
@@ -493,13 +491,13 @@ var MongoDBDao = /** @class */ (function () {
                     case 1:
                         _a.trys.push([1, 10, 11, 12]);
                         if (!(server_1.opcionCapa == 4)) return [3 /*break*/, 3];
-                        console.log('buscar producto por mongoDB');
+                        logger_js_1.consoleLogger.info('buscar producto por mongoDB');
                         return [4 /*yield*/, connectMongoose(connectStrLocal)];
                     case 2:
                         _a.sent();
                         return [3 /*break*/, 5];
                     case 3:
-                        console.log("buscar producto por mongoAtlas");
+                        logger_js_1.consoleLogger.info("buscar producto por mongoAtlas");
                         return [4 /*yield*/, connectMongooseAtlas()];
                     case 4:
                         _a.sent();
@@ -508,21 +506,20 @@ var MongoDBDao = /** @class */ (function () {
                     case 6:
                         prodID = _a.sent();
                         if (!(prodID.length == 0)) return [3 /*break*/, 7];
-                        console.log("el producto no está en el carrito");
+                        logger_js_1.consoleLogger.warn("el producto no está en el carrito");
                         return [3 /*break*/, 9];
                     case 7: return [4 /*yield*/, prodModel.default.find({ _id: id }, { _id: 1, code: 1, title: 1, description: 1, price: 1, thumbnail: 1, stock: 1, timestamp: 1 })];
                     case 8:
                         producto = _a.sent();
-                        console.log("producto encontrado", producto);
                         _a.label = 9;
                     case 9: return [3 /*break*/, 12];
                     case 10:
                         error_11 = _a.sent();
-                        console.log(error_11);
+                        logger_js_1.errorLogger.error(error_11);
                         return [3 /*break*/, 12];
                     case 11:
                         mongoose.disconnect().then(function () {
-                            console.log("Base de datos desconectada");
+                            logger_js_1.consoleLogger.info("Base de datos desconectada");
                         });
                         return [2 /*return*/, producto];
                     case 12:
@@ -544,13 +541,13 @@ var MongoDBDao = /** @class */ (function () {
                     case 1:
                         _a.trys.push([1, 11, 12, 13]);
                         if (!(server_1.opcionCapa == 4)) return [3 /*break*/, 3];
-                        console.log('listar productos por mongoDB');
+                        logger_js_1.consoleLogger.info('listar productos por mongoDB');
                         return [4 /*yield*/, connectMongoose(connectStrLocal)];
                     case 2:
                         _a.sent();
                         return [3 /*break*/, 5];
                     case 3:
-                        console.log("listar productos por mongoAtlas");
+                        logger_js_1.consoleLogger.info("listar productos por mongoAtlas");
                         return [4 /*yield*/, connectMongooseAtlas()];
                     case 4:
                         _a.sent();
@@ -584,11 +581,11 @@ var MongoDBDao = /** @class */ (function () {
                     case 10: return [3 /*break*/, 13];
                     case 11:
                         error_12 = _a.sent();
-                        console.log(error_12);
+                        logger_js_1.errorLogger.error(error_12);
                         return [3 /*break*/, 13];
                     case 12:
                         mongoose.disconnect().then(function () {
-                            console.log("Base de datos desconectada");
+                            logger_js_1.consoleLogger.info("Base de datos desconectada");
                         });
                         return [2 /*return*/, productosArray];
                     case 13:
@@ -609,13 +606,13 @@ var MongoDBDao = /** @class */ (function () {
                     case 1:
                         _a.trys.push([1, 7, 8, 9]);
                         if (!(server_1.opcionCapa == 4)) return [3 /*break*/, 3];
-                        console.log('borrar producto del carrito por mongoDB');
+                        logger_js_1.consoleLogger.info('borrar producto del carrito por mongoDB');
                         return [4 /*yield*/, connectMongoose(connectStrLocal)];
                     case 2:
                         _a.sent();
                         return [3 /*break*/, 5];
                     case 3:
-                        console.log("borrar producto del carrito por mongoAtlas");
+                        logger_js_1.consoleLogger.info("borrar producto del carrito por mongoAtlas");
                         return [4 /*yield*/, connectMongooseAtlas()];
                     case 4:
                         _a.sent();
@@ -623,18 +620,18 @@ var MongoDBDao = /** @class */ (function () {
                     case 5: return [4 /*yield*/, cartProdModel.default.deleteMany({ idProd: id })];
                     case 6:
                         resp = _a.sent();
-                        console.log("producto borrado", resp.deletedCount);
+                        logger_js_1.consoleLogger.info("producto borrado " + resp.deletedCount);
                         if (resp.deletedCount == 1) {
                             resultado = true;
                         }
                         return [3 /*break*/, 9];
                     case 7:
                         error_13 = _a.sent();
-                        console.log(error_13);
+                        logger_js_1.errorLogger.error(error_13);
                         return [3 /*break*/, 9];
                     case 8:
                         mongoose.disconnect().then(function () {
-                            console.log("Base de datos desconectada");
+                            logger_js_1.consoleLogger.info("Base de datos desconectada");
                         });
                         return [2 /*return*/, resultado];
                     case 9:

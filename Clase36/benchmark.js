@@ -1,4 +1,6 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+var logger_js_1 = require("./logger.js");
 var autocannon = require('autocannon');
 var stream = require('stream');
 var run = function (url) {
@@ -17,5 +19,5 @@ var run = function (url) {
     });
     instance.on('done', function () { return process.stdout.write(Buffer.concat(buffer)); });
 };
-console.log('Running all benchmarks in parallel...');
+logger_js_1.consoleLogger.info('Running all benchmarks in parallel...');
 run('http://localhost:8080/ecommerce/info');

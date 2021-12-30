@@ -45,19 +45,18 @@ loginRouter.use(passport.session());
 
 ////////
 async function connectMongoose() {
-    console.log("conexión a mongoLocal");
+    consoleLogger.info("conexión a mongoLocal");
     try {
         await mongoose.connect("mongodb://localhost:27017/ecommerce")
-        console.log("Base de datos Mongo conectada");
+        consoleLogger.info("Base de datos Mongo conectada");
     } catch(error) {
-        console.log(error)
+        errorLogger.error(error)
     }    
 }
 ///////
 const createHash = (password: string) => bCrypt.hashSync(password, bCrypt.genSaltSync(10));
 const isValidPassword = (user: any, password: string) => bCrypt.compareSync(password, user.password);
 
-let usuario:any = "";
 //const FacebookStrategy = require('passport-facebook').Strategy;
 //const FACEBOOK_CLIENT_ID = Number(process.argv[3]) || '273751394685780';
 //const FACEBOOK_CLIENT_SECRET = Number(process.argv[4]) || 'bdc22f2dd51fd93cdaf053b722598c31';
@@ -66,6 +65,8 @@ let usuario:any = "";
 
 const loginStrategyName = 'login';
 const signUpStrategyName = 'signup';
+
+export let nombreUsuario = "";
 
 passport.use(
   loginStrategyName,
@@ -84,17 +85,17 @@ passport.use(
         }
 
         if (!user) {
-          console.log(`User Not Found with username ${username}`);
+          warningLogger.warn(`User Not Found with username ${username}`);
 
           return done(null, false);
         }
 
         if (!isValidPassword(user, password)) {
-          console.log('Invalid Password');
-
+          consoleLogger.info('Invalid Password');
           return done(null, false);
         }
-
+        nombreUsuario = user.username;
+        consoleLogger.info("mostrar el user logueado",nombreUsuario);
         return done(null, user);
       });
     },
@@ -108,7 +109,7 @@ passport.use(
       passReqToCallback: true,
     },
     async (request: express.Request, username: string, password: string, done: any) => {
-      console.log("va a verificar si existe");
+      consoleLogger.info("va a verificar si existe");
       await connectMongoose();
       Users.findOne(
         {
@@ -117,20 +118,21 @@ passport.use(
         (error: string, user: any) => {
          
           if (error) {
-            console.log(`Error in SignUp: ${error}`);
+            errorLogger.error(`Error in SignUp: ${error}`);
+            consoleLogger.error(`Error in SignUp: ${error}`);
 
             return done(error);
           }
 
           if (user) {
-            console.log('User already exists');
+            consoleLogger.info('User already exists');
 
             return done(
               null,
               false,
             );
           }
-          console.log ("creando objeto usuario");
+          consoleLogger.info("creando objeto usuario");
           const newUser: IUsuario = new Users();
  
           newUser.username = username;
@@ -144,12 +146,13 @@ passport.use(
      
           return newUser.save((error: any) => {
             if (error) {
-              console.log(`Error in Saving user: ${error}`);
+              errorLogger.error(`Error in Saving user: ${error}`);
+              consoleLogger.error(`Error in Saving user: ${error}`);
 
               throw error;
             }
 
-            console.log('User Registration succesful');
+            consoleLogger.info('User Registration succesful');
 
             return done(null, newUser);
           });
@@ -183,12 +186,7 @@ loginRouter.get('/login', (req: any, res: express.Response) => {
 
   if (req.isAuthenticated()) {
     const { user } = req;
-    usuario = {
-      nombre: user.username,
-      email: user.email,
-      telefono: user.phone      
-    };
-    console.log('user logueado');
+    consoleLogger.info('user logueado', user.username);
     return res
       .status(200)
       .render('welcome', {
@@ -201,7 +199,7 @@ loginRouter.get('/login', (req: any, res: express.Response) => {
         telefono: user.phone,
       });
   }
-  console.log('user NO logueado');
+  consoleLogger.info('user NO logueado');
   return res
     .status(200)
     .sendFile(`${__dirname}/public/formlogin.html`);
@@ -214,12 +212,6 @@ loginRouter.post('/login',passport.authenticate(loginStrategyName, { failureRedi
       return res.send('Login failed');
   }
   req.session.nombre = username;
-  console.log("usuario", req.session.nombre)
-  usuario = {
-    nombre: username,
-    email: "", 
-    telefono: "",
-  }
   return res.redirect('/ecommerce/login');
   
 });
@@ -244,7 +236,7 @@ loginRouter.post('/registro', passport.authenticate(signUpStrategyName, { failur
 });
 
 loginRouter.get('/failsignup', (req: express.Request, res: express.Response) => {
-    console.log('error en registro');
+    consoleLogger.error('error en registro');
     return res
       .status(500)
       .render('error-registro', {});
@@ -253,7 +245,7 @@ loginRouter.get('/failsignup', (req: express.Request, res: express.Response) => 
 
 loginRouter.get('/ruta-protegida', checkAuthentication, (req: any, res: express.Response) => {
   const { user } = req;
-  console.log(user);
+  consoleLogger.info(user);
   return res
     .status(200)
     .send('<h1>Ruta OK!</h1>');
@@ -274,10 +266,6 @@ loginRouter.get('/logout', async (req: express.Request, res: express.Response) =
 });
 
 loginRouter.get('/info', (req:express.Request, res: express.Response) => {
-  /*consoleLogger.info(`argumentos: ${process.argv.slice(2)}, plataforma: ${process.platform},
-   version: ${process.version}, uso memoria: ${JSON.stringify(process.memoryUsage())}
-  , path: ${process.execPath}, pid: ${process.pid}, CPUs: ${numCPUs}`);*/
-
   res.render("datosProceso", {
     argumentos: process.argv.slice(2),
     plataforma: process.platform,
@@ -306,4 +294,4 @@ loginRouter.get('/random/:cant?', (req:express.Request, res: express.Response) =
    
 });
 
-export default usuario;
+

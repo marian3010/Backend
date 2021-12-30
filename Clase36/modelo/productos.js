@@ -41,9 +41,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var DaoFactory_1 = __importDefault(require("../src/DaoFactory"));
 var server_1 = require("../server");
+var logger_js_1 = require("../logger.js");
 var daoFact = new DaoFactory_1.default(server_1.opcionCapa);
 var dao = daoFact.elegirBD();
-console.log("Dao", dao);
+logger_js_1.consoleLogger.info("Dao", dao);
 var Productos = /** @class */ (function () {
     function Productos() {
     }
@@ -68,11 +69,11 @@ var Productos = /** @class */ (function () {
                         return [4 /*yield*/, dao.agregarProducto(producto)];
                     case 1:
                         response = _a.sent();
-                        console.log("función exitosa", response);
+                        logger_js_1.consoleLogger.info("funci\u00F3n exitosa " + response);
                         return [2 /*return*/, producto];
                     case 2:
                         error_1 = _a.sent();
-                        console.log(error_1);
+                        logger_js_1.errorLogger.error(error_1);
                         return [3 /*break*/, 3];
                     case 3: return [2 /*return*/];
                 }
@@ -90,11 +91,11 @@ var Productos = /** @class */ (function () {
                         return [4 /*yield*/, dao.buscarProducto(id)];
                     case 1:
                         productoEncontrado = _a.sent();
-                        console.log("producto encontrado", productoEncontrado);
+                        logger_js_1.consoleLogger.info("producto encontrado " + productoEncontrado);
                         return [3 /*break*/, 3];
                     case 2:
                         error_2 = _a.sent();
-                        console.log(error_2);
+                        logger_js_1.errorLogger.error(error_2);
                         return [3 /*break*/, 3];
                     case 3: return [2 /*return*/, productoEncontrado];
                 }
@@ -123,13 +124,13 @@ var Productos = /** @class */ (function () {
                             ;
                         }
                         ;
-                        console.log("lista productos", listaProductos);
-                        console.log("filtro", filtro);
-                        console.log("valor desde", valorDesde);
-                        console.log("valor hasta", valorHasta);
+                        logger_js_1.consoleLogger.info("lista productos " + listaProductos);
+                        logger_js_1.consoleLogger.info("filtro " + filtro);
+                        logger_js_1.consoleLogger.info("valor desde " + valorDesde);
+                        logger_js_1.consoleLogger.info("valor hasta " + valorHasta);
                         if (!filtro) {
-                            console.log("sin filtro");
-                            console.log("lista productos", listaProductos);
+                            logger_js_1.consoleLogger.info("sin filtro");
+                            logger_js_1.consoleLogger.info("lista productos " + listaProductos);
                             return [2 /*return*/, listaProductos];
                         }
                         if (filtro === 'nombre')
@@ -143,7 +144,7 @@ var Productos = /** @class */ (function () {
                         return [3 /*break*/, 4];
                     case 3:
                         error_3 = _a.sent();
-                        console.log(error_3);
+                        logger_js_1.errorLogger.error(error_3);
                         return [3 /*break*/, 4];
                     case 4: return [2 /*return*/, listaProductos];
                 }
@@ -164,7 +165,7 @@ var Productos = /** @class */ (function () {
                         return [2 /*return*/, response];
                     case 2:
                         error_4 = _a.sent();
-                        console.log(error_4);
+                        logger_js_1.errorLogger.error(error_4);
                         return [3 /*break*/, 3];
                     case 3: return [2 /*return*/];
                 }
@@ -194,7 +195,7 @@ var Productos = /** @class */ (function () {
                         return [2 /*return*/, response];
                     case 2:
                         error_5 = _a.sent();
-                        console.log(error_5);
+                        logger_js_1.errorLogger.error(error_5);
                         return [3 /*break*/, 3];
                     case 3: return [2 /*return*/];
                 }

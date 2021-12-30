@@ -39,7 +39,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.sessionHandler = exports.loginRouter = void 0;
+exports.nombreUsuario = exports.sessionHandler = exports.loginRouter = void 0;
 var express_1 = __importDefault(require("express"));
 var express_session_1 = __importDefault(require("express-session"));
 var fs_1 = __importDefault(require("fs"));
@@ -80,18 +80,18 @@ function connectMongoose() {
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
-                    console.log("conexión a mongoLocal");
+                    logger_js_1.consoleLogger.info("conexión a mongoLocal");
                     _a.label = 1;
                 case 1:
                     _a.trys.push([1, 3, , 4]);
                     return [4 /*yield*/, mongoose.connect("mongodb://localhost:27017/ecommerce")];
                 case 2:
                     _a.sent();
-                    console.log("Base de datos Mongo conectada");
+                    logger_js_1.consoleLogger.info("Base de datos Mongo conectada");
                     return [3 /*break*/, 4];
                 case 3:
                     error_1 = _a.sent();
-                    console.log(error_1);
+                    logger_js_1.errorLogger.error(error_1);
                     return [3 /*break*/, 4];
                 case 4: return [2 /*return*/];
             }
@@ -101,7 +101,6 @@ function connectMongoose() {
 ///////
 var createHash = function (password) { return bCrypt.hashSync(password, bCrypt.genSaltSync(10)); };
 var isValidPassword = function (user, password) { return bCrypt.compareSync(password, user.password); };
-var usuario = "";
 //const FacebookStrategy = require('passport-facebook').Strategy;
 //const FACEBOOK_CLIENT_ID = Number(process.argv[3]) || '273751394685780';
 //const FACEBOOK_CLIENT_SECRET = Number(process.argv[4]) || 'bdc22f2dd51fd93cdaf053b722598c31';
@@ -109,6 +108,7 @@ var usuario = "";
 //consoleLogger.info(`facebook client secret ${FACEBOOK_CLIENT_SECRET}`);
 var loginStrategyName = 'login';
 var signUpStrategyName = 'signup';
+exports.nombreUsuario = "";
 passport.use(loginStrategyName, new passportLocal.Strategy({
     passReqToCallback: true,
 }, function (_request, username, password, done) { return __awaiter(void 0, void 0, void 0, function () {
@@ -124,13 +124,15 @@ passport.use(loginStrategyName, new passportLocal.Strategy({
                         return done(error);
                     }
                     if (!user) {
-                        console.log("User Not Found with username " + username);
+                        logger_js_1.warningLogger.warn("User Not Found with username " + username);
                         return done(null, false);
                     }
                     if (!isValidPassword(user, password)) {
-                        console.log('Invalid Password');
+                        logger_js_1.consoleLogger.info('Invalid Password');
                         return done(null, false);
                     }
+                    exports.nombreUsuario = user.username;
+                    logger_js_1.consoleLogger.info("mostrar el user logueado", exports.nombreUsuario);
                     return done(null, user);
                 });
                 return [2 /*return*/];
@@ -143,7 +145,7 @@ passport.use(signUpStrategyName, new passportLocal.Strategy({
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
-                console.log("va a verificar si existe");
+                logger_js_1.consoleLogger.info("va a verificar si existe");
                 return [4 /*yield*/, connectMongoose()];
             case 1:
                 _a.sent();
@@ -151,14 +153,15 @@ passport.use(signUpStrategyName, new passportLocal.Strategy({
                     username: username,
                 }, function (error, user) {
                     if (error) {
-                        console.log("Error in SignUp: " + error);
+                        logger_js_1.errorLogger.error("Error in SignUp: " + error);
+                        logger_js_1.consoleLogger.error("Error in SignUp: " + error);
                         return done(error);
                     }
                     if (user) {
-                        console.log('User already exists');
+                        logger_js_1.consoleLogger.info('User already exists');
                         return done(null, false);
                     }
-                    console.log("creando objeto usuario");
+                    logger_js_1.consoleLogger.info("creando objeto usuario");
                     var newUser = new users_1.Users();
                     newUser.username = username;
                     newUser.password = createHash(password);
@@ -170,10 +173,11 @@ passport.use(signUpStrategyName, new passportLocal.Strategy({
                     newUser.phone = request.body.phone;
                     return newUser.save(function (error) {
                         if (error) {
-                            console.log("Error in Saving user: " + error);
+                            logger_js_1.errorLogger.error("Error in Saving user: " + error);
+                            logger_js_1.consoleLogger.error("Error in Saving user: " + error);
                             throw error;
                         }
-                        console.log('User Registration succesful');
+                        logger_js_1.consoleLogger.info('User Registration succesful');
                         return done(null, newUser);
                     });
                 });
@@ -199,12 +203,7 @@ process.on('exit', function (code) { return console.log('exit ${code}'); });
 exports.loginRouter.get('/login', function (req, res) {
     if (req.isAuthenticated()) {
         var user = req.user;
-        usuario = {
-            nombre: user.username,
-            email: user.email,
-            telefono: user.phone
-        };
-        console.log('user logueado');
+        logger_js_1.consoleLogger.info('user logueado', user.username);
         return res
             .status(200)
             .render('welcome', {
@@ -217,7 +216,7 @@ exports.loginRouter.get('/login', function (req, res) {
             telefono: user.phone,
         });
     }
-    console.log('user NO logueado');
+    logger_js_1.consoleLogger.info('user NO logueado');
     return res
         .status(200)
         .sendFile(__dirname + "/public/formlogin.html");
@@ -228,12 +227,6 @@ exports.loginRouter.post('/login', passport.authenticate(loginStrategyName, { fa
         return res.send('Login failed');
     }
     req.session.nombre = username;
-    console.log("usuario", req.session.nombre);
-    usuario = {
-        nombre: username,
-        email: "",
-        telefono: "",
-    };
     return res.redirect('/ecommerce/login');
 });
 exports.loginRouter.get('/faillogin', function (req, res) {
@@ -254,14 +247,14 @@ exports.loginRouter.post('/registro', passport.authenticate(signUpStrategyName, 
     });
 }); });
 exports.loginRouter.get('/failsignup', function (req, res) {
-    console.log('error en registro');
+    logger_js_1.consoleLogger.error('error en registro');
     return res
         .status(500)
         .render('error-registro', {});
 });
 exports.loginRouter.get('/ruta-protegida', checkAuthentication, function (req, res) {
     var user = req.user;
-    console.log(user);
+    logger_js_1.consoleLogger.info(user);
     return res
         .status(200)
         .send('<h1>Ruta OK!</h1>');
@@ -284,9 +277,6 @@ exports.loginRouter.get('/logout', function (req, res) { return __awaiter(void 0
     });
 }); });
 exports.loginRouter.get('/info', function (req, res) {
-    /*consoleLogger.info(`argumentos: ${process.argv.slice(2)}, plataforma: ${process.platform},
-     version: ${process.version}, uso memoria: ${JSON.stringify(process.memoryUsage())}
-    , path: ${process.execPath}, pid: ${process.pid}, CPUs: ${numCPUs}`);*/
     res.render("datosProceso", {
         argumentos: process.argv.slice(2),
         plataforma: process.platform,
@@ -309,4 +299,3 @@ exports.loginRouter.get('/random/:cant?', function (req, res) {
         res.json({ message: message });
     });
 });
-exports.default = usuario;

@@ -1,3 +1,4 @@
+import {consoleLogger, errorLogger, warningLogger} from './logger.js'
 const autocannon = require('autocannon');
 const stream = require('stream');
 
@@ -32,6 +33,6 @@ const run = (url:any) => {
   );
 };
 
-console.log('Running all benchmarks in parallel...');
+consoleLogger.info('Running all benchmarks in parallel...');
 
 run('http://localhost:8080/ecommerce/info');
