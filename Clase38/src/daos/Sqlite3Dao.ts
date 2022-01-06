@@ -5,72 +5,76 @@ import options from '../../db/sqlite3';
 import knex from "knex";
 import {consoleLogger, errorLogger, warningLogger} from '../../logger.js'
 const knexSQLite3 = knex(options);
+import {opcionCapa} from '../../server';
 
-knexSQLite3.schema.hasTable("productos")
-    .then(response => {
-        consoleLogger.info(`respuesta al create table productos ${response}`)
-        if(!response) {
-            knexSQLite3.schema.createTable("productos", (table:any) => {
-                table.increments("id",{primaryKey:true})
-                table.string("code");
-                table.string("title").notNullable();
-                table.string("description");
-                table.integer("price").notNullable();
-                table.string("thumbnail");
-                table.integer("stock");
-                table.integer("timestamp");
-            })
-        .then(() => consoleLogger.info("tabla productos creada en SQLite"))
-        .catch((error) => {
-            errorLogger.error(error);
-            })
-        }
-    });
-knexSQLite3.schema.hasTable("mensajes")
-    .then(res => {
-        consoleLogger.info(`respuesta al create table mensajes ${res}`)
-        if(!res) {
-            knexSQLite3.schema.createTable("mensajes", (table:any) => {
-                table.string("author");
-                table.string("fecha");
-                table.string("text");
-            })
-        .then(() => consoleLogger.info("tabla mensajes creada en SQLite"))
-        .catch((error) => {
-            errorLogger.error(error);
-            })
-        }
-    });
-knexSQLite3.schema.hasTable("carrito")
-    .then(resp => {
-        consoleLogger.info(`respuesta al create table carrito ${resp}`)
-        if(!resp) {
-            knexSQLite3.schema.createTable("carrito", (table:any) => {
-                table.increments("id",{primaryKey:true});
-                table.integer("timestamp");
-            })
-        .then(() => consoleLogger.info("tabla carrito creada en SQLite"))
-        .catch((error) => {
-            errorLogger.error(error);
-            })
-        }
-    });
-knexSQLite3.schema.hasTable("productosCarrito")
-    .then(respo => {
-        consoleLogger.info(`respuesta al create table productosCarrito ${respo}`)
-        if(!respo) {
-            knexSQLite3.schema.createTable("productosCarrito", (table:any) => {
-                table.increments("id",{primaryKey:true});
-                table.integer('idCarrito').notNullable();
-                table.integer('idProducto').notNullable();
-                
-            })
-        .then(() => consoleLogger.info("tabla productosCarrito creada en SQLite"))
-        .catch((error) => {
-            errorLogger.error(error);
-            })
-        }
-    });
+
+if (opcionCapa === 3) {
+    knexSQLite3.schema.hasTable("productos")
+        .then(response => {
+            consoleLogger.info(`respuesta al create table productos ${response}`)
+            if(!response) {
+                knexSQLite3.schema.createTable("productos", (table:any) => {
+                    table.increments("id",{primaryKey:true})
+                    table.string("code");
+                    table.string("title").notNullable();
+                    table.string("description");
+                    table.integer("price").notNullable();
+                    table.string("thumbnail");
+                    table.integer("stock");
+                    table.integer("timestamp");
+                })
+            .then(() => consoleLogger.info("tabla productos creada en SQLite"))
+            .catch((error) => {
+                errorLogger.error(error);
+                })
+            }
+        });
+    knexSQLite3.schema.hasTable("mensajes")
+        .then(res => {
+            consoleLogger.info(`respuesta al create table mensajes ${res}`)
+            if(!res) {
+                knexSQLite3.schema.createTable("mensajes", (table:any) => {
+                    table.string("author");
+                    table.string("fecha");
+                    table.string("text");
+                })
+            .then(() => consoleLogger.info("tabla mensajes creada en SQLite"))
+            .catch((error) => {
+                errorLogger.error(error);
+                })
+            }
+        });
+    knexSQLite3.schema.hasTable("carrito")
+        .then(resp => {
+            consoleLogger.info(`respuesta al create table carrito ${resp}`)
+            if(!resp) {
+                knexSQLite3.schema.createTable("carrito", (table:any) => {
+                    table.increments("id",{primaryKey:true});
+                    table.integer("timestamp");
+                })
+            .then(() => consoleLogger.info("tabla carrito creada en SQLite"))
+            .catch((error) => {
+                errorLogger.error(error);
+                })
+            }
+        });
+    knexSQLite3.schema.hasTable("productosCarrito")
+        .then(respo => {
+            consoleLogger.info(`respuesta al create table productosCarrito ${respo}`)
+            if(!respo) {
+                knexSQLite3.schema.createTable("productosCarrito", (table:any) => {
+                    table.increments("id",{primaryKey:true});
+                    table.integer('idCarrito').notNullable();
+                    table.integer('idProducto').notNullable();
+                    
+                })
+            .then(() => consoleLogger.info("tabla productosCarrito creada en SQLite"))
+            .catch((error) => {
+                errorLogger.error(error);
+                })
+            }
+        });
+};
 
 class Sqlite3Dao implements Operaciones {
 

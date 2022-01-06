@@ -48,7 +48,9 @@ exports.prods = new productos_js_1.default();
 var path_1 = __importDefault(require("path"));
 var __dirname = path_1.default.resolve();
 var logger_js_1 = require("../logger.js");
-productosRouter.get('/', function (req, res) {
+var graphqlHTTP = require("express-graphql").graphqlHTTP;
+var products_1 = require("../graphql/products");
+productosRouter.get('/', function (_req, res) {
     res.sendFile(__dirname + "/public/listoProds.html");
 });
 productosRouter.get('/listar/:id?', function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
@@ -86,7 +88,7 @@ productosRouter.get('/listar/:id?', function (req, res) { return __awaiter(void 
     });
 }); });
 //guardo un nuevo producto
-productosRouter.get('/guardar', (0, authorization_js_1.authorizationMiddleware)(), function (req, res) {
+productosRouter.get('/guardar', (0, authorization_js_1.authorizationMiddleware)(), function (_req, res) {
     res.sendFile(__dirname + "/public/agregoProd.html");
 });
 productosRouter.post('/guardar', (0, authorization_js_1.authorizationMiddleware)(), function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
@@ -171,4 +173,9 @@ productosRouter.put('/actualizar/:id', (0, authorization_js_1.authorizationMiddl
         }
     });
 }); });
+productosRouter.use("/graphql", graphqlHTTP({
+    schema: products_1.schema,
+    rootValue: products_1.root,
+    graphiql: true,
+}));
 exports.default = productosRouter;

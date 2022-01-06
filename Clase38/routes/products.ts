@@ -6,8 +6,10 @@ export const prods = new Productos();
 import path from "path";
 const __dirname = path.resolve();
 import {consoleLogger, errorLogger, warningLogger} from '../logger.js'
+const { graphqlHTTP } = require("express-graphql");
+import {schema, root } from '../graphql/products';
 
-productosRouter.get('/', (req: express.Request, res: express.Response) => {
+productosRouter.get('/', (_req: express.Request, res: express.Response) => {
     res.sendFile(__dirname + "/public/listoProds.html");
 });
 
@@ -32,7 +34,7 @@ productosRouter.get('/listar/:id?', async (req: express.Request, res: express.Re
 });
 
 //guardo un nuevo producto
-productosRouter.get('/guardar', authorizationMiddleware(), (req: express.Request, res: express.Response) => {
+productosRouter.get('/guardar', authorizationMiddleware(), (_req: express.Request, res: express.Response) => {
     res.sendFile(__dirname + "/public/agregoProd.html");
 });
 productosRouter.post('/guardar', authorizationMiddleware(), async (req: express.Request, res: express.Response) => {
@@ -81,5 +83,12 @@ productosRouter.put('/actualizar/:id', authorizationMiddleware(), async(req: exp
         consoleLogger.error(err);
     }
 });
+
+productosRouter.use("/graphql",graphqlHTTP({
+      schema,
+      rootValue: root,
+      graphiql: true,
+    })
+  );
 
 export default productosRouter;

@@ -43,70 +43,74 @@ var sqlite3_1 = __importDefault(require("../../db/sqlite3"));
 var knex_1 = __importDefault(require("knex"));
 var logger_js_1 = require("../../logger.js");
 var knexSQLite3 = (0, knex_1.default)(sqlite3_1.default);
-knexSQLite3.schema.hasTable("productos")
-    .then(function (response) {
-    logger_js_1.consoleLogger.info("respuesta al create table productos " + response);
-    if (!response) {
-        knexSQLite3.schema.createTable("productos", function (table) {
-            table.increments("id", { primaryKey: true });
-            table.string("code");
-            table.string("title").notNullable();
-            table.string("description");
-            table.integer("price").notNullable();
-            table.string("thumbnail");
-            table.integer("stock");
-            table.integer("timestamp");
-        })
-            .then(function () { return logger_js_1.consoleLogger.info("tabla productos creada en SQLite"); })
-            .catch(function (error) {
-            logger_js_1.errorLogger.error(error);
-        });
-    }
-});
-knexSQLite3.schema.hasTable("mensajes")
-    .then(function (res) {
-    logger_js_1.consoleLogger.info("respuesta al create table mensajes " + res);
-    if (!res) {
-        knexSQLite3.schema.createTable("mensajes", function (table) {
-            table.string("author");
-            table.string("fecha");
-            table.string("text");
-        })
-            .then(function () { return logger_js_1.consoleLogger.info("tabla mensajes creada en SQLite"); })
-            .catch(function (error) {
-            logger_js_1.errorLogger.error(error);
-        });
-    }
-});
-knexSQLite3.schema.hasTable("carrito")
-    .then(function (resp) {
-    logger_js_1.consoleLogger.info("respuesta al create table carrito " + resp);
-    if (!resp) {
-        knexSQLite3.schema.createTable("carrito", function (table) {
-            table.increments("id", { primaryKey: true });
-            table.integer("timestamp");
-        })
-            .then(function () { return logger_js_1.consoleLogger.info("tabla carrito creada en SQLite"); })
-            .catch(function (error) {
-            logger_js_1.errorLogger.error(error);
-        });
-    }
-});
-knexSQLite3.schema.hasTable("productosCarrito")
-    .then(function (respo) {
-    logger_js_1.consoleLogger.info("respuesta al create table productosCarrito " + respo);
-    if (!respo) {
-        knexSQLite3.schema.createTable("productosCarrito", function (table) {
-            table.increments("id", { primaryKey: true });
-            table.integer('idCarrito').notNullable();
-            table.integer('idProducto').notNullable();
-        })
-            .then(function () { return logger_js_1.consoleLogger.info("tabla productosCarrito creada en SQLite"); })
-            .catch(function (error) {
-            logger_js_1.errorLogger.error(error);
-        });
-    }
-});
+var server_1 = require("../../server");
+if (server_1.opcionCapa === 3) {
+    knexSQLite3.schema.hasTable("productos")
+        .then(function (response) {
+        logger_js_1.consoleLogger.info("respuesta al create table productos " + response);
+        if (!response) {
+            knexSQLite3.schema.createTable("productos", function (table) {
+                table.increments("id", { primaryKey: true });
+                table.string("code");
+                table.string("title").notNullable();
+                table.string("description");
+                table.integer("price").notNullable();
+                table.string("thumbnail");
+                table.integer("stock");
+                table.integer("timestamp");
+            })
+                .then(function () { return logger_js_1.consoleLogger.info("tabla productos creada en SQLite"); })
+                .catch(function (error) {
+                logger_js_1.errorLogger.error(error);
+            });
+        }
+    });
+    knexSQLite3.schema.hasTable("mensajes")
+        .then(function (res) {
+        logger_js_1.consoleLogger.info("respuesta al create table mensajes " + res);
+        if (!res) {
+            knexSQLite3.schema.createTable("mensajes", function (table) {
+                table.string("author");
+                table.string("fecha");
+                table.string("text");
+            })
+                .then(function () { return logger_js_1.consoleLogger.info("tabla mensajes creada en SQLite"); })
+                .catch(function (error) {
+                logger_js_1.errorLogger.error(error);
+            });
+        }
+    });
+    knexSQLite3.schema.hasTable("carrito")
+        .then(function (resp) {
+        logger_js_1.consoleLogger.info("respuesta al create table carrito " + resp);
+        if (!resp) {
+            knexSQLite3.schema.createTable("carrito", function (table) {
+                table.increments("id", { primaryKey: true });
+                table.integer("timestamp");
+            })
+                .then(function () { return logger_js_1.consoleLogger.info("tabla carrito creada en SQLite"); })
+                .catch(function (error) {
+                logger_js_1.errorLogger.error(error);
+            });
+        }
+    });
+    knexSQLite3.schema.hasTable("productosCarrito")
+        .then(function (respo) {
+        logger_js_1.consoleLogger.info("respuesta al create table productosCarrito " + respo);
+        if (!respo) {
+            knexSQLite3.schema.createTable("productosCarrito", function (table) {
+                table.increments("id", { primaryKey: true });
+                table.integer('idCarrito').notNullable();
+                table.integer('idProducto').notNullable();
+            })
+                .then(function () { return logger_js_1.consoleLogger.info("tabla productosCarrito creada en SQLite"); })
+                .catch(function (error) {
+                logger_js_1.errorLogger.error(error);
+            });
+        }
+    });
+}
+;
 var Sqlite3Dao = /** @class */ (function () {
     function Sqlite3Dao() {
     }

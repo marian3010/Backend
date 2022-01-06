@@ -5,72 +5,76 @@ import options from '../../db/mariaDB';
 import knex from "knex";
 import {consoleLogger, errorLogger, warningLogger} from '../../logger.js'
 const knexMariaDB = knex(options);
+import {opcionCapa} from '../../server';
 
-knexMariaDB.schema.hasTable("productos")
-    .then(response => {
-        consoleLogger.info(`respuesta al create table productos ${response}`)
-        if(!response) {
-            knexMariaDB.schema.createTable("productos", (table:any) => {
-                table.increments("id",{primaryKey:true})
-                table.string("code");
-                table.string("title").notNullable();
-                table.string("description");
-                table.integer("price").notNullable();
-                table.string("thumbnail");
-                table.integer("stock");
-                table.integer("timestamp");
-            })
-        .then(() => consoleLogger.info("tabla productos creada en mariaDB"))
-        .catch((error) => {
-            errorLogger.error(error);
-            })
-        }
-    });
-knexMariaDB.schema.hasTable("mensajes")
-    .then(res => {
-        consoleLogger.info(`respuesta al create table mensajes ${res}`)
-        if(!res) {
-            knexMariaDB.schema.createTable("mensajes", (table:any) => {
-                table.string("author");
-                table.string("fecha");
-                table.string("text");
-            })
-        .then(() => consoleLogger.info("tabla mensajes creada en mariaDB"))
-        .catch((error) => {
-            errorLogger.error(error);
-            })
-        }
-    });
-knexMariaDB.schema.hasTable("carrito")
-    .then(resp => {
-        consoleLogger.info(`respuesta al create table carrito ${resp}`)
-        if(!resp) {
-            knexMariaDB.schema.createTable("carrito", (table:any) => {
-                table.increments("id",{primaryKey:true});
-                table.integer("timestamp");
-            })
-        .then(() => consoleLogger.info("tabla carrito creada en mariaDB"))
-        .catch((error) => {
-            errorLogger.error(error);
-            })
-        }
-    });
-knexMariaDB.schema.hasTable("productosCarrito")
-    .then(respo => {
-        consoleLogger.info(`respuesta al create table productosCarrito ${respo}`)
-        if(!respo) {
-            knexMariaDB.schema.createTable("productosCarrito", (table:any) => {
-                table.increments("id",{primaryKey:true});
-                table.integer('idCarrito').notNullable();
-                table.integer('idProducto').notNullable();
-                
-            })
-        .then(() => consoleLogger.info("tabla productosCarrito creada en mariaDB"))
-        .catch((error) => {
-            errorLogger.error(error);
-            })
-        }
-    });
+if (opcionCapa === 2) {
+    
+    knexMariaDB.schema.hasTable("productos")
+        .then(response => {
+            consoleLogger.info(`respuesta al create table productos ${response}`)
+            if(!response) {
+                knexMariaDB.schema.createTable("productos", (table:any) => {
+                    table.increments("id",{primaryKey:true})
+                    table.string("code");
+                    table.string("title").notNullable();
+                    table.string("description");
+                    table.integer("price").notNullable();
+                    table.string("thumbnail");
+                    table.integer("stock");
+                    table.integer("timestamp");
+                })
+            .then(() => consoleLogger.info("tabla productos creada en mariaDB"))
+            .catch((error) => {
+                errorLogger.error(error);
+                })
+            }
+        });
+    knexMariaDB.schema.hasTable("mensajes")
+        .then(res => {
+            consoleLogger.info(`respuesta al create table mensajes ${res}`)
+            if(!res) {
+                knexMariaDB.schema.createTable("mensajes", (table:any) => {
+                    table.string("author");
+                    table.string("fecha");
+                    table.string("text");
+                })
+            .then(() => consoleLogger.info("tabla mensajes creada en mariaDB"))
+            .catch((error) => {
+                errorLogger.error(error);
+                })
+            }
+        });
+    knexMariaDB.schema.hasTable("carrito")
+        .then(resp => {
+            consoleLogger.info(`respuesta al create table carrito ${resp}`)
+            if(!resp) {
+                knexMariaDB.schema.createTable("carrito", (table:any) => {
+                    table.increments("id",{primaryKey:true});
+                    table.integer("timestamp");
+                })
+            .then(() => consoleLogger.info("tabla carrito creada en mariaDB"))
+            .catch((error) => {
+                errorLogger.error(error);
+                })
+            }
+        });
+    knexMariaDB.schema.hasTable("productosCarrito")
+        .then(respo => {
+            consoleLogger.info(`respuesta al create table productosCarrito ${respo}`)
+            if(!respo) {
+                knexMariaDB.schema.createTable("productosCarrito", (table:any) => {
+                    table.increments("id",{primaryKey:true});
+                    table.integer('idCarrito').notNullable();
+                    table.integer('idProducto').notNullable();
+                    
+                })
+            .then(() => consoleLogger.info("tabla productosCarrito creada en mariaDB"))
+            .catch((error) => {
+                errorLogger.error(error);
+                })
+            }
+        });
+};
 
 class MariaDBDao implements Operaciones {
 

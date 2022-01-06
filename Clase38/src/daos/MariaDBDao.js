@@ -43,70 +43,74 @@ var mariaDB_1 = __importDefault(require("../../db/mariaDB"));
 var knex_1 = __importDefault(require("knex"));
 var logger_js_1 = require("../../logger.js");
 var knexMariaDB = (0, knex_1.default)(mariaDB_1.default);
-knexMariaDB.schema.hasTable("productos")
-    .then(function (response) {
-    logger_js_1.consoleLogger.info("respuesta al create table productos " + response);
-    if (!response) {
-        knexMariaDB.schema.createTable("productos", function (table) {
-            table.increments("id", { primaryKey: true });
-            table.string("code");
-            table.string("title").notNullable();
-            table.string("description");
-            table.integer("price").notNullable();
-            table.string("thumbnail");
-            table.integer("stock");
-            table.integer("timestamp");
-        })
-            .then(function () { return logger_js_1.consoleLogger.info("tabla productos creada en mariaDB"); })
-            .catch(function (error) {
-            logger_js_1.errorLogger.error(error);
-        });
-    }
-});
-knexMariaDB.schema.hasTable("mensajes")
-    .then(function (res) {
-    logger_js_1.consoleLogger.info("respuesta al create table mensajes " + res);
-    if (!res) {
-        knexMariaDB.schema.createTable("mensajes", function (table) {
-            table.string("author");
-            table.string("fecha");
-            table.string("text");
-        })
-            .then(function () { return logger_js_1.consoleLogger.info("tabla mensajes creada en mariaDB"); })
-            .catch(function (error) {
-            logger_js_1.errorLogger.error(error);
-        });
-    }
-});
-knexMariaDB.schema.hasTable("carrito")
-    .then(function (resp) {
-    logger_js_1.consoleLogger.info("respuesta al create table carrito " + resp);
-    if (!resp) {
-        knexMariaDB.schema.createTable("carrito", function (table) {
-            table.increments("id", { primaryKey: true });
-            table.integer("timestamp");
-        })
-            .then(function () { return logger_js_1.consoleLogger.info("tabla carrito creada en mariaDB"); })
-            .catch(function (error) {
-            logger_js_1.errorLogger.error(error);
-        });
-    }
-});
-knexMariaDB.schema.hasTable("productosCarrito")
-    .then(function (respo) {
-    logger_js_1.consoleLogger.info("respuesta al create table productosCarrito " + respo);
-    if (!respo) {
-        knexMariaDB.schema.createTable("productosCarrito", function (table) {
-            table.increments("id", { primaryKey: true });
-            table.integer('idCarrito').notNullable();
-            table.integer('idProducto').notNullable();
-        })
-            .then(function () { return logger_js_1.consoleLogger.info("tabla productosCarrito creada en mariaDB"); })
-            .catch(function (error) {
-            logger_js_1.errorLogger.error(error);
-        });
-    }
-});
+var server_1 = require("../../server");
+if (server_1.opcionCapa === 2) {
+    knexMariaDB.schema.hasTable("productos")
+        .then(function (response) {
+        logger_js_1.consoleLogger.info("respuesta al create table productos " + response);
+        if (!response) {
+            knexMariaDB.schema.createTable("productos", function (table) {
+                table.increments("id", { primaryKey: true });
+                table.string("code");
+                table.string("title").notNullable();
+                table.string("description");
+                table.integer("price").notNullable();
+                table.string("thumbnail");
+                table.integer("stock");
+                table.integer("timestamp");
+            })
+                .then(function () { return logger_js_1.consoleLogger.info("tabla productos creada en mariaDB"); })
+                .catch(function (error) {
+                logger_js_1.errorLogger.error(error);
+            });
+        }
+    });
+    knexMariaDB.schema.hasTable("mensajes")
+        .then(function (res) {
+        logger_js_1.consoleLogger.info("respuesta al create table mensajes " + res);
+        if (!res) {
+            knexMariaDB.schema.createTable("mensajes", function (table) {
+                table.string("author");
+                table.string("fecha");
+                table.string("text");
+            })
+                .then(function () { return logger_js_1.consoleLogger.info("tabla mensajes creada en mariaDB"); })
+                .catch(function (error) {
+                logger_js_1.errorLogger.error(error);
+            });
+        }
+    });
+    knexMariaDB.schema.hasTable("carrito")
+        .then(function (resp) {
+        logger_js_1.consoleLogger.info("respuesta al create table carrito " + resp);
+        if (!resp) {
+            knexMariaDB.schema.createTable("carrito", function (table) {
+                table.increments("id", { primaryKey: true });
+                table.integer("timestamp");
+            })
+                .then(function () { return logger_js_1.consoleLogger.info("tabla carrito creada en mariaDB"); })
+                .catch(function (error) {
+                logger_js_1.errorLogger.error(error);
+            });
+        }
+    });
+    knexMariaDB.schema.hasTable("productosCarrito")
+        .then(function (respo) {
+        logger_js_1.consoleLogger.info("respuesta al create table productosCarrito " + respo);
+        if (!respo) {
+            knexMariaDB.schema.createTable("productosCarrito", function (table) {
+                table.increments("id", { primaryKey: true });
+                table.integer('idCarrito').notNullable();
+                table.integer('idProducto').notNullable();
+            })
+                .then(function () { return logger_js_1.consoleLogger.info("tabla productosCarrito creada en mariaDB"); })
+                .catch(function (error) {
+                logger_js_1.errorLogger.error(error);
+            });
+        }
+    });
+}
+;
 var MariaDBDao = /** @class */ (function () {
     function MariaDBDao() {
     }
