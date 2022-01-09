@@ -37,6 +37,7 @@ class Productos {
                 stock,
                 timestamp 
             }
+            consoleLogger.info(`producto que va como parametro al dao ${producto}`)
             const response = await dao.agregarProducto(producto);
             consoleLogger.info(`función exitosa ${response}`)
             return producto;

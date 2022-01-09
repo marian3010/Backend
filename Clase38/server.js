@@ -66,7 +66,7 @@ var SocketIO = __importStar(require("socket.io"));
 var compression = require('compression');
 // Defino la opción de Base de Datos
 var DaoFactory_1 = require("./src/DaoFactory");
-exports.opcionCapa = DaoFactory_1.capaPersistencia.mongoAtlas;
+exports.opcionCapa = DaoFactory_1.capaPersistencia.fileSys;
 var comunicacion_1 = require("./comunicacion");
 var mensaje_1 = require("./modelo/mensaje");
 var products_1 = __importDefault(require("./routes/products"));
@@ -180,7 +180,7 @@ function serverCluster() {
 }
 ;
 //const modeChild = process.argv[5] || "fork";
-var modeCluster = true;
+var modeCluster = false;
 if (modeCluster) {
     logger_js_1.consoleLogger.info("modo de ejecuci\u00F3n cluster");
     serverCluster();

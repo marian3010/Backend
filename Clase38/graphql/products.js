@@ -44,23 +44,35 @@ var buildSchema = require("graphql").buildSchema;
 var productos_js_1 = __importDefault(require("../modelo/productos.js"));
 exports.prods = new productos_js_1.default();
 // GraphQL Schema
-exports.schema = buildSchema("\n  type Query {\n    producto(id): Producto,\n    productos: [Producto],\n  },\n  type Mutation {\n    guardarProducto(code: String!, title: String!, description: String!, price: Number!, thumbnail: String!, stock: Number!): Boolean\n  },\n  type Producto {\n    code: string,\n    title: string,\n    description: string,\n    price: number,\n    thumbnail: string,\n    stock: number,\n    timestamp: number\n  }\n");
-/*export const getProducto = async (id: any) => {
+exports.schema = buildSchema("\n  type Query {\n    producto(id:Int!): Producto,\n    productos(filtro:String, valorDesde:String, valorHasta:String): [Producto],\n  },\n  type Mutation {\n    guardarProducto(producto): Producto\n  },\n  type Producto {\n    id: Int,\n    code: String,\n    title: String,\n    description: String,\n    price: Int,\n    thumbnail: String,\n    stock: Int,\n    timestamp: Int\n  }\n");
+/*export const getProducto = async ({id}) => {
+  try {
     const producto = await prods.buscarProducto(id)
     return producto;
+  } catch(err) {
+    console.log(err);
+  }
+  return;
+  
 };
 
-export const getProductos = async (filtro: any, valorDesde: any, valorHasta: any) => {
+export const getProductos = async (filtro, valorDesde, valorHasta) => {
+  try {
     const productos = await prods.listarProductos(filtro, valorDesde, valorHasta)
     return productos;
+  } catch(err) {
+    console.log(err);
+  }
+  return;
+  
 };*/
-var guardarProducto = function (code, title, description, price, thumbnail, stock) { return __awaiter(void 0, void 0, void 0, function () {
+var guardarProducto = function (producto) { return __awaiter(void 0, void 0, void 0, function () {
     var prod, err_1;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
                 _a.trys.push([0, 2, , 3]);
-                return [4 /*yield*/, exports.prods.agregarProducto(code, title, description, price, thumbnail, stock)];
+                return [4 /*yield*/, exports.prods.agregarProducto(producto.code, producto.title, producto.description, producto.price, producto.thumbnail, producto.stock)];
             case 1:
                 prod = _a.sent();
                 if (prod) {
@@ -77,5 +89,7 @@ var guardarProducto = function (code, title, description, price, thumbnail, stoc
 }); };
 exports.guardarProducto = guardarProducto;
 exports.root = {
+    //producto: getProducto,
+    //productos: getProductos,
     guardarProducto: exports.guardarProducto,
 };

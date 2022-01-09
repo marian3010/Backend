@@ -66,6 +66,7 @@ var Productos = /** @class */ (function () {
                             stock: stock,
                             timestamp: timestamp
                         };
+                        logger_js_1.consoleLogger.info("producto que va como parametro al dao " + producto);
                         return [4 /*yield*/, dao.agregarProducto(producto)];
                     case 1:
                         response = _a.sent();

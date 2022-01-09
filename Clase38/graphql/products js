@@ -47,15 +47,15 @@ export const getProductos = async (filtro, valorDesde, valorHasta) => {
 };
 
 export const guardarProducto = async({code, title, description, price, thumbnail, stock}) => {
-  try {
-      const prod = await prods.agregarProducto(code, title, description, price, thumbnail, stock);
-      if (prod) {
-          return true;
-      }  
-  } catch(err) {
-      console.log(err);
-  }    
-  return false;
+    try {
+        const prod = await prods.agregarProducto(code, title, description, price, thumbnail, stock);
+        if (prod) {
+            return true;
+        }  
+    } catch(err) {
+        console.log(err);
+    }    
+    return false;
 };
 
 export const root = {
