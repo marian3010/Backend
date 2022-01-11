@@ -1,4 +1,5 @@
 const { buildSchema } = require("graphql");
+import { consoleLogger } from "../logger.js";
 import Productos from "../modelo/productos.js";
 export const prods = new Productos();
 
@@ -6,28 +7,30 @@ export const prods = new Productos();
 
 export const schema = buildSchema(`
   type Query {
-    producto(id:Int!): Producto,
+    producto(id:ID!): Producto,
     productos(filtro:String, valorDesde:String, valorHasta:String): [Producto],
   },
   type Mutation {
     guardarProducto(code: String!, title: String!, description: String!, price: Int!, thumbnail: String!, stock: Int!): Producto
   },
   type Producto {
-    id: Int,
+    id: ID,
     code: String,
     title: String,
     description: String,
     price: Int,
     thumbnail: String,
-    stock: Int,
-    timestamp: Int
+    stock: Int
   }
 `);
 
-export const getProducto = async ({id}) => {
+export const getProducto = async ({id}: any) => {
   try {
-    const producto = await prods.buscarProducto(id)
-    return producto;
+    const producto = await prods.buscarProducto(id);
+    consoleLogger.info(`producto graphql ${JSON.stringify(producto)}`);
+    const p = producto[0];
+    delete p.timestamp;
+    return p;
   } catch(err) {
     console.log(err);
   }
@@ -35,7 +38,7 @@ export const getProducto = async ({id}) => {
   
 };
 
-export const getProductos = async (filtro, valorDesde, valorHasta) => {
+export const getProductos = async (filtro:any, valorDesde:any, valorHasta:any) => {
   try {
     const productos = await prods.listarProductos(filtro, valorDesde, valorHasta)
     return productos;
@@ -46,16 +49,18 @@ export const getProductos = async (filtro, valorDesde, valorHasta) => {
   
 };
 
-export const guardarProducto = async({code, title, description, price, thumbnail, stock}) => {
+export const guardarProducto = async (code:string, title:string, description:string, price:number, thumbnail:string, stock:number) => {
   try {
+      consoleLogger.info(`parametros para guardar el producto graphql ${code} ${title} ${price}`)
       const prod = await prods.agregarProducto(code, title, description, price, thumbnail, stock);
+      consoleLogger.info(`producto guardado ${JSON.stringify(prod)}`)
       if (prod) {
-          return true;
+          return prod;
       }  
   } catch(err) {
       console.log(err);
   }    
-  return false;
+  return [];
 };
 
 export const root = {

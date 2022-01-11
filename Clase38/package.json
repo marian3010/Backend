@@ -28,6 +28,7 @@
         "express-session": "^1.17.2",
         "firebase-admin": "^9.12.0",
         "graphql": "^16.2.0",
+        "graphql-iso-date": "^3.6.1",
         "knex": "^0.95.11",
         "moment": "^2.29.1",
         "mongoose": "^6.0.8",
@@ -50,6 +51,7 @@
     "devDependencies": {
         "@types/express": "^4.17.13",
         "@types/express-handlebars": "^5.3.1",
-        "@types/express-session": "^1.17.4"
+        "@types/express-session": "^1.17.4",
+        "@types/graphql-iso-date": "^3.4.0"
     }
 }

@@ -88,7 +88,7 @@ var FsDao = /** @class */ (function () {
                             timestamp: producto.timestamp,
                             id: nuevoId
                         };
-                        logger_js_1.consoleLogger.info("prod a guardar " + prod);
+                        logger_js_1.consoleLogger.info("prod a guardar " + JSON.stringify(prod));
                         productos.push(prod);
                         return [4 /*yield*/, fs_1.default.promises.writeFile(fileProductos, JSON.stringify(productos, null, "\t"), "utf-8")];
                     case 5:

@@ -66,7 +66,7 @@ var Productos = /** @class */ (function () {
                             stock: stock,
                             timestamp: timestamp
                         };
-                        logger_js_1.consoleLogger.info("producto que va como parametro al dao " + producto);
+                        logger_js_1.consoleLogger.info("producto que va como parametro al dao " + JSON.stringify(producto));
                         return [4 /*yield*/, dao.agregarProducto(producto)];
                     case 1:
                         response = _a.sent();
@@ -92,6 +92,7 @@ var Productos = /** @class */ (function () {
                         return [4 /*yield*/, dao.buscarProducto(id)];
                     case 1:
                         productoEncontrado = _a.sent();
+                        logger_js_1.consoleLogger.info("id del producto buscado " + id);
                         logger_js_1.consoleLogger.info("producto encontrado " + productoEncontrado);
                         return [3 /*break*/, 3];
                     case 2:

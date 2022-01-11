@@ -39,57 +39,83 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.root = exports.guardarProducto = exports.schema = exports.prods = void 0;
+exports.root = exports.guardarProducto = exports.getProductos = exports.getProducto = exports.schema = exports.prods = void 0;
 var buildSchema = require("graphql").buildSchema;
+var logger_js_1 = require("../logger.js");
 var productos_js_1 = __importDefault(require("../modelo/productos.js"));
 exports.prods = new productos_js_1.default();
 // GraphQL Schema
-exports.schema = buildSchema("\n  type Query {\n    producto(id:Int!): Producto,\n    productos(filtro:String, valorDesde:String, valorHasta:String): [Producto],\n  },\n  type Mutation {\n    guardarProducto(producto): Producto\n  },\n  type Producto {\n    id: Int,\n    code: String,\n    title: String,\n    description: String,\n    price: Int,\n    thumbnail: String,\n    stock: Int,\n    timestamp: Int\n  }\n");
-/*export const getProducto = async ({id}) => {
-  try {
-    const producto = await prods.buscarProducto(id)
-    return producto;
-  } catch(err) {
-    console.log(err);
-  }
-  return;
-  
+exports.schema = buildSchema("\n  type Query {\n    producto(id:ID!): Producto,\n    productos(filtro:String, valorDesde:String, valorHasta:String): [Producto],\n  },\n  type Mutation {\n    guardarProducto(code: String!, title: String!, description: String!, price: Int!, thumbnail: String!, stock: Int!): Producto\n  },\n  type Producto {\n    id: ID,\n    code: String,\n    title: String,\n    description: String,\n    price: Int,\n    thumbnail: String,\n    stock: Int\n  }\n");
+var getProducto = function (_a) {
+    var id = _a.id;
+    return __awaiter(void 0, void 0, void 0, function () {
+        var producto, p, err_1;
+        return __generator(this, function (_b) {
+            switch (_b.label) {
+                case 0:
+                    _b.trys.push([0, 2, , 3]);
+                    return [4 /*yield*/, exports.prods.buscarProducto(id)];
+                case 1:
+                    producto = _b.sent();
+                    logger_js_1.consoleLogger.info("producto graphql " + JSON.stringify(producto));
+                    p = producto[0];
+                    delete p.timestamp;
+                    return [2 /*return*/, p];
+                case 2:
+                    err_1 = _b.sent();
+                    console.log(err_1);
+                    return [3 /*break*/, 3];
+                case 3: return [2 /*return*/];
+            }
+        });
+    });
 };
-
-export const getProductos = async (filtro, valorDesde, valorHasta) => {
-  try {
-    const productos = await prods.listarProductos(filtro, valorDesde, valorHasta)
-    return productos;
-  } catch(err) {
-    console.log(err);
-  }
-  return;
-  
-};*/
-var guardarProducto = function (producto) { return __awaiter(void 0, void 0, void 0, function () {
-    var prod, err_1;
+exports.getProducto = getProducto;
+var getProductos = function (filtro, valorDesde, valorHasta) { return __awaiter(void 0, void 0, void 0, function () {
+    var productos, err_2;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
                 _a.trys.push([0, 2, , 3]);
-                return [4 /*yield*/, exports.prods.agregarProducto(producto.code, producto.title, producto.description, producto.price, producto.thumbnail, producto.stock)];
+                return [4 /*yield*/, exports.prods.listarProductos(filtro, valorDesde, valorHasta)];
+            case 1:
+                productos = _a.sent();
+                return [2 /*return*/, productos];
+            case 2:
+                err_2 = _a.sent();
+                console.log(err_2);
+                return [3 /*break*/, 3];
+            case 3: return [2 /*return*/];
+        }
+    });
+}); };
+exports.getProductos = getProductos;
+var guardarProducto = function (code, title, description, price, thumbnail, stock) { return __awaiter(void 0, void 0, void 0, function () {
+    var prod, err_3;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                _a.trys.push([0, 2, , 3]);
+                logger_js_1.consoleLogger.info("parametros para guardar el producto graphql " + code + " " + title + " " + price);
+                return [4 /*yield*/, exports.prods.agregarProducto(code, title, description, price, thumbnail, stock)];
             case 1:
                 prod = _a.sent();
+                logger_js_1.consoleLogger.info("producto guardado " + JSON.stringify(prod));
                 if (prod) {
-                    return [2 /*return*/, true];
+                    return [2 /*return*/, prod];
                 }
                 return [3 /*break*/, 3];
             case 2:
-                err_1 = _a.sent();
-                console.log(err_1);
+                err_3 = _a.sent();
+                console.log(err_3);
                 return [3 /*break*/, 3];
-            case 3: return [2 /*return*/, false];
+            case 3: return [2 /*return*/, []];
         }
     });
 }); };
 exports.guardarProducto = guardarProducto;
 exports.root = {
-    //producto: getProducto,
-    //productos: getProductos,
+    producto: exports.getProducto,
+    productos: exports.getProductos,
     guardarProducto: exports.guardarProducto,
 };

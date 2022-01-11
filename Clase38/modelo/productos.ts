@@ -37,7 +37,7 @@ class Productos {
                 stock,
                 timestamp 
             }
-            consoleLogger.info(`producto que va como parametro al dao ${producto}`)
+            consoleLogger.info(`producto que va como parametro al dao ${JSON.stringify(producto)}`)
             const response = await dao.agregarProducto(producto);
             consoleLogger.info(`función exitosa ${response}`)
             return producto;
@@ -51,6 +51,7 @@ class Productos {
         let productoEncontrado
         try {
             productoEncontrado = await dao.buscarProducto(id)
+            consoleLogger.info(`id del producto buscado ${id}`);
             consoleLogger.info(`producto encontrado ${productoEncontrado}`);
         }
         catch (error) {

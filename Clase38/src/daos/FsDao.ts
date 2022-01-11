@@ -52,7 +52,7 @@ class FsDao implements Operaciones {
             timestamp: producto.timestamp,
             id: nuevoId
         };
-        consoleLogger.info (`prod a guardar ${prod}`);
+        consoleLogger.info (`prod a guardar ${JSON.stringify(prod)}`);
         productos.push(prod);
         await fs.promises.writeFile(fileProductos, JSON.stringify(productos, null, "\t"), "utf-8");
         return response;
