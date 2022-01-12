@@ -90,29 +90,31 @@ var getProductos = function (filtro, valorDesde, valorHasta) { return __awaiter(
     });
 }); };
 exports.getProductos = getProductos;
-var guardarProducto = function (code, title, description, price, thumbnail, stock) { return __awaiter(void 0, void 0, void 0, function () {
-    var prod, err_3;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0:
-                _a.trys.push([0, 2, , 3]);
-                logger_js_1.consoleLogger.info("parametros para guardar el producto graphql " + code + " " + title + " " + price);
-                return [4 /*yield*/, exports.prods.agregarProducto(code, title, description, price, thumbnail, stock)];
-            case 1:
-                prod = _a.sent();
-                logger_js_1.consoleLogger.info("producto guardado " + JSON.stringify(prod));
-                if (prod) {
-                    return [2 /*return*/, prod];
-                }
-                return [3 /*break*/, 3];
-            case 2:
-                err_3 = _a.sent();
-                console.log(err_3);
-                return [3 /*break*/, 3];
-            case 3: return [2 /*return*/, []];
-        }
+var guardarProducto = function (_a) {
+    var code = _a.code, title = _a.title, description = _a.description, price = _a.price, thumbnail = _a.thumbnail, stock = _a.stock;
+    return __awaiter(void 0, void 0, void 0, function () {
+        var prod, err_3;
+        return __generator(this, function (_b) {
+            switch (_b.label) {
+                case 0:
+                    _b.trys.push([0, 2, , 3]);
+                    return [4 /*yield*/, exports.prods.agregarProducto(code, title, description, price, thumbnail, stock)];
+                case 1:
+                    prod = _b.sent();
+                    logger_js_1.consoleLogger.info("producto guardado " + JSON.stringify(prod));
+                    if (prod) {
+                        return [2 /*return*/, prod];
+                    }
+                    return [3 /*break*/, 3];
+                case 2:
+                    err_3 = _b.sent();
+                    console.log(err_3);
+                    return [3 /*break*/, 3];
+                case 3: return [2 /*return*/, []];
+            }
+        });
     });
-}); };
+};
 exports.guardarProducto = guardarProducto;
 exports.root = {
     producto: exports.getProducto,

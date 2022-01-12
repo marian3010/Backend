@@ -3,6 +3,14 @@ import { consoleLogger } from "../logger.js";
 import Productos from "../modelo/productos.js";
 export const prods = new Productos();
 
+interface IGuardarProducto {
+  code: string;
+  title: string;
+  description: string,
+  price: number,
+  thumbnail: string,
+  stock: number;
+}
 // GraphQL Schema
 
 export const schema = buildSchema(`
@@ -48,10 +56,9 @@ export const getProductos = async (filtro:any, valorDesde:any, valorHasta:any) =
   return;   
   
 };
+export const guardarProducto = async ({code, title, description, price, thumbnail, stock}: IGuardarProducto) => {
 
-export const guardarProducto = async (code:string, title:string, description:string, price:number, thumbnail:string, stock:number) => {
   try {
-      consoleLogger.info(`parametros para guardar el producto graphql ${code} ${title} ${price}`)
       const prod = await prods.agregarProducto(code, title, description, price, thumbnail, stock);
       consoleLogger.info(`producto guardado ${JSON.stringify(prod)}`)
       if (prod) {

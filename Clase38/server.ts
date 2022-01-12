@@ -6,7 +6,7 @@ const compression = require('compression');
 
 // Defino la opción de Base de Datos
 import {capaPersistencia} from './src/DaoFactory';
-export const opcionCapa:number = capaPersistencia.firebase;
+export const opcionCapa:number = capaPersistencia.mongoAtlas;
 import { smsMensajeAdmin } from "./comunicacion";
 
 import {Mensajes} from "./modelo/mensaje";
