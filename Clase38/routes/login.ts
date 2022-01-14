@@ -45,9 +45,9 @@ loginRouter.use(passport.session());
 
 ////////
 async function connectMongoose() {
-    consoleLogger.info("conexión a mongoLocal");
+    consoleLogger.info("conexión a mongoAtlas");
     try {
-        await mongoose.connect("mongodb://localhost:27017/ecommerce")
+        await mongoose.connect('mongodb+srv://admin:12345@cluster0.jbzno.mongodb.net/ecommerce?retryWrites=true&w=majority')
         consoleLogger.info("Base de datos Mongo conectada");
     } catch(error) {
         errorLogger.error(error)

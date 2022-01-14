@@ -80,11 +80,11 @@ function connectMongoose() {
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
-                    logger_js_1.consoleLogger.info("conexión a mongoLocal");
+                    logger_js_1.consoleLogger.info("conexión a mongoAtlas");
                     _a.label = 1;
                 case 1:
                     _a.trys.push([1, 3, , 4]);
-                    return [4 /*yield*/, mongoose.connect("mongodb://localhost:27017/ecommerce")];
+                    return [4 /*yield*/, mongoose.connect('mongodb+srv://admin:12345@cluster0.jbzno.mongodb.net/ecommerce?retryWrites=true&w=majority')];
                 case 2:
                     _a.sent();
                     logger_js_1.consoleLogger.info("Base de datos Mongo conectada");
