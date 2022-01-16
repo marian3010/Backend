@@ -1,0 +1,108 @@
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-KyZXEAg3QhqLMpG8r+8fhAXLRk2vvoC2f3B09zVXn8CA5QIVfZOJ3BCsw2P0p/We" crossorigin="anonymous" />
+    <link rel="icon" href="https://image.flaticon.com/icons/png/512/3585/3585145.png" type="image" sizes="16x16" />
+    <title>Agregar Producto</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.7.7/handlebars.min.js" integrity="sha512-RNLkV3d+aLtfcpEyFG8jRbnWHxUqVZozacROI4J2F1sTaDqo1dPQYs01OMi1t1w9Y2FdbSCDSQ2ZVdAC8bzgAg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js" integrity="sha512-qTXRIMyZIFb8iQcfjXWCO8+M5Tbc38Qi5WzdPOYZHIlZpzBHG3L3by84BBBOiRGiEb7KKtAOAs5qYdUiZiQNNQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+</head>
+
+<body>
+    <section class="container bg-light mt-3">
+        <div class="container">
+            <h1 class="mt-3 mb-3 pl-3">Agregar Producto con GraphQL</h1>
+            <form onsubmit="guardarProducto(event)">
+                <div class="form-row">
+                    <div class="form-group col-md-6">
+                        <label for title>Código</label>
+                        <input type="text" name="code" id="code" class="form-control" />
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group col-md-6">
+                        <label for title>Nombre</label>
+                        <input type="text" name="title" id="title" class="form-control" />
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group col-md-6">
+                        <label for title>Descripción</label>
+                        <input type="text" name="description" id="description" class="form-control" />
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group col-md-6">
+                        <label for price>Precio</label>
+                        <input type="number" name="price" id="price" class="form-control" />
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group col-md-6">
+                        <label for thumbnail>Imagen</label>
+                        <input name="thumbnail" id="thumbnail" class="form-control" />
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group col-md-6">
+                        <label for price>Stock</label>
+                        <input type="number" name="stock" id="stock" class="form-control" />
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary mt-3">
+                    Agregar Producto
+                </button>
+            </form>
+        </div>
+    </section>
+
+    <script>
+        let query;
+        let variables;
+
+        const guardarProducto = (event) => {
+            event.preventDefault();
+            console.log("event", event);
+            query = `mutation guardarProducto($code: String!, $title: String!, $description: String!, $price: Int!, $thumbnail: String!, $stock: Int!) {
+                guardarProducto(code: $code, title: $title, description: $description, $price: price, $thumbnail: thumbnail, $stock: stock)
+                  }`;
+            console.log("query", query);
+            variables = {
+                "code": document.getElementById('code').value,
+                "title": document.getElementById('title').value,
+                "description": document.getElementById('description').value,
+                "price": document.getElementById('price').value,
+                "thumbnail": document.getElementById('thumbnail').value,
+                "stock": document.getElementById('stock').value
+            };
+            console.log("variables", variables);
+            fetch(
+                    '/graphql', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            query,
+                            variables
+                        })
+                    })
+                .then(() => {
+                    document.getElementById('code').value = "";
+                    document.getElementById('title').value = "";
+                    document.getElementById('description').value = "";
+                    document.getElementById('price').value = "";
+                    document.getElementById('thumbnail').value = "";
+                    document.getElementById('stock').value = "";
+                })
+                .catch(console.error)
+        };
+    </script>
+
+</body>
+
+</html>
