@@ -2,3 +2,10 @@
 {"level":40,"time":1640727257663,"pid":2136,"hostname":"DESKTOP-0K22551","msg":"hubo un error en el login"}
 {"level":40,"time":1640727264372,"pid":2136,"hostname":"DESKTOP-0K22551","msg":"hubo un error en el login"}
 {"level":40,"time":1640882701316,"pid":19036,"hostname":"DESKTOP-0K22551","msg":"hubo un error en el login"}
+{"level":40,"time":1642458216849,"pid":13804,"hostname":"DESKTOP-0K22551","msg":"falta parámetro ID del producto a actualizar"}
+{"level":40,"time":1642458650054,"pid":9388,"hostname":"DESKTOP-0K22551","msg":"falta parámetro ID del producto a actualizar"}
+{"level":40,"time":1642458856939,"pid":9448,"hostname":"DESKTOP-0K22551","msg":"falta parámetro ID del producto a actualizar"}
+{"level":40,"time":1642459007611,"pid":1240,"hostname":"DESKTOP-0K22551","msg":"falta parámetro ID del producto a actualizar"}
+{"level":40,"time":1642459819062,"pid":2616,"hostname":"DESKTOP-0K22551","msg":"falta parámetro ID del producto a borrar"}
+{"level":40,"time":1642471983865,"pid":6948,"hostname":"DESKTOP-0K22551","msg":"falta parámetro ID del producto a actualizar"}
+{"level":40,"time":1642471983871,"pid":6948,"hostname":"DESKTOP-0K22551","msg":"falta parámetro ID del producto a borrar"}

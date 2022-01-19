@@ -34,6 +34,16 @@ async function connectMongooseAtlas() {
 }
 
 class MongoDBDao implements Operaciones {
+    private static instance: MongoDBDao;
+    
+    constructor () {
+        if (typeof MongoDBDao.instance === 'object') {
+            consoleLogger.warn("ya existe el objeto")
+            return MongoDBDao.instance;
+        }
+        MongoDBDao.instance = this;
+    }
+
     async agregarProducto(producto: Producto): Promise<boolean> {
         let resultado = true;
         try {

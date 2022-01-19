@@ -77,6 +77,15 @@ if (opcionCapa === 3) {
 };
 
 class Sqlite3Dao implements Operaciones {
+    private static instance: Sqlite3Dao;
+    
+    constructor () {
+        if (typeof Sqlite3Dao.instance === 'object') {
+            consoleLogger.warn("ya existe el objeto")
+            return Sqlite3Dao.instance;
+        }
+        Sqlite3Dao.instance = this;
+    }
 
     async agregarProducto(producto: Producto): Promise<boolean> {
         let resultado = true;

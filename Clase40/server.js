@@ -66,7 +66,17 @@ var SocketIO = __importStar(require("socket.io"));
 var compression = require('compression');
 // Defino la opción de Base de Datos
 var DaoFactory_1 = require("./src/DaoFactory");
-exports.opcionCapa = DaoFactory_1.capaPersistencia.mongoAtlas;
+var index = DaoFactory_1.capaPersistencia.findIndex(function (db) { return db === "mongoAtlas"; });
+if (process.argv[3]) {
+    var indexArg = DaoFactory_1.capaPersistencia.findIndex(function (db) { return db === process.argv[3]; });
+    if (indexArg < 0) {
+        logger_js_1.consoleLogger.info("no existe esa persistencia");
+    }
+    else {
+        index = indexArg;
+    }
+}
+exports.opcionCapa = index;
 var comunicacion_1 = require("./comunicacion");
 var mensaje_1 = require("./modelo/mensaje");
 var products_1 = __importDefault(require("./routes/products"));
@@ -162,7 +172,7 @@ function serverCluster() {
     if (cluster.isMaster) {
         logger_js_1.consoleLogger.info("Master " + process.pid + " is running");
         logger_js_1.consoleLogger.info("Cantidad de CPUs: " + numCPUs);
-        for (var index = 0; index < numCPUs; index += 1) {
+        for (var index_1 = 0; index_1 < numCPUs; index_1 += 1) {
             cluster.fork();
         }
         cluster.on('exit', function (worker) {

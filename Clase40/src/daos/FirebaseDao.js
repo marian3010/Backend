@@ -47,6 +47,11 @@ logger_js_1.consoleLogger.info("Base de datos conectada");
 var firestoreAdmin = admin.firestore();
 var FirebaseDao = /** @class */ (function () {
     function FirebaseDao() {
+        if (typeof FirebaseDao.instance === 'object') {
+            logger_js_1.consoleLogger.warn("ya existe el objeto");
+            return FirebaseDao.instance;
+        }
+        FirebaseDao.instance = this;
     }
     FirebaseDao.prototype.agregarProducto = function (producto) {
         return __awaiter(this, void 0, void 0, function () {

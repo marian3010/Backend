@@ -113,6 +113,11 @@ if (server_1.opcionCapa === 2) {
 ;
 var MariaDBDao = /** @class */ (function () {
     function MariaDBDao() {
+        if (typeof MariaDBDao.instance === 'object') {
+            logger_js_1.consoleLogger.warn("ya existe el objeto");
+            return MariaDBDao.instance;
+        }
+        MariaDBDao.instance = this;
     }
     MariaDBDao.prototype.agregarProducto = function (producto) {
         return __awaiter(this, void 0, void 0, function () {

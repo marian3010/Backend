@@ -11,15 +11,16 @@ var Sqlite3Dao_1 = __importDefault(require("./daos/Sqlite3Dao"));
 var MongoDBDao_1 = __importDefault(require("./daos/MongoDBDao"));
 var FirebaseDao_1 = __importDefault(require("./daos/FirebaseDao"));
 var logger_js_1 = require("../logger.js");
-exports.capaPersistencia = {
+/*export const capaPersistencia = {
     memory: 0,
     fileSys: 1,
     mariaDB: 2,
     sqlite: 3,
     mongoLocal: 4,
     mongoAtlas: 5,
-    firebase: 6
-};
+    firebase: 6,
+}*/
+exports.capaPersistencia = ["memory", "fileSys", "mariaDB", "sqlite", "mongoLocal", "mongoAtlas", "firebase"];
 var DaoFactory = /** @class */ (function () {
     function DaoFactory(tipo) {
         this.tipo = tipo;

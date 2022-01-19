@@ -77,6 +77,14 @@ if (opcionCapa === 2) {
 };
 
 class MariaDBDao implements Operaciones {
+    private static instance: MariaDBDao;
+    constructor () {
+        if (typeof MariaDBDao.instance === 'object') {
+            consoleLogger.warn("ya existe el objeto")
+            return MariaDBDao.instance;
+        }
+        MariaDBDao.instance = this;
+    }
 
     async agregarProducto(producto: Producto): Promise<boolean> {
         let response = true;

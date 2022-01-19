@@ -52,6 +52,11 @@ var FsDao = /** @class */ (function () {
             timestamp: Date.now(),
             productos: [],
         };
+        if (typeof FsDao.instance === 'object') {
+            logger_js_1.consoleLogger.warn("ya existe el objeto");
+            return FsDao.instance;
+        }
+        FsDao.instance = this;
     }
     FsDao.prototype.agregarProducto = function (producto) {
         return __awaiter(this, void 0, void 0, function () {

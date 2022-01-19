@@ -13,6 +13,14 @@ consoleLogger.info("Base de datos conectada");
 const firestoreAdmin = admin.firestore();
 
 class FirebaseDao implements Operaciones {
+    private static instance: FirebaseDao;
+    constructor () {
+        if (typeof FirebaseDao.instance === 'object') {
+            consoleLogger.warn("ya existe el objeto")
+            return FirebaseDao.instance;
+        }
+        FirebaseDao.instance = this;
+    }
     
     async agregarProducto(producto: Producto): Promise<boolean> {
         let resultado = true;

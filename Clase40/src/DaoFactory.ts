@@ -7,15 +7,16 @@ import MongoDBDao from "./daos/MongoDBDao";
 import FirebaseDao from "./daos/FirebaseDao";
 import {consoleLogger, errorLogger, warningLogger} from '../logger.js'
 
-export const capaPersistencia = {
+/*export const capaPersistencia = {
     memory: 0,
     fileSys: 1,
     mariaDB: 2,
     sqlite: 3,
     mongoLocal: 4,
     mongoAtlas: 5,
-    firebase: 6
- }
+    firebase: 6,
+}*/
+export const capaPersistencia = ["memory","fileSys","mariaDB","sqlite","mongoLocal","mongoAtlas","firebase"]
 
 class DaoFactory {
     private tipo:number

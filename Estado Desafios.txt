@@ -1,5 +1,5 @@
 Desafio 23 - pendiente
-Desafio 33 - está hecho el deploy en Heroku pero tiene errores 
-Desafio 37 - entregado
-Desafio 38 - entregado
+Desafio 33 - está hecho el deploy en Heroku, listo para corregir
+Desafio 36 - listo para corregir
 Desafio 39 - en desarrollo
+Desafio 40 - listo para corregir

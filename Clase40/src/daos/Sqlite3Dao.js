@@ -113,6 +113,11 @@ if (server_1.opcionCapa === 3) {
 ;
 var Sqlite3Dao = /** @class */ (function () {
     function Sqlite3Dao() {
+        if (typeof Sqlite3Dao.instance === 'object') {
+            logger_js_1.consoleLogger.warn("ya existe el objeto");
+            return Sqlite3Dao.instance;
+        }
+        Sqlite3Dao.instance = this;
     }
     Sqlite3Dao.prototype.agregarProducto = function (producto) {
         return __awaiter(this, void 0, void 0, function () {

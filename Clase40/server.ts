@@ -6,7 +6,18 @@ const compression = require('compression');
 
 // Defino la opción de Base de Datos
 import {capaPersistencia} from './src/DaoFactory';
-export const opcionCapa:number = capaPersistencia.mongoAtlas;
+let index = capaPersistencia.findIndex(db => db === "mongoAtlas");
+
+if (process.argv[3]) {
+  const indexArg = capaPersistencia.findIndex(db => db === process.argv[3]);
+  if (indexArg < 0) {
+    consoleLogger.info("no existe esa persistencia")
+  } else {
+    index = indexArg;
+  }
+  
+}
+export const opcionCapa:number = index;
 import { smsMensajeAdmin } from "./comunicacion";
 
 import {Mensajes} from "./modelo/mensaje";

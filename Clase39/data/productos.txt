@@ -1,62 +1,32 @@
 [
 	{
-		"code": "A102",
-		"title": "Calculadora",
-		"description": "calculadora para la vida",
-		"price": 50,
-		"thumbnail": "https://cdn3.iconfinder.com/data/icons/education-209/64/globe-earth-geograhy-planet-school-256.png",
-		"stock": 34,
-		"timestamp": 1635204861160,
+		"code": "AX01",
+		"title": "prueba Axios",
+		"description": "descripción de la prueba Axios",
+		"price": 500,
+		"thumbnail": "www.pruebaAxios.com",
+		"stock": 1,
+		"timestamp": 1642471983825,
+		"id": 1
+	},
+	{
+		"code": "AX02",
+		"title": "prueba Axios",
+		"description": "descripción de la prueba Axios",
+		"price": 750,
+		"thumbnail": "www.pruebaAxios222.com",
+		"stock": 11,
+		"timestamp": 1642472329974,
 		"id": 2
 	},
 	{
 		"code": "A101",
 		"title": "Pelota",
-		"description": "Globo terráqueo para uso escolar",
-		"price": 750,
+		"description": "Pelota para uso escolar",
+		"price": 950,
 		"thumbnail": "https://cdn3.iconfinder.com/data/icons/education-209/64/globe-earth-geograhy-planet-school-256.png",
-		"stock": 11,
-		"timestamp": 1635204861747,
+		"stock": 4,
+		"timestamp": 1642473359834,
 		"id": 3
-	},
-	{
-		"code": "A104",
-		"title": "lupa",
-		"description": "lupa de vidrio grande",
-		"price": 190,
-		"thumbnail": "www.lupa.com.ar",
-		"stock": 19,
-		"timestamp": 1637017401352,
-		"id": 4
-	},
-	{
-		"code": "A101",
-		"title": "Globo terráqueo",
-		"description": "Globo terráqueo para uso escolar",
-		"price": 750,
-		"thumbnail": "https://cdn3.iconfinder.com/data/icons/education-209/64/globe-earth-geograhy-planet-school-256.png",
-		"stock": 11,
-		"timestamp": 1637602476738,
-		"id": 5
-	},
-	{
-		"code": "A101",
-		"title": "Pelota",
-		"description": "Pelota para uso escolar",
-		"price": 750,
-		"thumbnail": "https://cdn3.iconfinder.com/data/icons/education-209/64/globe-earth-geograhy-planet-school-256.png",
-		"stock": 11,
-		"timestamp": 1641582201443,
-		"id": 6
-	},
-	{
-		"code": "A101",
-		"title": "Pelota",
-		"description": "Pelota para uso escolar",
-		"price": 750,
-		"thumbnail": "https://cdn3.iconfinder.com/data/icons/education-209/64/globe-earth-geograhy-planet-school-256.png",
-		"stock": 11,
-		"timestamp": 1641582913589,
-		"id": 7
 	}
 ]

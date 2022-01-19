@@ -18,14 +18,21 @@ interface Cart {
 class FsDao implements Operaciones {
     public carrito: Cart
     public nuevoCartId: number
+    private static instance: FsDao;    
         
-        constructor() {
+    constructor() {
             this.nuevoCartId = 1;
             this.carrito = {
                 id: this.nuevoCartId,
                 timestamp: Date.now(),
                 productos: [],
             };
+            if (typeof FsDao.instance === 'object') {
+                consoleLogger.warn("ya existe el objeto")
+                return FsDao.instance;
+            }
+            FsDao.instance = this;
+            
         }
    
     async agregarProducto(producto: Producto): Promise<boolean> {

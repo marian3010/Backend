@@ -97,6 +97,11 @@ function connectMongooseAtlas() {
 }
 var MongoDBDao = /** @class */ (function () {
     function MongoDBDao() {
+        if (typeof MongoDBDao.instance === 'object') {
+            logger_js_1.consoleLogger.warn("ya existe el objeto");
+            return MongoDBDao.instance;
+        }
+        MongoDBDao.instance = this;
     }
     MongoDBDao.prototype.agregarProducto = function (producto) {
         return __awaiter(this, void 0, void 0, function () {
