@@ -60,6 +60,7 @@ var FirebaseDao = /** @class */ (function () {
                 switch (_a.label) {
                     case 0:
                         resultado = true;
+                        producto.timestamp = Date.now();
                         collection = firestoreAdmin.collection("productos");
                         _a.label = 1;
                     case 1:

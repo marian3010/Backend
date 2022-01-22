@@ -24,6 +24,7 @@ class FirebaseDao implements Operaciones {
     
     async agregarProducto(producto: Producto): Promise<boolean> {
         let resultado = true;
+        producto.timestamp = Date.now();
         const collection = firestoreAdmin.collection("productos");
         try {
             consoleLogger.info("agregar por firebase");

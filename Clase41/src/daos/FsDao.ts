@@ -3,6 +3,7 @@ import {Operaciones} from "../interfaces/Operaciones";
 import { Producto } from "../../modelo/productos";
 import { Mensaje } from "../../modelo/mensaje";
 import fs from "fs";
+import {productoDto} from "../dto/productoDto"
 import {consoleLogger, errorLogger, warningLogger} from '../../logger.js'
 
 const fileProductos = "./data/productos.txt";
@@ -33,8 +34,17 @@ class FsDao implements Operaciones {
             }
             FsDao.instance = this;
             
-        }
-   
+    }
+    getNextId(productos:any) {
+        const { length } = productos;
+    
+        return length ? productos[length - 1].id + 1 : 1;
+    }  
+    
+    getTimestamp() {
+        return new Date();
+    }
+
     async agregarProducto(producto: Producto): Promise<boolean> {
         let response = true;
         let productos = [];
@@ -43,24 +53,15 @@ class FsDao implements Operaciones {
         }
         catch (error) {
             errorLogger.error(error);
-            
         } 
-        let nuevoId = 1;
-        if (productos.length !== 0) {
-            nuevoId = productos[productos.length - 1].id + 1;
-        }
-        let prod = {
-            code: producto.code,
-            title: producto.title,
-            description: producto.description,
-            price: producto.price,
-            thumbnail: producto.thumbnail,
-            stock: producto.stock,
-            timestamp: producto.timestamp,
-            id: nuevoId
-        };
-        consoleLogger.info (`prod a guardar ${JSON.stringify(prod)}`);
-        productos.push(prod);
+        const dto = productoDto(
+            producto,
+            this.getNextId(productos),
+            this.getTimestamp()
+          );
+        
+        consoleLogger.info (`prod a guardar ${JSON.stringify(dto)}`);
+        productos.push(dto);
         await fs.promises.writeFile(fileProductos, JSON.stringify(productos, null, "\t"), "utf-8");
         return response;
     };
@@ -160,7 +161,6 @@ class FsDao implements Operaciones {
         try {
             consoleLogger.info("listar mensajes desde mensajes.txt")
             mensajesArray = JSON.parse(await fs.promises.readFile(fileMensajes, "utf-8"))
-                consoleLogger.info(`mensajes encontrados ${mensajesArray}`)
                 return mensajesArray;
         } 
         catch (error) {

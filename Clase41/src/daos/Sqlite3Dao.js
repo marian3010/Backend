@@ -130,6 +130,7 @@ var Sqlite3Dao = /** @class */ (function () {
                     case 1:
                         _a.trys.push([1, 3, , 4]);
                         logger_js_1.consoleLogger.info('agregar por SQLite3');
+                        producto.timestamp = Date.now();
                         return [4 /*yield*/, knexSQLite3("productos").insert(producto)];
                     case 2:
                         response = _a.sent();

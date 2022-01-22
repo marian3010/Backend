@@ -90,6 +90,7 @@ class MariaDBDao implements Operaciones {
         let response = true;
         try {
             consoleLogger.info('agregar por mariaDB')
+            producto.timestamp = Date.now();
             await knexMariaDB("productos").insert(producto);
         }
         catch (error) {

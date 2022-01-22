@@ -55,6 +55,7 @@ class MongoDBDao implements Operaciones {
                 await connectMongooseAtlas()
                 
             }
+            producto.timestamp = Date.now();
             await prodModel.default.insertMany(producto);
         }
         catch (error) {
@@ -178,7 +179,6 @@ class MongoDBDao implements Operaciones {
                 await connectMongooseAtlas()
             }
             mensajesArray = await modelMensajes.default.find();
-            return mensajesArray;
         }
         catch(error) {
             errorLogger.error(error);
@@ -186,6 +186,7 @@ class MongoDBDao implements Operaciones {
             mongoose.disconnect().then(() => {
               consoleLogger.info("Base de datos desconectada");
             });
+            return mensajesArray;
         };
     };  
 
@@ -258,7 +259,7 @@ class MongoDBDao implements Operaciones {
             mongoose.disconnect().then(() => {
                 consoleLogger.info("Base de datos desconectada");
               });
-              return resultado;
+            return resultado;
         }
     };
 

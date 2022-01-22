@@ -1,15 +1,5 @@
-import DaoFactory from '../src/DaoFactory';
-import MariaDBDao from '../src/daos/MariaDBDao';
-import MongoDBDao from '../src/daos/MongoDBDao';
-import Sqlite3Dao from '../src/daos/Sqlite3Dao';
-import FsDao from '../src/daos/FsDao';
-import MemoryDao from '../src/daos/MemoryDao';
-import { opcionCapa } from "../server"
+import { dao } from "../server"
 import {consoleLogger, errorLogger, warningLogger} from '../logger.js'
-
-const daoFact = new DaoFactory(opcionCapa);
-const dao: MongoDBDao | Sqlite3Dao | MariaDBDao | FsDao | MemoryDao = daoFact.elegirBD()
-consoleLogger.info("Dao", dao);
 
 export interface Producto {
     id?: number;
@@ -19,14 +9,14 @@ export interface Producto {
     price: number;
     thumbnail: string;
     stock: number;
-    timestamp: number;
+    timestamp?: number;
 } 
 
 class Productos {
     public constructor() {
     };
     
-    public async agregarProducto(code:string, title:string, description:string, price:number, thumbnail:string, stock:number, timestamp:number = Date.now()) {
+    public async agregarProducto(code:string, title:string, description:string, price:number, thumbnail:string, stock:number) {
         try {
             const producto: Producto = {
                 code,
@@ -34,8 +24,7 @@ class Productos {
                 description,
                 price,
                 thumbnail,
-                stock,
-                timestamp 
+                stock
             }
             consoleLogger.info(`producto que va como parametro al dao ${JSON.stringify(producto)}`)
             const response = await dao.agregarProducto(producto);

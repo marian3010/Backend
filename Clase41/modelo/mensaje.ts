@@ -1,14 +1,5 @@
-import DaoFactory from "../src/DaoFactory";
-import MariaDBDao from '../src/daos/MariaDBDao';
-import MongoDBDao from '../src/daos/MongoDBDao';
-import Sqlite3Dao from '../src/daos/Sqlite3Dao';
-import FsDao from '../src/daos/FsDao';
-import MemoryDao from '../src/daos/MemoryDao';
-import { opcionCapa } from "../server"
-
-const daoFact = new DaoFactory(opcionCapa);
-const dao: MongoDBDao | Sqlite3Dao | MariaDBDao | FsDao | MemoryDao = daoFact.elegirBD()
-console.log("Dao", dao);
+import { dao } from "../server"
+import { consoleLogger } from "../logger";
 
 export interface Mensaje {
   id?: number;

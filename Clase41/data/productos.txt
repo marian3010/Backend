@@ -58,5 +58,15 @@
 		"stock": 11,
 		"timestamp": 1641582913589,
 		"id": 7
+	},
+	{
+		"id": 8,
+		"timestamp": "2022-01-21T00:20:52.365Z",
+		"code": "XXX001",
+		"title": "mate keep",
+		"description": "mate de aluminio con cubierta de goma",
+		"price": "1290",
+		"thumbnail": "www.keep.com/mate",
+		"stock": "3"
 	}
 ]

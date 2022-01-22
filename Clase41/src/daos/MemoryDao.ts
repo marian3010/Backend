@@ -1,6 +1,7 @@
 import {Operaciones} from "../interfaces/Operaciones";
 import { Producto } from "../../modelo/productos";
 import { Mensaje } from "../../modelo/mensaje";
+import {productoDto} from "../dto/productoDto"
 import {consoleLogger, errorLogger, warningLogger} from '../../logger.js'
 
 interface Cart {
@@ -34,22 +35,20 @@ class MemoryDao implements Operaciones {
         this.productos = [];
         this.messages= [];
         this.messageNuevoId = 0;
-    }    
-   
+    } 
+
+    getTimestamp() {
+        return new Date();
+    }
+
     async agregarProducto(producto: Producto): Promise<boolean> {
         let response = true;
-        this.nuevoProdId ++;
-        const prod = {
-            code: producto.code,
-            title: producto.title,
-            description: producto.description,
-            price: producto.price,
-            thumbnail: producto.thumbnail,
-            stock: producto.stock,
-            timestamp: producto.timestamp,
-            id: this.nuevoProdId
-        };
-        this.productos.push(prod);
+        const dto = productoDto(
+            producto,
+            this.nuevoProdId ++,
+            this.getTimestamp()
+        );
+        this.productos.push(dto);
         return response;
     };
 

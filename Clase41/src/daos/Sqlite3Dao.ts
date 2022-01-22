@@ -91,6 +91,7 @@ class Sqlite3Dao implements Operaciones {
         let resultado = true;
         try {
             consoleLogger.info('agregar por SQLite3')
+            producto.timestamp = Date.now();
             const response = await knexSQLite3("productos").insert(producto);
             consoleLogger.info(`Id del producto agregado ${response}`)
         }

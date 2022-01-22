@@ -58,17 +58,21 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.opcionCapa = void 0;
+exports.isAdmin = exports.dao = exports.opcionCapa = void 0;
 var express_1 = __importDefault(require("express"));
 var path_1 = __importDefault(require("path"));
 var express_handlebars_1 = __importDefault(require("express-handlebars"));
 var SocketIO = __importStar(require("socket.io"));
 var compression = require('compression');
+var logger_js_1 = require("./logger.js");
+var DaoFactory_1 = __importDefault(require("./src/DaoFactory"));
 // Defino la opción de Base de Datos
-var DaoFactory_1 = require("./src/DaoFactory");
-var index = DaoFactory_1.capaPersistencia.findIndex(function (db) { return db === "mongoAtlas"; });
+// mongoAtlas será la opción por defecto y en los parámetros de entrada defino la opción 
+// por su nombre.
+var DaoFactory_2 = require("./src/DaoFactory");
+var index = DaoFactory_2.capaPersistencia.findIndex(function (db) { return db === "mongoAtlas"; });
 if (process.argv[3]) {
-    var indexArg = DaoFactory_1.capaPersistencia.findIndex(function (db) { return db === process.argv[3]; });
+    var indexArg = DaoFactory_2.capaPersistencia.findIndex(function (db) { return db === process.argv[3]; });
     if (indexArg < 0) {
         logger_js_1.consoleLogger.info("no existe esa persistencia");
     }
@@ -77,15 +81,17 @@ if (process.argv[3]) {
     }
 }
 exports.opcionCapa = index;
+var daoFact = new DaoFactory_1.default(exports.opcionCapa);
+exports.dao = daoFact.elegirBD();
+logger_js_1.consoleLogger.info("Dao", exports.dao);
 var comunicacion_1 = require("./comunicacion");
 var mensaje_1 = require("./modelo/mensaje");
 var products_1 = __importDefault(require("./routes/products"));
 var carts_1 = __importDefault(require("./routes/carts"));
 var login_1 = require("./routes/login");
-var logger_js_1 = require("./logger.js");
 var numCPUs = require('os').cpus().length;
 var cluster = require('cluster');
-var isAdmin = true;
+exports.isAdmin = true;
 var __dirname = path_1.default.resolve();
 var app = (0, express_1.default)();
 var error = new Error("La ruta no es válida");
@@ -189,7 +195,6 @@ function serverCluster() {
     }
 }
 ;
-//const modeChild = process.argv[5] || "fork";
 var modeCluster = false;
 if (modeCluster) {
     logger_js_1.consoleLogger.info("modo de ejecuci\u00F3n cluster");
@@ -203,4 +208,3 @@ else {
     msgSocket(server);
 }
 ;
-exports.default = isAdmin;

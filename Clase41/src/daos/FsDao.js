@@ -40,6 +40,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var fs_1 = __importDefault(require("fs"));
+var productoDto_1 = require("../dto/productoDto");
 var logger_js_1 = require("../../logger.js");
 var fileProductos = "./data/productos.txt";
 var fileMensajes = "./data/mensajes.txt";
@@ -58,9 +59,16 @@ var FsDao = /** @class */ (function () {
         }
         FsDao.instance = this;
     }
+    FsDao.prototype.getNextId = function (productos) {
+        var length = productos.length;
+        return length ? productos[length - 1].id + 1 : 1;
+    };
+    FsDao.prototype.getTimestamp = function () {
+        return new Date();
+    };
     FsDao.prototype.agregarProducto = function (producto) {
         return __awaiter(this, void 0, void 0, function () {
-            var response, productos, _a, _b, error_1, nuevoId, prod;
+            var response, productos, _a, _b, error_1, dto;
             return __generator(this, function (_c) {
                 switch (_c.label) {
                     case 0:
@@ -79,22 +87,9 @@ var FsDao = /** @class */ (function () {
                         logger_js_1.errorLogger.error(error_1);
                         return [3 /*break*/, 4];
                     case 4:
-                        nuevoId = 1;
-                        if (productos.length !== 0) {
-                            nuevoId = productos[productos.length - 1].id + 1;
-                        }
-                        prod = {
-                            code: producto.code,
-                            title: producto.title,
-                            description: producto.description,
-                            price: producto.price,
-                            thumbnail: producto.thumbnail,
-                            stock: producto.stock,
-                            timestamp: producto.timestamp,
-                            id: nuevoId
-                        };
-                        logger_js_1.consoleLogger.info("prod a guardar " + JSON.stringify(prod));
-                        productos.push(prod);
+                        dto = (0, productoDto_1.productoDto)(producto, this.getNextId(productos), this.getTimestamp());
+                        logger_js_1.consoleLogger.info("prod a guardar " + JSON.stringify(dto));
+                        productos.push(dto);
                         return [4 /*yield*/, fs_1.default.promises.writeFile(fileProductos, JSON.stringify(productos, null, "\t"), "utf-8")];
                     case 5:
                         _c.sent();
@@ -291,7 +286,6 @@ var FsDao = /** @class */ (function () {
                         return [4 /*yield*/, fs_1.default.promises.readFile(fileMensajes, "utf-8")];
                     case 2:
                         mensajesArray = _b.apply(_a, [_c.sent()]);
-                        logger_js_1.consoleLogger.info("mensajes encontrados " + mensajesArray);
                         return [2 /*return*/, mensajesArray];
                     case 3:
                         error_6 = _c.sent();

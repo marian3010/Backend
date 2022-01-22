@@ -125,7 +125,9 @@ var MongoDBDao = /** @class */ (function () {
                     case 4:
                         _a.sent();
                         _a.label = 5;
-                    case 5: return [4 /*yield*/, prodModel.default.insertMany(producto)];
+                    case 5:
+                        producto.timestamp = Date.now();
+                        return [4 /*yield*/, prodModel.default.insertMany(producto)];
                     case 6:
                         _a.sent();
                         return [3 /*break*/, 9];
@@ -348,7 +350,7 @@ var MongoDBDao = /** @class */ (function () {
                     case 5: return [4 /*yield*/, modelMensajes.default.find()];
                     case 6:
                         mensajesArray = _a.sent();
-                        return [2 /*return*/, mensajesArray];
+                        return [3 /*break*/, 9];
                     case 7:
                         error_8 = _a.sent();
                         logger_js_1.errorLogger.error(error_8);
@@ -357,7 +359,7 @@ var MongoDBDao = /** @class */ (function () {
                         mongoose.disconnect().then(function () {
                             logger_js_1.consoleLogger.info("Base de datos desconectada");
                         });
-                        return [7 /*endfinally*/];
+                        return [2 /*return*/, mensajesArray];
                     case 9:
                         ;
                         return [2 /*return*/];

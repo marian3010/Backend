@@ -36,6 +36,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+var productoDto_1 = require("../dto/productoDto");
 var logger_js_1 = require("../../logger.js");
 var MemoryDao = /** @class */ (function () {
     function MemoryDao() {
@@ -55,23 +56,16 @@ var MemoryDao = /** @class */ (function () {
         this.messages = [];
         this.messageNuevoId = 0;
     }
+    MemoryDao.prototype.getTimestamp = function () {
+        return new Date();
+    };
     MemoryDao.prototype.agregarProducto = function (producto) {
         return __awaiter(this, void 0, void 0, function () {
-            var response, prod;
+            var response, dto;
             return __generator(this, function (_a) {
                 response = true;
-                this.nuevoProdId++;
-                prod = {
-                    code: producto.code,
-                    title: producto.title,
-                    description: producto.description,
-                    price: producto.price,
-                    thumbnail: producto.thumbnail,
-                    stock: producto.stock,
-                    timestamp: producto.timestamp,
-                    id: this.nuevoProdId
-                };
-                this.productos.push(prod);
+                dto = (0, productoDto_1.productoDto)(producto, this.nuevoProdId++, this.getTimestamp());
+                this.productos.push(dto);
                 return [2 /*return*/, response];
             });
         });

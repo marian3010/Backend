@@ -3,6 +3,16 @@ import path from "path";
 import handlebars from "express-handlebars";
 import * as SocketIO from 'socket.io';
 const compression = require('compression');
+import {consoleLogger, errorLogger, warningLogger} from './logger.js'
+import DaoFactory from './src/DaoFactory';
+import MariaDBDao from './src/daos/MariaDBDao';
+import MongoDBDao from './src/daos/MongoDBDao';
+import Sqlite3Dao from './src/daos/Sqlite3Dao';
+import FsDao from './src/daos/FsDao';
+import MemoryDao from './src/daos/MemoryDao';
+import {MongoClient} from 'mongodb';
+import MessageRepository from "./repositories/messageRepository";
+import Message from "./repositories/entity/messages";
 
 // Defino la opción de Base de Datos
 // mongoAtlas será la opción por defecto y en los parámetros de entrada defino la opción 
@@ -18,21 +28,22 @@ if (process.argv[3]) {
   } else {
     index = indexArg;
   }
-  
 }
 export const opcionCapa:number = index;
-import { smsMensajeAdmin } from "./comunicacion";
+const daoFact = new DaoFactory(opcionCapa);
+export const dao: MongoDBDao | Sqlite3Dao | MariaDBDao | FsDao | MemoryDao = daoFact.elegirBD()
+consoleLogger.info("Dao", dao);
 
+import { smsMensajeAdmin } from "./comunicacion";
 import {Mensajes} from "./modelo/mensaje";
 import productosRouter from './routes/products';
 import carritoRouter from './routes/carts';
 import {loginRouter, sessionHandler} from './routes/login';
-import {consoleLogger, errorLogger, warningLogger} from './logger.js'
 
 const numCPUs = require ('os').cpus().length;
 const cluster = require ('cluster');
 
-const isAdmin:boolean = true;
+export const isAdmin:boolean = true;
 const __dirname = path.resolve();
 const app = express();
 const error = new Error("La ruta no es válida");
@@ -61,6 +72,7 @@ app.engine("hbs", handlebars({
 })); 
 
 let server: any;
+
 ///funcion para enviar msgs por socket
 function msgSocket(server:any) {
   const io = new SocketIO.Server(server);
@@ -75,7 +87,21 @@ function msgSocket(server:any) {
   io.on('connection', async socket => {
       consoleLogger.info("se conectó el back");
       try {
-       const messages = await msgList.leerMensajes();
+        console.log("Contectando a la Base de datos...");
+        const connection: MongoClient = await MongoClient.connect(
+          "mongodb://localhost",
+          {
+            useNewUrlParser: true,
+            useUnifiedTopology: true,
+          }
+        );
+        const messageRepository: MessageRepository = new MessageRepository(
+          connection.db("datos"),
+          "personas"
+        );
+        console.log("Base de datos conectada");
+        const messages = await messageRepository.find()
+        //const messages = await msgList.leerMensajes();
           if (messages) {
           socket.emit("messages", messages);
           socket.on("new-message", async (data) => {
@@ -87,7 +113,8 @@ function msgSocket(server:any) {
             messages.push(data);
             io.sockets.emit("messages", messages);
             consoleLogger.info(`mensaje a guardar - data ${data}`);
-            await msgList.guardarMensajes(data);
+            //await msgList.guardarMensajes(data);
+            await messageRepository.create(data);
           })
         }
       } catch (err) {
@@ -125,7 +152,6 @@ function serverCluster() {
   }  
 };
 
-//const modeChild = process.argv[5] || "fork";
 const modeCluster = false;
 
 if (modeCluster) {
@@ -140,4 +166,3 @@ if (modeCluster) {
   msgSocket(server);
 };     
 
-export default isAdmin;

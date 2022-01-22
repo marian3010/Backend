@@ -35,16 +35,9 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Mensajes = void 0;
-var DaoFactory_1 = __importDefault(require("../src/DaoFactory"));
 var server_1 = require("../server");
-var daoFact = new DaoFactory_1.default(server_1.opcionCapa);
-var dao = daoFact.elegirBD();
-console.log("Dao", dao);
 ;
 var Mensajes = /** @class */ (function () {
     function Mensajes() {
@@ -60,7 +53,7 @@ var Mensajes = /** @class */ (function () {
                         _a.label = 1;
                     case 1:
                         _a.trys.push([1, 3, , 4]);
-                        return [4 /*yield*/, dao.leerMensajes()];
+                        return [4 /*yield*/, server_1.dao.leerMensajes()];
                     case 2:
                         rows = _a.sent();
                         if (rows) {
@@ -87,7 +80,7 @@ var Mensajes = /** @class */ (function () {
                 switch (_a.label) {
                     case 0:
                         _a.trys.push([0, 2, , 3]);
-                        return [4 /*yield*/, dao.guardarMensajes(mensaje)];
+                        return [4 /*yield*/, server_1.dao.guardarMensajes(mensaje)];
                     case 1:
                         response = _a.sent();
                         console.log("función exitosa", response);

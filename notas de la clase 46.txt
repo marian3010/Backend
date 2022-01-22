@@ -1,0 +1,47 @@
+import koa from 'koa'
+import emoji from 'node-emoji'
+import morgan from 'morgan'
+import dotenv from 'dotenv'
+dotenv.config()
+const app = new koa()
+
+app.use(morgan('dev'))
+
+const PORT = process.env.PORT || 3000
+const server = app.listen(PORT, () => console.log(emoji.get('fire'),`Server started on port http://localhost:${PORT}`))
+server.on('error', (err) => console.log(err))
+
+
+
+export const schema = buildSchema(`
+  type Query {
+    producto(id:Int!): Producto,
+    productos(filtro:String, valorDesde:String, valorHasta:String): [Producto],
+  },
+  type Mutation {
+    guardarProducto(code: String!, title: String!, description: String!, price: Int!, thumbnail: String!, stock: Int!): Producto
+  },
+  type Producto {
+    id: Int,
+    code: String,
+    title: String,
+    description: String,
+    price: Int,
+    thumbnail: String,
+    stock: Int,
+    timestamp: Int
+  }
+`);
+
+
+export const guardarProducto = async({code, title, description, price, thumbnail, stock}) => {
+    try {
+        const prod = await prods.agregarProducto(code, title, description, price, thumbnail, stock);
+        if (prod) {
+            return true;
+        }  
+    } catch(err) {
+        console.log(err);
+    }    
+    return false;
+};

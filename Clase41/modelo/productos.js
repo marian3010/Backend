@@ -35,22 +35,14 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-var DaoFactory_1 = __importDefault(require("../src/DaoFactory"));
 var server_1 = require("../server");
 var logger_js_1 = require("../logger.js");
-var daoFact = new DaoFactory_1.default(server_1.opcionCapa);
-var dao = daoFact.elegirBD();
-logger_js_1.consoleLogger.info("Dao", dao);
 var Productos = /** @class */ (function () {
     function Productos() {
     }
     ;
-    Productos.prototype.agregarProducto = function (code, title, description, price, thumbnail, stock, timestamp) {
-        if (timestamp === void 0) { timestamp = Date.now(); }
+    Productos.prototype.agregarProducto = function (code, title, description, price, thumbnail, stock) {
         return __awaiter(this, void 0, void 0, function () {
             var producto, response, error_1;
             return __generator(this, function (_a) {
@@ -63,11 +55,10 @@ var Productos = /** @class */ (function () {
                             description: description,
                             price: price,
                             thumbnail: thumbnail,
-                            stock: stock,
-                            timestamp: timestamp
+                            stock: stock
                         };
                         logger_js_1.consoleLogger.info("producto que va como parametro al dao " + JSON.stringify(producto));
-                        return [4 /*yield*/, dao.agregarProducto(producto)];
+                        return [4 /*yield*/, server_1.dao.agregarProducto(producto)];
                     case 1:
                         response = _a.sent();
                         logger_js_1.consoleLogger.info("funci\u00F3n exitosa " + response);
@@ -89,7 +80,7 @@ var Productos = /** @class */ (function () {
                 switch (_a.label) {
                     case 0:
                         _a.trys.push([0, 2, , 3]);
-                        return [4 /*yield*/, dao.buscarProducto(id)];
+                        return [4 /*yield*/, server_1.dao.buscarProducto(id)];
                     case 1:
                         productoEncontrado = _a.sent();
                         logger_js_1.consoleLogger.info("id del producto buscado " + id);
@@ -115,7 +106,7 @@ var Productos = /** @class */ (function () {
                         _a.label = 1;
                     case 1:
                         _a.trys.push([1, 3, , 4]);
-                        return [4 /*yield*/, dao.listarProductos()];
+                        return [4 /*yield*/, server_1.dao.listarProductos()];
                     case 2:
                         rows = _a.sent();
                         if (rows) {
@@ -161,7 +152,7 @@ var Productos = /** @class */ (function () {
                 switch (_a.label) {
                     case 0:
                         _a.trys.push([0, 2, , 3]);
-                        return [4 /*yield*/, dao.borrarProducto(id)];
+                        return [4 /*yield*/, server_1.dao.borrarProducto(id)];
                     case 1:
                         response = _a.sent();
                         return [2 /*return*/, response];
@@ -191,7 +182,7 @@ var Productos = /** @class */ (function () {
                             stock: stock,
                             timestamp: Date.now()
                         };
-                        return [4 /*yield*/, dao.actualizarProducto(id, producto)];
+                        return [4 /*yield*/, server_1.dao.actualizarProducto(id, producto)];
                     case 1:
                         response = _a.sent();
                         return [2 /*return*/, response];

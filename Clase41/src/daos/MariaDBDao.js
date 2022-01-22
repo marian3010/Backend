@@ -130,6 +130,7 @@ var MariaDBDao = /** @class */ (function () {
                     case 1:
                         _a.trys.push([1, 3, , 4]);
                         logger_js_1.consoleLogger.info('agregar por mariaDB');
+                        producto.timestamp = Date.now();
                         return [4 /*yield*/, knexMariaDB("productos").insert(producto)];
                     case 2:
                         _a.sent();
