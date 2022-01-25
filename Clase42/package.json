@@ -9,8 +9,8 @@
         "ServerES6toJS5": "./node_modules/.bin/babel ./server.es6.js -o ./server.js -w",
         "ProductosES6toJS5": "./node_modules/.bin/babel ./productos.es6.js -o ./productos.js -w",
         "ServerTStoJS5": "./node_modules/.bin/tsc",
-        "dev": "set NODE_ENV=development&& node server.js",
-        "prod": "set NODE_ENV=production&& node server.js"
+        "dev": "set NODE_ENV=development&& node server.js --port=3030",
+        "prod": "set NODE_ENV=production&& node server.js --port=8081"
     },
     "author": "",
     "license": "ISC",

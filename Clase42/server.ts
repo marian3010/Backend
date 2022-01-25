@@ -13,10 +13,10 @@ import MemoryDao from './src/daos/MemoryDao';
 const config = require("./config");
 const yargs = require ("yargs");
 const { argv } = yargs;
-// Defino la opción de Base de Datos
-// mongoAtlas será la opción por defecto y en los parámetros de entrada defino la opción 
-// por su nombre.
 
+// Defino la opción de Base de Datos
+// mongoAtlas será la opción por defecto y del config traigo la opción de persistencia
+// por su nombre según el entorno.
 import {capaPersistencia} from './src/DaoFactory';
 let index = capaPersistencia.findIndex(db => db === "mongoAtlas");
 
@@ -48,12 +48,7 @@ const app = express();
 const error = new Error("La ruta no es válida");
 const notFoundMiddleware = () => (req: express.Request, _res: express.Response, next: express.NextFunction) => {return next(error);};
 let port = 8080;
-/*if (process.argv[2]) {
-  port = parseInt(process.argv[2])
-}*/
 
-console.log("argv", argv);
-console.log("argvport", argv.port);
 if (argv.port) {
   port = parseInt(argv.port)
 }

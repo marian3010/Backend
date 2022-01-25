@@ -70,8 +70,8 @@ var config = require("./config");
 var yargs = require("yargs");
 var argv = yargs.argv;
 // Defino la opción de Base de Datos
-// mongoAtlas será la opción por defecto y en los parámetros de entrada defino la opción 
-// por su nombre.
+// mongoAtlas será la opción por defecto y del config traigo la opción de persistencia
+// por su nombre según el entorno.
 var DaoFactory_2 = require("./src/DaoFactory");
 var index = DaoFactory_2.capaPersistencia.findIndex(function (db) { return db === "mongoAtlas"; });
 if (config.PERSISTENCIA) {
@@ -100,12 +100,6 @@ var app = (0, express_1.default)();
 var error = new Error("La ruta no es válida");
 var notFoundMiddleware = function () { return function (req, _res, next) { return next(error); }; };
 var port = 8080;
-/*if (process.argv[2]) {
-  port = parseInt(process.argv[2])
-}*/
-console.log("yargs", yargs);
-console.log("argv", argv);
-console.log("argvport", argv.port);
 if (argv.port) {
     port = parseInt(argv.port);
 }
