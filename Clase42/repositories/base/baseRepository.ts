@@ -1,9 +1,11 @@
-import {
+/*import {
     Db,
     Collection,
     InsertOneWriteOpResult,
     WithId,
-    
+    DeleteWriteOpResultObject,
+    UpdateWriteOpResult,
+    ObjectId,
 } from "mongodb";
   
   import IWrite from "../interfaces/IWrite";
@@ -26,6 +28,6 @@ import {
     async find(): Promise<T[]> {
       return this.collection.find({}).toArray();
     }
-
-      
+  
   }
+  */

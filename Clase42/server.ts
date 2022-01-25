@@ -10,10 +10,9 @@ import MongoDBDao from './src/daos/MongoDBDao';
 import Sqlite3Dao from './src/daos/Sqlite3Dao';
 import FsDao from './src/daos/FsDao';
 import MemoryDao from './src/daos/MemoryDao';
-import {MongoClient} from 'mongodb';
-import MessageRepository from "./repositories/messageRepository";
-import Message from "./repositories/entity/messages";
-
+const config = require("./config");
+const yargs = require ("yargs");
+const { argv } = yargs;
 // Defino la opción de Base de Datos
 // mongoAtlas será la opción por defecto y en los parámetros de entrada defino la opción 
 // por su nombre.
@@ -21,8 +20,8 @@ import Message from "./repositories/entity/messages";
 import {capaPersistencia} from './src/DaoFactory';
 let index = capaPersistencia.findIndex(db => db === "mongoAtlas");
 
-if (process.argv[3]) {
-  const indexArg = capaPersistencia.findIndex(db => db === process.argv[3]);
+if (config.PERSISTENCIA) {
+  const indexArg = capaPersistencia.findIndex(db => db === config.PERSISTENCIA);
   if (indexArg < 0) {
     consoleLogger.info("no existe esa persistencia")
   } else {
@@ -49,8 +48,14 @@ const app = express();
 const error = new Error("La ruta no es válida");
 const notFoundMiddleware = () => (req: express.Request, _res: express.Response, next: express.NextFunction) => {return next(error);};
 let port = 8080;
-if (process.argv[2]) {
+/*if (process.argv[2]) {
   port = parseInt(process.argv[2])
+}*/
+
+console.log("argv", argv);
+console.log("argvport", argv.port);
+if (argv.port) {
+  port = parseInt(argv.port)
 }
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -87,21 +92,7 @@ function msgSocket(server:any) {
   io.on('connection', async socket => {
       consoleLogger.info("se conectó el back");
       try {
-        console.log("Contectando a la Base de datos...");
-        const connection: MongoClient = await MongoClient.connect(
-          "mongodb://localhost",
-          {
-            //useNewUrlParser: true,
-            //useUnifiedTopology: true,
-          }
-        );
-        const messageRepository: MessageRepository = new MessageRepository(
-          connection.db("datos"),
-          "personas"
-        );
-        console.log("Base de datos conectada");
-        const messages = await messageRepository.find()
-        //const messages = await msgList.leerMensajes();
+        const messages = await msgList.leerMensajes();
           if (messages) {
           socket.emit("messages", messages);
           socket.on("new-message", async (data) => {
@@ -113,8 +104,8 @@ function msgSocket(server:any) {
             messages.push(data);
             io.sockets.emit("messages", messages);
             consoleLogger.info(`mensaje a guardar - data ${data}`);
-            //await msgList.guardarMensajes(data);
-            await messageRepository.create(data);
+            await msgList.guardarMensajes(data);
+            
           })
         }
       } catch (err) {
@@ -152,9 +143,7 @@ function serverCluster() {
   }  
 };
 
-const modeCluster = false;
-
-if (modeCluster) {
+if (config.MODO_CLUSTER == true) {
     consoleLogger.info(`modo de ejecución cluster`);
     serverCluster();
 } else {

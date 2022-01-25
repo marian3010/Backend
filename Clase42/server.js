@@ -66,15 +66,16 @@ var SocketIO = __importStar(require("socket.io"));
 var compression = require('compression');
 var logger_js_1 = require("./logger.js");
 var DaoFactory_1 = __importDefault(require("./src/DaoFactory"));
-var mongodb_1 = require("mongodb");
-var messageRepository_1 = __importDefault(require("./repositories/messageRepository"));
+var config = require("./config");
+var yargs = require("yargs");
+var argv = yargs.argv;
 // Defino la opción de Base de Datos
 // mongoAtlas será la opción por defecto y en los parámetros de entrada defino la opción 
 // por su nombre.
 var DaoFactory_2 = require("./src/DaoFactory");
 var index = DaoFactory_2.capaPersistencia.findIndex(function (db) { return db === "mongoAtlas"; });
-if (process.argv[3]) {
-    var indexArg = DaoFactory_2.capaPersistencia.findIndex(function (db) { return db === process.argv[3]; });
+if (config.PERSISTENCIA) {
+    var indexArg = DaoFactory_2.capaPersistencia.findIndex(function (db) { return db === config.PERSISTENCIA; });
     if (indexArg < 0) {
         logger_js_1.consoleLogger.info("no existe esa persistencia");
     }
@@ -99,8 +100,14 @@ var app = (0, express_1.default)();
 var error = new Error("La ruta no es válida");
 var notFoundMiddleware = function () { return function (req, _res, next) { return next(error); }; };
 var port = 8080;
-if (process.argv[2]) {
-    port = parseInt(process.argv[2]);
+/*if (process.argv[2]) {
+  port = parseInt(process.argv[2])
+}*/
+console.log("yargs", yargs);
+console.log("argv", argv);
+console.log("argvport", argv.port);
+if (argv.port) {
+    port = parseInt(argv.port);
 }
 app.use(express_1.default.json());
 app.use(express_1.default.urlencoded({ extended: true }));
@@ -129,7 +136,7 @@ function msgSocket(server) {
     });
     var msgList = new mensaje_1.Mensajes();
     io.on('connection', function (socket) { return __awaiter(_this, void 0, void 0, function () {
-        var connection, messageRepository_2, messages_1, err_1;
+        var messages_1, err_1;
         var _this = this;
         return __generator(this, function (_a) {
             switch (_a.label) {
@@ -137,22 +144,10 @@ function msgSocket(server) {
                     logger_js_1.consoleLogger.info("se conectó el back");
                     _a.label = 1;
                 case 1:
-                    _a.trys.push([1, 4, , 5]);
-                    console.log("Contectando a la Base de datos...");
-                    return [4 /*yield*/, mongodb_1.MongoClient.connect("mongodb://localhost", {
-                            useNewUrlParser: true,
-                            useUnifiedTopology: true,
-                        })];
+                    _a.trys.push([1, 3, , 4]);
+                    return [4 /*yield*/, msgList.leerMensajes()];
                 case 2:
-                    connection = _a.sent();
-                    messageRepository_2 = new messageRepository_1.default(connection.db("datos"), "personas");
-                    console.log("Base de datos conectada");
-                    return [4 /*yield*/, messageRepository_2.find()
-                        //const messages = await msgList.leerMensajes();
-                    ];
-                case 3:
                     messages_1 = _a.sent();
-                    //const messages = await msgList.leerMensajes();
                     if (messages_1) {
                         socket.emit("messages", messages_1);
                         socket.on("new-message", function (data) { return __awaiter(_this, void 0, void 0, function () {
@@ -168,23 +163,21 @@ function msgSocket(server) {
                                         messages_1.push(data);
                                         io.sockets.emit("messages", messages_1);
                                         logger_js_1.consoleLogger.info("mensaje a guardar - data " + data);
-                                        //await msgList.guardarMensajes(data);
-                                        return [4 /*yield*/, messageRepository_2.create(data)];
+                                        return [4 /*yield*/, msgList.guardarMensajes(data)];
                                     case 1:
-                                        //await msgList.guardarMensajes(data);
                                         _a.sent();
                                         return [2 /*return*/];
                                 }
                             });
                         }); });
                     }
-                    return [3 /*break*/, 5];
-                case 4:
+                    return [3 /*break*/, 4];
+                case 3:
                     err_1 = _a.sent();
                     logger_js_1.consoleLogger.error(err_1);
                     logger_js_1.errorLogger.error(err_1);
-                    return [3 /*break*/, 5];
-                case 5: return [2 /*return*/];
+                    return [3 /*break*/, 4];
+                case 4: return [2 /*return*/];
             }
         });
     }); });
@@ -211,8 +204,7 @@ function serverCluster() {
     }
 }
 ;
-var modeCluster = false;
-if (modeCluster) {
+if (config.MODO_CLUSTER == true) {
     logger_js_1.consoleLogger.info("modo de ejecuci\u00F3n cluster");
     serverCluster();
 }
