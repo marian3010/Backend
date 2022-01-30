@@ -5,25 +5,16 @@ import MariaDBDao from "./daos/MariaDBDao";
 import Sqlite3Dao from "./daos/Sqlite3Dao";
 import MongoDBDao from "./daos/MongoDBDao";
 import FirebaseDao from "./daos/FirebaseDao";
-import {consoleLogger, errorLogger, warningLogger} from '../logger.js'
+import {consoleLogger, errorLogger, warningLogger} from '../logger.js';
 
-/*export const capaPersistencia = {
-    memory: 0,
-    fileSys: 1,
-    mariaDB: 2,
-    sqlite: 3,
-    mongoLocal: 4,
-    mongoAtlas: 5,
-    firebase: 6,
-}*/
-export const capaPersistencia = ["memory","fileSys","mariaDB","sqlite","mongoLocal","mongoAtlas","firebase"]
+export const capaPersistencia = ["memory","fileSys","mariaDB","sqlite","mongoLocal","mongoAtlas","firebase"];
 
 class DaoFactory {
     private tipo:number
 
     constructor(tipo:number) {
         this.tipo = tipo
-    }
+    };
 
     elegirBD(): Operaciones {
         consoleLogger.info(`tipo de BD ${this.tipo}`)
@@ -44,8 +35,8 @@ class DaoFactory {
                 return new FirebaseDao()      
             default:
                 throw new Error("DAO no encontrado");           
-        }
-    }
-}    
+        };
+    };
+};   
 
-export default DaoFactory
+export default DaoFactory;

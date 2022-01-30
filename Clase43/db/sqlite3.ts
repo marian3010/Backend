@@ -6,8 +6,4 @@ const options = {
     useNullAsDefault: true,
 };
 
-//module.exports = {
-//    options,
-//};
-
 export default options;

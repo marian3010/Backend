@@ -1,6 +1,6 @@
 import {Operaciones} from "../interfaces/Operaciones";
-import { Producto } from "../../modelo/productos";
-import { Mensaje } from "../../modelo/mensaje";
+import {Producto} from "../../modelo/productos";
+import {Mensaje} from "../../modelo/mensaje";
 import {productoDto} from "../dto/productoDto"
 import {consoleLogger, errorLogger, warningLogger} from '../../logger.js'
 
@@ -20,7 +20,7 @@ class MemoryDao implements Operaciones {
     public productos: Producto []
     
     constructor() {
-        if (typeof MemoryDao.instance === 'object' ) {
+        if (typeof MemoryDao.instance === 'object') {
             consoleLogger.warn("ya existe el objeto");
             return MemoryDao.instance;
         }

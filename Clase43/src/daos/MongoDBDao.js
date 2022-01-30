@@ -64,11 +64,14 @@ function connectMongoose(connect) {
                     error_1 = _a.sent();
                     logger_js_1.errorLogger.error(error_1);
                     return [3 /*break*/, 4];
-                case 4: return [2 /*return*/];
+                case 4:
+                    ;
+                    return [2 /*return*/];
             }
         });
     });
 }
+;
 function connectMongooseAtlas() {
     return __awaiter(this, void 0, void 0, function () {
         var dbname, password, user, error_2;
@@ -91,19 +94,24 @@ function connectMongooseAtlas() {
                     error_2 = _a.sent();
                     logger_js_1.errorLogger.error(error_2);
                     return [3 /*break*/, 4];
-                case 4: return [2 /*return*/];
+                case 4:
+                    ;
+                    return [2 /*return*/];
             }
         });
     });
 }
+;
 var MongoDBDao = /** @class */ (function () {
     function MongoDBDao() {
         if (typeof MongoDBDao.instance === 'object') {
             logger_js_1.consoleLogger.warn("ya existe el objeto");
             return MongoDBDao.instance;
         }
+        ;
         MongoDBDao.instance = this;
     }
+    ;
     MongoDBDao.prototype.agregarProducto = function (producto) {
         return __awaiter(this, void 0, void 0, function () {
             var resultado, error_3;
@@ -142,11 +150,14 @@ var MongoDBDao = /** @class */ (function () {
                             logger_js_1.consoleLogger.info("Base de datos desconectada");
                         });
                         return [2 /*return*/, resultado];
-                    case 9: return [2 /*return*/];
+                    case 9:
+                        ;
+                        return [2 /*return*/];
                 }
             });
         });
     };
+    ;
     MongoDBDao.prototype.buscarProducto = function (id) {
         return __awaiter(this, void 0, void 0, function () {
             var producto, error_4;
@@ -189,6 +200,7 @@ var MongoDBDao = /** @class */ (function () {
             });
         });
     };
+    ;
     MongoDBDao.prototype.listarProductos = function () {
         return __awaiter(this, void 0, void 0, function () {
             var productosArray, error_5;
@@ -232,6 +244,7 @@ var MongoDBDao = /** @class */ (function () {
             });
         });
     };
+    ;
     MongoDBDao.prototype.borrarProducto = function (id) {
         return __awaiter(this, void 0, void 0, function () {
             var resultado, resp, error_6;
@@ -279,6 +292,7 @@ var MongoDBDao = /** @class */ (function () {
             });
         });
     };
+    ;
     MongoDBDao.prototype.actualizarProducto = function (id, producto) {
         return __awaiter(this, void 0, void 0, function () {
             var resultado, resp, error_7;
@@ -482,7 +496,9 @@ var MongoDBDao = /** @class */ (function () {
                             logger_js_1.consoleLogger.info("Base de datos desconectada");
                         });
                         return [2 /*return*/, resultado];
-                    case 17: return [2 /*return*/];
+                    case 17:
+                        ;
+                        return [2 /*return*/];
                 }
             });
         });
@@ -603,6 +619,7 @@ var MongoDBDao = /** @class */ (function () {
             });
         });
     };
+    ;
     MongoDBDao.prototype.borrarProdsCarrito = function (id) {
         return __awaiter(this, void 0, void 0, function () {
             var resultado, resp, error_13;
@@ -652,4 +669,5 @@ var MongoDBDao = /** @class */ (function () {
     ;
     return MongoDBDao;
 }());
+;
 exports.default = MongoDBDao;

@@ -7,20 +7,6 @@ var twilio = require('twilio');
 var config = require("./config");
 var mailAdmin = config.ADMIN_EMAIL;
 var client = twilio(config.TWILIO_ID, config.TWILIO_PASS);
-var transporter = nodemailer.createTransport({
-    host: 'smtp.ethereal.email',
-    port: 587,
-    auth: {
-        user: 'mateo.hilll92@ethereal.email',
-        pass: 'MhDabT9mADsA5e8zPK',
-    },
-});
-var mailOptions = {
-    from: 'Servidor Node.js',
-    to: mailAdmin,
-    subject: '',
-    html: '',
-};
 var transporterGmail = nodemailer.createTransport({
     service: 'gmail',
     auth: {
@@ -40,9 +26,10 @@ var mailOptionsGmail = {
     ],
 };
 function emailLogout(nombre) {
-    mailOptions.subject = 'Log out';
-    mailOptions.html = "<h1> " + nombre + " - " + Date() + " </h1>";
-    transporter.sendMail(mailOptions, function (error, info) {
+    mailOptionsGmail.to = mailAdmin;
+    mailOptionsGmail.subject = 'Logout';
+    mailOptionsGmail.html = "<h1> " + nombre + " - " + Date() + " </h1>";
+    transporterGmail.sendMail(mailOptionsGmail, function (error, info) {
         if (error) {
             logger_js_1.errorLogger.error(error);
             return error;
@@ -51,6 +38,7 @@ function emailLogout(nombre) {
     });
 }
 exports.emailLogout = emailLogout;
+;
 function gmailRegistro(nom, ape, email, dire, fono, edad) {
     mailOptionsGmail.to = mailAdmin;
     mailOptionsGmail.subject = 'Nuevo registro';
@@ -64,6 +52,7 @@ function gmailRegistro(nom, ape, email, dire, fono, edad) {
     });
 }
 exports.gmailRegistro = gmailRegistro;
+;
 function smsMensajeAdmin(texto, autor) {
     client.messages.create({
         body: "Mensaje recibido de " + autor + " - texto recibido: " + texto,
@@ -74,6 +63,7 @@ function smsMensajeAdmin(texto, autor) {
         .catch(function (error) { return logger_js_1.errorLogger.error(error); });
 }
 exports.smsMensajeAdmin = smsMensajeAdmin;
+;
 function gmailCompra(productos, nombre, email) {
     mailOptionsGmail.to = mailAdmin;
     mailOptionsGmail.subject = "Nuevo pedido de " + nombre + " - " + email;
@@ -87,6 +77,7 @@ function gmailCompra(productos, nombre, email) {
     });
 }
 exports.gmailCompra = gmailCompra;
+;
 function wappCompra(productos, nombre, email) {
     client.messages.create({
         body: "Nuevo pedido de " + nombre + " - " + email + " - lista de productos: " + productos,
@@ -97,6 +88,7 @@ function wappCompra(productos, nombre, email) {
         .catch(function (error) { return logger_js_1.errorLogger.error(error); });
 }
 exports.wappCompra = wappCompra;
+;
 function smsCompra(telefono) {
     client.messages.create({
         body: "Su pedido ha sido recibido y se encuentra en proceso",
@@ -107,3 +99,4 @@ function smsCompra(telefono) {
         .catch(function (error) { return logger_js_1.errorLogger.error(error); });
 }
 exports.smsCompra = smsCompra;
+;

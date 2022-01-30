@@ -46,7 +46,7 @@ export function emailLogout(nombre:string){
       return consoleLogger.info(info);
     },
   );
-}
+};
 
 export function gmailRegistro(nom:string,ape:string,email:string,dire:string,fono:string,edad:number) {
     mailOptionsGmail.to = mailAdmin;
@@ -69,7 +69,7 @@ export function gmailRegistro(nom:string,ape:string,email:string,dire:string,fon
         return consoleLogger.info(info);
       },
     );
-}
+};
 
 export function smsMensajeAdmin(texto:string, autor:string) {
     client.messages.create(
@@ -82,7 +82,7 @@ export function smsMensajeAdmin(texto:string, autor:string) {
     .then((message:any) => consoleLogger.info(message.sid))
     .catch((error:any) => errorLogger.error(error));
      
-}
+};
 
 export function gmailCompra(productos:any, nombre:string, email:string) {
     mailOptionsGmail.to = mailAdmin;
@@ -100,7 +100,7 @@ export function gmailCompra(productos:any, nombre:string, email:string) {
         return consoleLogger.info(info);
       },
     );
-}
+};
 
 export function wappCompra(productos:any, nombre:string, email:string) {
     client.messages.create(
@@ -112,7 +112,7 @@ export function wappCompra(productos:any, nombre:string, email:string) {
     )
     .then((message:any) => consoleLogger.info(message.sid))
     .catch((error:any) => errorLogger.error(error));
-}
+};
 
 export function smsCompra(telefono:string) {
     client.messages.create(
@@ -124,5 +124,5 @@ export function smsCompra(telefono:string) {
     )
     .then((message:any) => consoleLogger.info(message.sid))
     .catch((error:any) => errorLogger.error(error));
-}
+};
 

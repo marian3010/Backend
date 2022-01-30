@@ -224,7 +224,6 @@ var FirebaseDao = /** @class */ (function () {
                     case 2:
                         query = _a.sent();
                         response = query.docs.map(function (doc) {
-                            //const data = doc.data();
                             if (doc.id === id) {
                                 //si lo encuentra lo actualiza
                                 collection.doc(id).update(producto);

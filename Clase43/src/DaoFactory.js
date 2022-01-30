@@ -11,20 +11,12 @@ var Sqlite3Dao_1 = __importDefault(require("./daos/Sqlite3Dao"));
 var MongoDBDao_1 = __importDefault(require("./daos/MongoDBDao"));
 var FirebaseDao_1 = __importDefault(require("./daos/FirebaseDao"));
 var logger_js_1 = require("../logger.js");
-/*export const capaPersistencia = {
-    memory: 0,
-    fileSys: 1,
-    mariaDB: 2,
-    sqlite: 3,
-    mongoLocal: 4,
-    mongoAtlas: 5,
-    firebase: 6,
-}*/
 exports.capaPersistencia = ["memory", "fileSys", "mariaDB", "sqlite", "mongoLocal", "mongoAtlas", "firebase"];
 var DaoFactory = /** @class */ (function () {
     function DaoFactory(tipo) {
         this.tipo = tipo;
     }
+    ;
     DaoFactory.prototype.elegirBD = function () {
         logger_js_1.consoleLogger.info("tipo de BD " + this.tipo);
         switch (this.tipo) {
@@ -45,7 +37,10 @@ var DaoFactory = /** @class */ (function () {
             default:
                 throw new Error("DAO no encontrado");
         }
+        ;
     };
+    ;
     return DaoFactory;
 }());
+;
 exports.default = DaoFactory;

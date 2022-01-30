@@ -1,35 +1,33 @@
 import express from "express";
 import session from 'express-session';
 import fs from "fs";
-const numCPUs = require ('os').cpus().length;
-
+import {Users, IUsuario} from '../model/users';
 import {consoleLogger, errorLogger, warningLogger} from '../logger.js'
 import {emailLogout, gmailRegistro} from '../comunicacion';
+import MongoStore from 'connect-mongo';
+const advancedOptions: any = {useNewUrlParser: true, useUnifiedTopology: true}
 
-declare module "express-session" {
-    interface Session {
-      nombre: string;
-    }
-}
+import path from "path";
+const __dirname = path.resolve(); 
+
 const bCrypt = require('bcrypt');
 const passport = require('passport')
 const passportLocal = require('passport-local');
-import path from "path";
-const __dirname = path.resolve();
-import {Users, IUsuario} from '../model/users';
+const numCPUs = require ('os').cpus().length;
 const mongoose = require("mongoose");
-
-export const loginRouter = express.Router();
 
 const config = require("../config");
 const mongoUser = config.MONGO_USER;
 const mongoPass = config.MONGO_PASS;
 const mongoDbName = config.MONGO_DBNAME;
 const expTime = parseInt(config.EXP_TIME);
-consoleLogger.info(`expiration time ${config.EXP_TIME}`);
 
-import MongoStore from 'connect-mongo';
-const advancedOptions: any = {useNewUrlParser: true, useUnifiedTopology: true}
+declare module "express-session" {
+  interface Session {
+    nombre: string;
+  }
+}
+
 export const sessionHandler = session(
   {
     store: MongoStore.create({
@@ -45,7 +43,7 @@ export const sessionHandler = session(
   },
 );
 
-//export const loginRouter = express.Router();
+export const loginRouter = express.Router();
 loginRouter.use(sessionHandler);
 loginRouter.use(passport.initialize());
 loginRouter.use(passport.session());
@@ -265,7 +263,4 @@ loginRouter.get('/info', (req:express.Request, res: express.Response) => {
     numCPUs: numCPUs,
   });
 });
-
-
-
 

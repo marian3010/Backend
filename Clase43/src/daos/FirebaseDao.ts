@@ -126,7 +126,6 @@ class FirebaseDao implements Operaciones {
             //busco el producto para ver si existe
             const query = await collection.get();
             const response = query.docs.map((doc:any) => {
-                //const data = doc.data();
                 if (doc.id === id) {
                     //si lo encuentra lo actualiza
                     collection.doc(id).update(producto);

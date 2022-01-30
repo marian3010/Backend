@@ -1,14 +1,14 @@
 import {Operaciones} from "../interfaces/Operaciones";
-import { Producto } from "../../modelo/productos";
-import { Mensaje, Mensajes } from "../../modelo/mensaje";
-import { opcionCapa } from "../../server";
+import {Producto} from "../../modelo/productos";
+import {Mensaje, Mensajes} from "../../modelo/mensaje";
+import {opcionCapa} from "../../server";
 import {consoleLogger, errorLogger, warningLogger} from '../../logger.js'
 const mongoose = require("mongoose");
 const prodModel = require("../../model/prods");
 const modelMensajes = require("../../model/messages.js");
 const cartModel = require("../../model/cart");
 const cartProdModel = require("../../model/cartProd");
-const connectStrLocal =  "mongodb://localhost:27017/ecommerce"
+const connectStrLocal =  "mongodb://localhost:27017/ecommerce";
 const config = require("../../config");
 
 async function connectMongoose(connect:string) {
@@ -18,8 +18,8 @@ async function connectMongoose(connect:string) {
         consoleLogger.info("Base de datos conectada");
     } catch(error) {
         errorLogger.error(error);
-    }    
-}
+    };    
+};
 
 async function connectMongooseAtlas() {
     consoleLogger.info("conexión a mongoAtlas");
@@ -31,8 +31,8 @@ async function connectMongooseAtlas() {
         consoleLogger.info("Base de datos conectada");
     } catch(error) {
         errorLogger.error(error);
-    }    
-}
+    };    
+};
 
 class MongoDBDao implements Operaciones {
     private static instance: MongoDBDao;
@@ -41,9 +41,9 @@ class MongoDBDao implements Operaciones {
         if (typeof MongoDBDao.instance === 'object') {
             consoleLogger.warn("ya existe el objeto")
             return MongoDBDao.instance;
-        }
+        };
         MongoDBDao.instance = this;
-    }
+    };
 
     async agregarProducto(producto: Producto): Promise<boolean> {
         let resultado = true;
@@ -67,8 +67,8 @@ class MongoDBDao implements Operaciones {
                 consoleLogger.info("Base de datos desconectada");
               });
               return resultado;
-        }
-    }
+        };
+    };
 
     async buscarProducto(id:string) {
         let producto: Producto[] = []
@@ -90,7 +90,7 @@ class MongoDBDao implements Operaciones {
             });
             return producto;
         };
-    }
+    };
 
     async listarProductos() {
         let productosArray: Producto[] = []
@@ -114,7 +114,7 @@ class MongoDBDao implements Operaciones {
             return productosArray;
             
         };
-    }    
+    };    
     
     async borrarProducto(id:string): Promise<boolean> {
         let resultado = false;
@@ -141,7 +141,7 @@ class MongoDBDao implements Operaciones {
             });
             return resultado;
         };
-    }
+    };
 
     async actualizarProducto(id:string, producto:Producto): Promise<boolean> {
         let resultado = false;
@@ -261,7 +261,7 @@ class MongoDBDao implements Operaciones {
                 consoleLogger.info("Base de datos desconectada");
               });
             return resultado;
-        }
+        };
     };
 
     async buscarProdCarrito(id:string) {
@@ -326,7 +326,7 @@ class MongoDBDao implements Operaciones {
             });
             return productosArray;
         };
-    }    
+    };    
  
     async borrarProdsCarrito(id:string): Promise<boolean> {
         let resultado = false;
@@ -353,6 +353,6 @@ class MongoDBDao implements Operaciones {
             return resultado;
         };
     };
-}
+};
 
 export default MongoDBDao;

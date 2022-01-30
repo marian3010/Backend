@@ -1,13 +1,15 @@
 import express from "express";
 const productosRouter = express.Router();
+
 import Productos from "../modelo/productos.js";
 import { authorizationMiddleware } from "../middleware/authorization.js";
+import {consoleLogger, errorLogger, warningLogger} from '../logger.js'
+import {schema, root } from '../graphql/products';
 import path from "path";
 const __dirname = path.resolve();
-import {consoleLogger, errorLogger, warningLogger} from '../logger.js'
+
 const config = require("../config");
 const { graphqlHTTP } = require("express-graphql");
-import {schema, root } from '../graphql/products';
 
 export const prods = new Productos();
 

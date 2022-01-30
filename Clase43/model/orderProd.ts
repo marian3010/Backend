@@ -6,6 +6,12 @@ const orderProdSchema = new mongoose.Schema({
     },
     idProd: {
         type: String,
+    },
+    cantProd: {
+        type: Number,
+    },
+    priceProd: {
+        type: Number,
     }
 });
 

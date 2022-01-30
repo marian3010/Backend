@@ -48,8 +48,7 @@ var users_js_1 = require("../model/users.js");
 exports.miCarrito = new carrito_js_1.default();
 var logger_js_1 = require("../logger.js");
 var comunicacion_1 = require("../comunicacion");
-logger_js_1.consoleLogger.info("nombreUsuario " + login_1.nombreUsuario);
-//listar carrito
+//listar productos del carrito
 carritoRouter.get('/listar/:id?', function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
     var idBuscar, producto, productos, err_1;
     return __generator(this, function (_a) {
@@ -57,9 +56,8 @@ carritoRouter.get('/listar/:id?', function (req, res) { return __awaiter(void 0,
             case 0:
                 _a.trys.push([0, 5, , 6]);
                 idBuscar = (req.params.id);
-                logger_js_1.consoleLogger.info("parametro a buscar idBuscar " + idBuscar);
                 if (!idBuscar) return [3 /*break*/, 2];
-                logger_js_1.consoleLogger.info("va a buscar productos al carrito por id");
+                logger_js_1.consoleLogger.info("busca productos en el carrito con id " + idBuscar);
                 return [4 /*yield*/, exports.miCarrito.buscarProdCarrito(idBuscar)];
             case 1:
                 producto = _a.sent();
@@ -158,6 +156,7 @@ carritoRouter.post('/comprar/:id', function (req, res) { return __awaiter(void 0
                     prod = productos_1[_i];
                     prodList = prodList + (prod.code + " - " + prod.description + ", ");
                 }
+                logger_js_1.consoleLogger.info("nombreUsuario " + login_1.nombreUsuario);
                 return [4 /*yield*/, (0, users_js_1.buscoDatosUser)(login_1.nombreUsuario)];
             case 2:
                 user = _a.sent();

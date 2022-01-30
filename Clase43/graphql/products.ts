@@ -11,8 +11,8 @@ interface IGuardarProducto {
   thumbnail: string,
   stock: number;
 }
-// GraphQL Schema
 
+// GraphQL Schema
 export const schema = buildSchema(`
   type Query {
     producto(id:ID!): Producto,
@@ -43,7 +43,6 @@ export const getProducto = async ({id}: any) => {
     console.log(err);
   }
   return;   
-  
 };
 
 export const getProductos = async (filtro:any, valorDesde:any, valorHasta:any) => {
@@ -54,8 +53,8 @@ export const getProductos = async (filtro:any, valorDesde:any, valorHasta:any) =
     console.log(err);
   }
   return;   
-  
 };
+
 export const guardarProducto = async ({code, title, description, price, thumbnail, stock}: IGuardarProducto) => {
 
   try {

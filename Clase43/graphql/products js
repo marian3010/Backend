@@ -32,7 +32,6 @@ export const getProducto = async ({id}) => {
     console.log(err);
   }
   return;   
-  
 };
 
 export const getProductos = async (filtro, valorDesde, valorHasta) => {
@@ -43,7 +42,6 @@ export const getProductos = async (filtro, valorDesde, valorHasta) => {
     console.log(err);
   }
   return;   
-  
 };
 
 export const guardarProducto = async({code, title, description, price, thumbnail, stock}) => {

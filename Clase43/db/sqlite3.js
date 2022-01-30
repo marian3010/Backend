@@ -7,7 +7,4 @@ var options = {
     },
     useNullAsDefault: true,
 };
-//module.exports = {
-//    options,
-//};
 exports.default = options;

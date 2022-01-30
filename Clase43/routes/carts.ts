@@ -7,14 +7,13 @@ export const miCarrito: Carrito = new Carrito();
 import {consoleLogger, errorLogger, warningLogger} from '../logger.js'
 import {gmailCompra, smsCompra, wappCompra} from '../comunicacion'
 
-consoleLogger.info(`nombreUsuario ${nombreUsuario}`);
-//listar carrito
+
+//listar productos del carrito
 carritoRouter.get('/listar/:id?', async (req: express.Request, res: express.Response) => {
     try {
         let idBuscar = (req.params.id);
-        consoleLogger.info(`parametro a buscar idBuscar ${idBuscar}`)
         if (idBuscar) {
-            consoleLogger.info("va a buscar productos al carrito por id")
+            consoleLogger.info(`busca productos en el carrito con id ${idBuscar}`)
             const producto = await miCarrito.buscarProdCarrito(idBuscar)
             res.json(producto);
         } else {
@@ -74,6 +73,7 @@ carritoRouter.post('/comprar/:id', async (req: express.Request, res: express.Res
             for (const prod of productos) {
                 prodList = prodList + `${prod.code} - ${prod.description}, `
             }  
+            consoleLogger.info(`nombreUsuario ${nombreUsuario}`);
             const user = await buscoDatosUser(nombreUsuario);
             gmailCompra(prodList,user.username, user.email);
             wappCompra(prodList,user.username, user.email);

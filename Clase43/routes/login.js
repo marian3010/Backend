@@ -39,29 +39,27 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.nombreUsuario = exports.sessionHandler = exports.loginRouter = void 0;
+exports.nombreUsuario = exports.loginRouter = exports.sessionHandler = void 0;
 var express_1 = __importDefault(require("express"));
 var express_session_1 = __importDefault(require("express-session"));
 var fs_1 = __importDefault(require("fs"));
-var numCPUs = require('os').cpus().length;
+var users_1 = require("../model/users");
 var logger_js_1 = require("../logger.js");
 var comunicacion_1 = require("../comunicacion");
+var connect_mongo_1 = __importDefault(require("connect-mongo"));
+var advancedOptions = { useNewUrlParser: true, useUnifiedTopology: true };
+var path_1 = __importDefault(require("path"));
+var __dirname = path_1.default.resolve();
 var bCrypt = require('bcrypt');
 var passport = require('passport');
 var passportLocal = require('passport-local');
-var path_1 = __importDefault(require("path"));
-var __dirname = path_1.default.resolve();
-var users_1 = require("../model/users");
+var numCPUs = require('os').cpus().length;
 var mongoose = require("mongoose");
-exports.loginRouter = express_1.default.Router();
 var config = require("../config");
 var mongoUser = config.MONGO_USER;
 var mongoPass = config.MONGO_PASS;
 var mongoDbName = config.MONGO_DBNAME;
 var expTime = parseInt(config.EXP_TIME);
-logger_js_1.consoleLogger.info("expiration time " + config.EXP_TIME);
-var connect_mongo_1 = __importDefault(require("connect-mongo"));
-var advancedOptions = { useNewUrlParser: true, useUnifiedTopology: true };
 exports.sessionHandler = (0, express_session_1.default)({
     store: connect_mongo_1.default.create({
         mongoUrl: "mongodb+srv://" + mongoUser + ":" + mongoPass + "@cluster0.jbzno.mongodb.net/" + mongoDbName + "?retryWrites=true&w=majority",
@@ -75,7 +73,7 @@ exports.sessionHandler = (0, express_session_1.default)({
         maxAge: expTime,
     },
 });
-//export const loginRouter = express.Router();
+exports.loginRouter = express_1.default.Router();
 exports.loginRouter.use(exports.sessionHandler);
 exports.loginRouter.use(passport.initialize());
 exports.loginRouter.use(passport.session());
@@ -200,7 +198,7 @@ var checkAuthentication = function (request, response, next) {
         .redirect(302, '/login');
 };
 ////////////////////////
-process.on('exit', function (code) { return console.log('exit ${code}'); });
+process.on('exit', function (code) { return console.log("exit " + code); });
 exports.loginRouter.get('/login', function (req, res) {
     if (req.isAuthenticated()) {
         var user = req.user;

@@ -44,12 +44,12 @@ var express_1 = __importDefault(require("express"));
 var productosRouter = express_1.default.Router();
 var productos_js_1 = __importDefault(require("../modelo/productos.js"));
 var authorization_js_1 = require("../middleware/authorization.js");
+var logger_js_1 = require("../logger.js");
+var products_1 = require("../graphql/products");
 var path_1 = __importDefault(require("path"));
 var __dirname = path_1.default.resolve();
-var logger_js_1 = require("../logger.js");
 var config = require("../config");
 var graphqlHTTP = require("express-graphql").graphqlHTTP;
-var products_1 = require("../graphql/products");
 exports.prods = new productos_js_1.default();
 productosRouter.get('/', function (_req, res) {
     if (config.MODE_ENV === "development") {
