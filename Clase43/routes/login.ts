@@ -2,7 +2,7 @@ import express from "express";
 import session from 'express-session';
 import fs from "fs";
 const numCPUs = require ('os').cpus().length;
-const { fork } = require('child_process');
+
 import {consoleLogger, errorLogger, warningLogger} from '../logger.js'
 import {emailLogout, gmailRegistro} from '../comunicacion';
 
@@ -14,18 +14,19 @@ declare module "express-session" {
 const bCrypt = require('bcrypt');
 const passport = require('passport')
 const passportLocal = require('passport-local');
-
+import path from "path";
+const __dirname = path.resolve();
 import {Users, IUsuario} from '../model/users';
 const mongoose = require("mongoose");
 
 export const loginRouter = express.Router();
-import path from "path";
-const __dirname = path.resolve();
 
 const config = require("../config");
 const mongoUser = config.MONGO_USER;
 const mongoPass = config.MONGO_PASS;
 const mongoDbName = config.MONGO_DBNAME;
+const expTime = parseInt(config.EXP_TIME);
+consoleLogger.info(`expiration time ${config.EXP_TIME}`);
 
 import MongoStore from 'connect-mongo';
 const advancedOptions: any = {useNewUrlParser: true, useUnifiedTopology: true}
@@ -39,10 +40,12 @@ export const sessionHandler = session(
     resave: true,
     saveUninitialized: true,
     cookie: {
-        maxAge: 60000,
+        maxAge: expTime,
       },
   },
 );
+
+//export const loginRouter = express.Router();
 loginRouter.use(sessionHandler);
 loginRouter.use(passport.initialize());
 loginRouter.use(passport.session());
@@ -60,12 +63,6 @@ async function connectMongoose() {
 ///////
 const createHash = (password: string) => bCrypt.hashSync(password, bCrypt.genSaltSync(10));
 const isValidPassword = (user: any, password: string) => bCrypt.compareSync(password, user.password);
-
-//const FacebookStrategy = require('passport-facebook').Strategy;
-//const FACEBOOK_CLIENT_ID = Number(process.argv[3]) || '273751394685780';
-//const FACEBOOK_CLIENT_SECRET = Number(process.argv[4]) || 'bdc22f2dd51fd93cdaf053b722598c31';
-//consoleLogger.info(`facebook client ID ${FACEBOOK_CLIENT_ID}`);
-//consoleLogger.info(`facebook client secret ${FACEBOOK_CLIENT_SECRET}`);
 
 const loginStrategyName = 'login';
 const signUpStrategyName = 'signup';
@@ -87,13 +84,10 @@ passport.use(
         if (error) {
           return done(error);
         }
-
         if (!user) {
           warningLogger.warn(`User Not Found with username ${username}`);
-
           return done(null, false);
         }
-
         if (!isValidPassword(user, password)) {
           consoleLogger.info('Invalid Password');
           return done(null, false);
@@ -120,17 +114,13 @@ passport.use(
           username,
         },
         (error: string, user: any) => {
-         
           if (error) {
             errorLogger.error(`Error in SignUp: ${error}`);
             consoleLogger.error(`Error in SignUp: ${error}`);
-
             return done(error);
           }
-
           if (user) {
             consoleLogger.info('User already exists');
-
             return done(
               null,
               false,
@@ -138,7 +128,6 @@ passport.use(
           }
           consoleLogger.info("creando objeto usuario");
           const newUser: IUsuario = new Users();
- 
           newUser.username = username;
           newUser.password = createHash(password);
           newUser.email = request.body.email;
@@ -152,12 +141,9 @@ passport.use(
             if (error) {
               errorLogger.error(`Error in Saving user: ${error}`);
               consoleLogger.error(`Error in Saving user: ${error}`);
-
               throw error;
             }
-
             consoleLogger.info('User Registration succesful');
-
             return done(null, newUser);
           });
         },
@@ -178,13 +164,12 @@ const checkAuthentication = (request: any, response: express.Response, next: any
   if (request.isAuthenticated()) {
     return next();
   }
-
   return response
     .redirect(302, '/login');
 };
 ////////////////////////
 
-process.on('exit', (code) => console.log('exit ${code}'),);
+process.on('exit', (code) => console.log(`exit ${code}`),);
 
 loginRouter.get('/login', (req: any, res: express.Response) => {
 
@@ -281,21 +266,6 @@ loginRouter.get('/info', (req:express.Request, res: express.Response) => {
   });
 });
 
-loginRouter.get('/random/:cant?', (req:express.Request, res: express.Response) => {
-  let cant = 100000;
-  if (req.params.cant) {
-    cant = parseInt(req.params.cant)
-  }
-  const child = fork('./random.js');
-  consoleLogger.info(`parametro a enviar ${cant}`);
-  child.send(cant, () => {consoleLogger.info(`parametro enviado por el padre ${cant}`)},)
-  
-  child.on(
-    'message',
-    (message:[]) => {
-      res.json({message})}
-  );  
-   
-});
+
 
 

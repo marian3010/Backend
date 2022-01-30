@@ -1,12 +1,13 @@
 import express from "express";
 const carritoRouter = express.Router();
 import Carrito from "../modelo/carrito.js";
-import {nombreUsuario} from "./login.js";
+import {nombreUsuario} from "./login";
 import { buscoDatosUser } from "../model/users.js";
 export const miCarrito: Carrito = new Carrito();
 import {consoleLogger, errorLogger, warningLogger} from '../logger.js'
 import {gmailCompra, smsCompra, wappCompra} from '../comunicacion'
 
+consoleLogger.info(`nombreUsuario ${nombreUsuario}`);
 //listar carrito
 carritoRouter.get('/listar/:id?', async (req: express.Request, res: express.Response) => {
     try {

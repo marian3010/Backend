@@ -63,15 +63,20 @@ var express_1 = __importDefault(require("express"));
 var path_1 = __importDefault(require("path"));
 var express_handlebars_1 = __importDefault(require("express-handlebars"));
 var SocketIO = __importStar(require("socket.io"));
-var compression = require('compression');
 var logger_js_1 = require("./logger.js");
 var DaoFactory_1 = __importDefault(require("./src/DaoFactory"));
+var comunicacion_1 = require("./comunicacion");
+var mensaje_1 = require("./modelo/mensaje");
+var products_1 = __importDefault(require("./routes/products"));
+var carts_1 = __importDefault(require("./routes/carts"));
+var login_1 = require("./routes/login");
+var mongodb_1 = require("mongodb");
+var messageRepository_1 = __importDefault(require("./repositories/messageRepository"));
 var config = require("./config");
-var yargs = require("yargs");
-var argv = yargs.argv;
+var numCPUs = require('os').cpus().length;
+var cluster = require('cluster');
 // Defino la opción de Base de Datos
-// mongoAtlas será la opción por defecto y del config traigo la opción de persistencia
-// por su nombre según el entorno.
+// mongoAtlas será la opción por defecto y del config traigo la opción de persistencia según el entorno.
 var DaoFactory_2 = require("./src/DaoFactory");
 var index = DaoFactory_2.capaPersistencia.findIndex(function (db) { return db === "mongoAtlas"; });
 if (config.PERSISTENCIA) {
@@ -87,22 +92,12 @@ exports.opcionCapa = index;
 var daoFact = new DaoFactory_1.default(exports.opcionCapa);
 exports.dao = daoFact.elegirBD();
 logger_js_1.consoleLogger.info("Dao", exports.dao);
-var comunicacion_1 = require("./comunicacion");
-var mensaje_1 = require("./modelo/mensaje");
-var products_1 = __importDefault(require("./routes/products"));
-var carts_1 = __importDefault(require("./routes/carts"));
-var login_1 = require("./routes/login");
-var numCPUs = require('os').cpus().length;
-var cluster = require('cluster');
 exports.isAdmin = true;
 var __dirname = path_1.default.resolve();
 var app = (0, express_1.default)();
 var error = new Error("La ruta no es válida");
 var notFoundMiddleware = function () { return function (req, _res, next) { return next(error); }; };
-var port = 8080;
-if (argv.port) {
-    port = parseInt(argv.port);
-}
+var port = parseInt(config.PORT);
 app.use(express_1.default.json());
 app.use(express_1.default.urlencoded({ extended: true }));
 app.use(express_1.default.static(__dirname + "/public"));
@@ -110,7 +105,6 @@ app.use('/productos', products_1.default);
 app.use('/carrito', carts_1.default);
 app.use('/ecommerce', login_1.loginRouter);
 app.use(notFoundMiddleware);
-app.use(compression());
 app.set("view engine", "hbs");
 app.set("views", path_1.default.join(__dirname, 'views'));
 app.engine("hbs", (0, express_handlebars_1.default)({
@@ -130,7 +124,7 @@ function msgSocket(server) {
     });
     var msgList = new mensaje_1.Mensajes();
     io.on('connection', function (socket) { return __awaiter(_this, void 0, void 0, function () {
-        var messages_1, err_1;
+        var connection, messageRepository_2, messages_1, err_1;
         var _this = this;
         return __generator(this, function (_a) {
             switch (_a.label) {
@@ -138,10 +132,22 @@ function msgSocket(server) {
                     logger_js_1.consoleLogger.info("se conectó el back");
                     _a.label = 1;
                 case 1:
-                    _a.trys.push([1, 3, , 4]);
-                    return [4 /*yield*/, msgList.leerMensajes()];
+                    _a.trys.push([1, 4, , 5]);
+                    logger_js_1.consoleLogger.info("Contectando a la Base de datos...");
+                    return [4 /*yield*/, mongodb_1.MongoClient.connect("mongodb://localhost", {
+                            useNewUrlParser: true,
+                            useUnifiedTopology: true,
+                        })];
                 case 2:
+                    connection = _a.sent();
+                    messageRepository_2 = new messageRepository_1.default(connection.db("ecommerce"), "mensajes");
+                    logger_js_1.consoleLogger.info("Base de datos conectada");
+                    return [4 /*yield*/, messageRepository_2.find()
+                        //const messages = await msgList.leerMensajes();
+                    ];
+                case 3:
                     messages_1 = _a.sent();
+                    //const messages = await msgList.leerMensajes();
                     if (messages_1) {
                         socket.emit("messages", messages_1);
                         socket.on("new-message", function (data) { return __awaiter(_this, void 0, void 0, function () {
@@ -157,21 +163,23 @@ function msgSocket(server) {
                                         messages_1.push(data);
                                         io.sockets.emit("messages", messages_1);
                                         logger_js_1.consoleLogger.info("mensaje a guardar - data " + data);
-                                        return [4 /*yield*/, msgList.guardarMensajes(data)];
+                                        //await msgList.guardarMensajes(data);
+                                        return [4 /*yield*/, messageRepository_2.create(data)];
                                     case 1:
+                                        //await msgList.guardarMensajes(data);
                                         _a.sent();
                                         return [2 /*return*/];
                                 }
                             });
                         }); });
                     }
-                    return [3 /*break*/, 4];
-                case 3:
+                    return [3 /*break*/, 5];
+                case 4:
                     err_1 = _a.sent();
                     logger_js_1.consoleLogger.error(err_1);
                     logger_js_1.errorLogger.error(err_1);
-                    return [3 /*break*/, 4];
-                case 4: return [2 /*return*/];
+                    return [3 /*break*/, 5];
+                case 5: return [2 /*return*/];
             }
         });
     }); });
@@ -198,12 +206,12 @@ function serverCluster() {
     }
 }
 ;
-if (config.MODO_CLUSTER == true) {
-    logger_js_1.consoleLogger.info("modo de ejecuci\u00F3n cluster");
+if (config.MODO_CLUSTER === true) {
+    logger_js_1.consoleLogger.info("modo de ejecucion cluster");
     serverCluster();
 }
 else {
-    logger_js_1.consoleLogger.info("modo de ejecuci\u00F3n fork");
+    logger_js_1.consoleLogger.info("modo de ejecucion fork");
     server = app.listen(port, function () {
         logger_js_1.consoleLogger.info("servidor listo en puerto " + port + " | PID: " + process.pid);
     });

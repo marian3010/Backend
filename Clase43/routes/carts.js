@@ -43,11 +43,12 @@ exports.miCarrito = void 0;
 var express_1 = __importDefault(require("express"));
 var carritoRouter = express_1.default.Router();
 var carrito_js_1 = __importDefault(require("../modelo/carrito.js"));
-var login_js_1 = require("./login.js");
+var login_1 = require("./login");
 var users_js_1 = require("../model/users.js");
 exports.miCarrito = new carrito_js_1.default();
 var logger_js_1 = require("../logger.js");
 var comunicacion_1 = require("../comunicacion");
+logger_js_1.consoleLogger.info("nombreUsuario " + login_1.nombreUsuario);
 //listar carrito
 carritoRouter.get('/listar/:id?', function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
     var idBuscar, producto, productos, err_1;
@@ -157,7 +158,7 @@ carritoRouter.post('/comprar/:id', function (req, res) { return __awaiter(void 0
                     prod = productos_1[_i];
                     prodList = prodList + (prod.code + " - " + prod.description + ", ");
                 }
-                return [4 /*yield*/, (0, users_js_1.buscoDatosUser)(login_js_1.nombreUsuario)];
+                return [4 /*yield*/, (0, users_js_1.buscoDatosUser)(login_1.nombreUsuario)];
             case 2:
                 user = _a.sent();
                 (0, comunicacion_1.gmailCompra)(prodList, user.username, user.email);

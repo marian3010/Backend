@@ -44,21 +44,22 @@ var express_1 = __importDefault(require("express"));
 var express_session_1 = __importDefault(require("express-session"));
 var fs_1 = __importDefault(require("fs"));
 var numCPUs = require('os').cpus().length;
-var fork = require('child_process').fork;
 var logger_js_1 = require("../logger.js");
 var comunicacion_1 = require("../comunicacion");
 var bCrypt = require('bcrypt');
 var passport = require('passport');
 var passportLocal = require('passport-local');
+var path_1 = __importDefault(require("path"));
+var __dirname = path_1.default.resolve();
 var users_1 = require("../model/users");
 var mongoose = require("mongoose");
 exports.loginRouter = express_1.default.Router();
-var path_1 = __importDefault(require("path"));
-var __dirname = path_1.default.resolve();
 var config = require("../config");
 var mongoUser = config.MONGO_USER;
 var mongoPass = config.MONGO_PASS;
 var mongoDbName = config.MONGO_DBNAME;
+var expTime = parseInt(config.EXP_TIME);
+logger_js_1.consoleLogger.info("expiration time " + config.EXP_TIME);
 var connect_mongo_1 = __importDefault(require("connect-mongo"));
 var advancedOptions = { useNewUrlParser: true, useUnifiedTopology: true };
 exports.sessionHandler = (0, express_session_1.default)({
@@ -71,9 +72,10 @@ exports.sessionHandler = (0, express_session_1.default)({
     resave: true,
     saveUninitialized: true,
     cookie: {
-        maxAge: 60000,
+        maxAge: expTime,
     },
 });
+//export const loginRouter = express.Router();
 exports.loginRouter.use(exports.sessionHandler);
 exports.loginRouter.use(passport.initialize());
 exports.loginRouter.use(passport.session());
@@ -105,11 +107,6 @@ function connectMongoose() {
 ///////
 var createHash = function (password) { return bCrypt.hashSync(password, bCrypt.genSaltSync(10)); };
 var isValidPassword = function (user, password) { return bCrypt.compareSync(password, user.password); };
-//const FacebookStrategy = require('passport-facebook').Strategy;
-//const FACEBOOK_CLIENT_ID = Number(process.argv[3]) || '273751394685780';
-//const FACEBOOK_CLIENT_SECRET = Number(process.argv[4]) || 'bdc22f2dd51fd93cdaf053b722598c31';
-//consoleLogger.info(`facebook client ID ${FACEBOOK_CLIENT_ID}`);
-//consoleLogger.info(`facebook client secret ${FACEBOOK_CLIENT_SECRET}`);
 var loginStrategyName = 'login';
 var signUpStrategyName = 'signup';
 exports.nombreUsuario = "";
@@ -289,17 +286,5 @@ exports.loginRouter.get('/info', function (req, res) {
         path: process.execPath,
         pid: process.pid,
         numCPUs: numCPUs,
-    });
-});
-exports.loginRouter.get('/random/:cant?', function (req, res) {
-    var cant = 100000;
-    if (req.params.cant) {
-        cant = parseInt(req.params.cant);
-    }
-    var child = fork('./random.js');
-    logger_js_1.consoleLogger.info("parametro a enviar " + cant);
-    child.send(cant, function () { logger_js_1.consoleLogger.info("parametro enviado por el padre " + cant); });
-    child.on('message', function (message) {
-        res.json({ message: message });
     });
 });

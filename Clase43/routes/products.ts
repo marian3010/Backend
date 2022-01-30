@@ -2,15 +2,21 @@ import express from "express";
 const productosRouter = express.Router();
 import Productos from "../modelo/productos.js";
 import { authorizationMiddleware } from "../middleware/authorization.js";
-export const prods = new Productos();
 import path from "path";
 const __dirname = path.resolve();
 import {consoleLogger, errorLogger, warningLogger} from '../logger.js'
+const config = require("../config");
 const { graphqlHTTP } = require("express-graphql");
 import {schema, root } from '../graphql/products';
 
+export const prods = new Productos();
+
 productosRouter.get('/', (_req: express.Request, res: express.Response) => {
-    res.sendFile(__dirname + "/public/listoProds.html");
+    if (config.MODE_ENV === "development") {
+        res.sendFile(__dirname + "/public/listoProdsDev.html");
+    } else {
+        res.sendFile(__dirname + "/public/listoProds.html");
+    }
 });
 
 productosRouter.get('/listar/:id?', async (req: express.Request, res: express.Response) => {

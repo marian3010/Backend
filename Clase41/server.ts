@@ -12,7 +12,6 @@ import FsDao from './src/daos/FsDao';
 import MemoryDao from './src/daos/MemoryDao';
 import {MongoClient} from 'mongodb';
 import MessageRepository from "./repositories/messageRepository";
-import Message from "./repositories/entity/messages";
 
 // Defino la opción de Base de Datos
 // mongoAtlas será la opción por defecto y en los parámetros de entrada defino la opción 
@@ -122,7 +121,6 @@ function msgSocket(server:any) {
         errorLogger.error(err);
       }  
   });
-  
 }
 
 ///funcion para iniciar server como cluster
@@ -132,7 +130,6 @@ function serverCluster() {
     consoleLogger.info(`Cantidad de CPUs: ${numCPUs}`);
     for (let index = 0; index < numCPUs; index += 1) {
       cluster.fork();
-      
     }
   
     cluster.on(
@@ -140,7 +137,6 @@ function serverCluster() {
       (worker:any) => {
         consoleLogger.info(`Worker ${worker.process.pid} died`);
         cluster.fork();
-        
       },
     );
   } else {
@@ -149,7 +145,7 @@ function serverCluster() {
       consoleLogger.info(`servidor listo en puerto ${port} | PID: ${process.pid}`)
     });
     msgSocket(server);
-  }  
+  };  
 };
 
 const modeCluster = false;
@@ -161,7 +157,6 @@ if (modeCluster) {
   consoleLogger.info(`modo de ejecución fork`);
   server = app.listen(port, () => {
     consoleLogger.info(`servidor listo en puerto ${port} | PID: ${process.pid}`)
-    
   })
   msgSocket(server);
 };     

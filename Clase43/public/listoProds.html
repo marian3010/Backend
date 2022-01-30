@@ -91,7 +91,8 @@
             </div>
             `);
             // Primero hago el fetch para traer la data
-            fetch('http://localhost:8080/productos/listar', {
+            // entorno de producción en Heroku
+            fetch('https://ecomm-mariana.herokuapp.com/productos/listar', {
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json'
@@ -103,7 +104,7 @@
                 .catch(error => console.error('Error:', error))
                 // Si todo sale bien tengo mi data y la uso
                 .then(miLista => {
-                    // aca tenggo mi handlebars.compile como antes
+                    // aca tengo mi handlebars.compile como antes
                     // esta vez el dato en vez de recibirlo como parametro del socket, es el parametro miLista del fetch
                     // se lo mando al template y lo asigno al html
                     const html = hbsTemplate({

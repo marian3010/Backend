@@ -44,14 +44,20 @@ var express_1 = __importDefault(require("express"));
 var productosRouter = express_1.default.Router();
 var productos_js_1 = __importDefault(require("../modelo/productos.js"));
 var authorization_js_1 = require("../middleware/authorization.js");
-exports.prods = new productos_js_1.default();
 var path_1 = __importDefault(require("path"));
 var __dirname = path_1.default.resolve();
 var logger_js_1 = require("../logger.js");
+var config = require("../config");
 var graphqlHTTP = require("express-graphql").graphqlHTTP;
 var products_1 = require("../graphql/products");
+exports.prods = new productos_js_1.default();
 productosRouter.get('/', function (_req, res) {
-    res.sendFile(__dirname + "/public/listoProds.html");
+    if (config.MODE_ENV === "development") {
+        res.sendFile(__dirname + "/public/listoProdsDev.html");
+    }
+    else {
+        res.sendFile(__dirname + "/public/listoProds.html");
+    }
 });
 productosRouter.get('/listar/:id?', function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
     var idBuscar, producto, productos, err_1;

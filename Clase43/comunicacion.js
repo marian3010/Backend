@@ -5,7 +5,7 @@ var logger_js_1 = require("./logger.js");
 var nodemailer = require('nodemailer');
 var twilio = require('twilio');
 var config = require("./config");
-var mailAdmin = 'mhiba3010@gmail.com';
+var mailAdmin = config.ADMIN_EMAIL;
 var client = twilio(config.TWILIO_ID, config.TWILIO_PASS);
 var transporter = nodemailer.createTransport({
     host: 'smtp.ethereal.email',
@@ -25,8 +25,6 @@ var transporterGmail = nodemailer.createTransport({
     service: 'gmail',
     auth: {
         user: mailAdmin,
-        // ! Con 2FA, necesario Contraseña de Aplicación
-        // ! Sin 2FA Aplicacion Poco Segura https://www.google.com/settings/security/lesssecureapps
         pass: config.GMAIL_PASS,
     },
 });
@@ -69,8 +67,8 @@ exports.gmailRegistro = gmailRegistro;
 function smsMensajeAdmin(texto, autor) {
     client.messages.create({
         body: "Mensaje recibido de " + autor + " - texto recibido: " + texto,
-        from: '+17404956791',
-        to: '+5401130252875',
+        from: config.TWILIO_SMS,
+        to: config.ADMIN_CEL_SMS,
     })
         .then(function (message) { return logger_js_1.consoleLogger.info(message.sid); })
         .catch(function (error) { return logger_js_1.errorLogger.error(error); });
@@ -92,8 +90,8 @@ exports.gmailCompra = gmailCompra;
 function wappCompra(productos, nombre, email) {
     client.messages.create({
         body: "Nuevo pedido de " + nombre + " - " + email + " - lista de productos: " + productos,
-        from: 'whatsapp:+14155238886',
-        to: 'whatsapp:+5491130252875'
+        from: "whatsapp:" + config.TWILIO_WAPP,
+        to: "whatsapp:" + config.ADMIN_CEL_WAPP
     })
         .then(function (message) { return logger_js_1.consoleLogger.info(message.sid); })
         .catch(function (error) { return logger_js_1.errorLogger.error(error); });
@@ -102,7 +100,7 @@ exports.wappCompra = wappCompra;
 function smsCompra(telefono) {
     client.messages.create({
         body: "Su pedido ha sido recibido y se encuentra en proceso",
-        from: '+17404956791',
+        from: config.TWILIO_SMS,
         to: telefono,
     })
         .then(function (message) { return logger_js_1.consoleLogger.info(message.sid); })

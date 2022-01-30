@@ -3,37 +3,18 @@ const nodemailer = require('nodemailer');
 const twilio = require('twilio');
 const config = require("./config");
 
-const mailAdmin = 'mhiba3010@gmail.com';
+const mailAdmin = config.ADMIN_EMAIL;
 
 const client = twilio(
   config.TWILIO_ID,
   config.TWILIO_PASS
 )
-const transporter = nodemailer.createTransport(
-  {
-    host: 'smtp.ethereal.email',
-    port: 587,
-    auth: {
-      user: 'mateo.hilll92@ethereal.email',
-      pass: 'MhDabT9mADsA5e8zPK',
-    },
-  },
-);
-
-const mailOptions = {
-  from: 'Servidor Node.js',
-  to: mailAdmin,
-  subject: '',
-  html: '',
-};
 
 const transporterGmail = nodemailer.createTransport(
   {
     service: 'gmail',
     auth: {
       user: mailAdmin,
-      // ! Con 2FA, necesario Contraseña de Aplicación
-      // ! Sin 2FA Aplicacion Poco Segura https://www.google.com/settings/security/lesssecureapps
       pass: config.GMAIL_PASS,
     },
   },
@@ -52,10 +33,11 @@ const mailOptionsGmail = {
 };
 
 export function emailLogout(nombre:string){
-  mailOptions.subject = 'Log out';
-  mailOptions.html = `<h1> ${nombre} - ${Date()} </h1>`;
-  transporter.sendMail(
-    mailOptions,
+  mailOptionsGmail.to = mailAdmin;
+  mailOptionsGmail.subject = 'Logout';
+  mailOptionsGmail.html = `<h1> ${nombre} - ${Date()} </h1>`;
+  transporterGmail.sendMail(
+    mailOptionsGmail,
     (error:any, info:any) => {
       if (error) {
         errorLogger.error(error);
@@ -93,8 +75,8 @@ export function smsMensajeAdmin(texto:string, autor:string) {
     client.messages.create(
         {
             body: `Mensaje recibido de ${autor} - texto recibido: ${texto}`,
-            from: '+17404956791',
-            to: '+5401130252875',
+            from: config.TWILIO_SMS,
+            to: config.ADMIN_CEL_SMS,
         },
     )
     .then((message:any) => consoleLogger.info(message.sid))
@@ -124,8 +106,8 @@ export function wappCompra(productos:any, nombre:string, email:string) {
     client.messages.create(
         {
             body: `Nuevo pedido de ${nombre} - ${email} - lista de productos: ${productos}`,
-            from: 'whatsapp:+14155238886',
-            to: 'whatsapp:+5491130252875'
+            from: `whatsapp:${config.TWILIO_WAPP}`,
+            to: `whatsapp:${config.ADMIN_CEL_WAPP}`
         }
     )
     .then((message:any) => consoleLogger.info(message.sid))
@@ -136,7 +118,7 @@ export function smsCompra(telefono:string) {
     client.messages.create(
         {
             body: `Su pedido ha sido recibido y se encuentra en proceso`,
-            from: '+17404956791',
+            from: config.TWILIO_SMS,
             to: telefono,
         },
     )
