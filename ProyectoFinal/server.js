@@ -206,7 +206,8 @@ function serverCluster() {
     }
 }
 ;
-if (config.MODO_CLUSTER === true) {
+console.log("modo", config.MODO_CLUSTER);
+if (config.MODO_CLUSTER = true) {
     logger_js_1.consoleLogger.info("modo de ejecucion cluster");
     serverCluster();
 }

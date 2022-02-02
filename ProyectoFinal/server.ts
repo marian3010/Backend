@@ -140,8 +140,9 @@ function serverCluster() {
     msgSocket(server);
   }  
 };
+console.log ("modo", config.MODO_CLUSTER);
 
-if (config.MODO_CLUSTER === true) {
+if (config.MODO_CLUSTER = true) {
   consoleLogger.info(`modo de ejecucion cluster`);
   serverCluster();
 } else {
