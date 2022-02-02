@@ -115,13 +115,11 @@ var Productos = /** @class */ (function () {
                             ;
                         }
                         ;
-                        logger_js_1.consoleLogger.info("lista productos " + listaProductos);
                         logger_js_1.consoleLogger.info("filtro " + filtro);
                         logger_js_1.consoleLogger.info("valor desde " + valorDesde);
                         logger_js_1.consoleLogger.info("valor hasta " + valorHasta);
                         if (!filtro) {
                             logger_js_1.consoleLogger.info("sin filtro");
-                            logger_js_1.consoleLogger.info("lista productos " + listaProductos);
                             return [2 /*return*/, listaProductos];
                         }
                         if (filtro === 'nombre')

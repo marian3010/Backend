@@ -75,6 +75,9 @@ var messageRepository_1 = __importDefault(require("./repositories/messageReposit
 var config = require("./config");
 var numCPUs = require('os').cpus().length;
 var cluster = require('cluster');
+var mongoUser = config.MONGO_USER;
+var mongoPass = config.MONGO_PASS;
+var mongoDbName = config.MONGO_DBNAME;
 // Defino la opción de Base de Datos
 // mongoAtlas será la opción por defecto y del config traigo la opción de persistencia según el entorno.
 var DaoFactory_2 = require("./src/DaoFactory");
@@ -134,7 +137,9 @@ function msgSocket(server) {
                 case 1:
                     _a.trys.push([1, 4, , 5]);
                     logger_js_1.consoleLogger.info("Contectando a la Base de datos...");
-                    return [4 /*yield*/, mongodb_1.MongoClient.connect("mongodb://localhost", {
+                    return [4 /*yield*/, mongodb_1.MongoClient.connect(
+                        // "mongodb://localhost",
+                        "mongodb+srv://" + mongoUser + ":" + mongoPass + "@cluster0.jbzno.mongodb.net/" + mongoDbName + "?retryWrites=true&w=majority", {
                             useNewUrlParser: true,
                             useUnifiedTopology: true,
                         })];
@@ -206,7 +211,6 @@ function serverCluster() {
     }
 }
 ;
-console.log("modo", config.MODO_CLUSTER);
 if (config.MODO_CLUSTER = true) {
     logger_js_1.consoleLogger.info("modo de ejecucion cluster");
     serverCluster();

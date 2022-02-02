@@ -57,13 +57,11 @@ class Productos {
                     listaProductos.push({code:row["code"],title:row["title"],description:row["description"],price:row["price"],thumbnail:row["thumbnail"],stock:row["stock"],timestamp:row["timestamp"],id:row["id"]});
                 };
             };
-            consoleLogger.info(`lista productos ${listaProductos}`)
             consoleLogger.info(`filtro ${filtro}`);
             consoleLogger.info(`valor desde ${valorDesde}`);
             consoleLogger.info(`valor hasta ${valorHasta}`);
             if (!filtro) {
                 consoleLogger.info("sin filtro")
-                consoleLogger.info(`lista productos ${listaProductos}`)
                 return listaProductos;
             }    
             if (filtro === 'nombre') 
