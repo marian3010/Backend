@@ -50,3 +50,6 @@
 
 ## Chat de Mensajes
 #### Para la prueba del chat, entrar a la ruta "/productos/" 
+
+## Ruta para correr el proyecto en Heroku
+#### https://ecomm-mariana.herokuapp.com/productos/
