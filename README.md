@@ -19,15 +19,15 @@
     MONGO_PASS: process.env.MONGO_PASS
 
 ## Persistencias
-#### en entorno de desarrollo, FileSystem
-#### en entorno productivo, mongoAtlas
-#### funcionan todos los dao, salvo la ruta "carrito/comprar/:id_carrito" que solo está hecho en fileSystem y mongoAtlas
+#### En entorno de desarrollo, FileSystem
+#### En entorno productivo, mongoAtlas
+#### Funcionan todos los dao, salvo la ruta "carrito/comprar/:id_carrito" que solo está hecho en fileSystem y mongoAtlas
 
 ## Rutas para las pruebas
 ### Login
-#### "ecommerce/registro" --> muestra formulario de registro, y de ahí a login
-#### "ecommerce/login" --> muestra formulario de login, y una vez logueado muestra los datos del user logueado
-#### "ecommerce/logout" --> muestra saludo
+#### "ecommerce/registro" --> muestra formulario de registro, y una vez registrado queda logueado con botón para desloguear
+#### "ecommerce/login" --> muestra formulario de login, y una vez logueado muestra los datos del user logueado con botón para desloguear
+#### "ecommerce/logout" --> muestra saludo y luego el form para login.
 #### "ecommerce/info" --> muestra los datos de proceso
 
 ### Productos
@@ -44,4 +44,5 @@
 #### "carrito/borrar/:id" --> elimina un producto del carrito, devuelve producto eliminado en formato json.
 #### "carrito/comprar/:id" --> genera una orden para el user logueado, con los productos del carrito del id pasado como parámetro. Envía comunicaciones vía Twilio. Devuelve los productos comprados en formato json.
 
-### Datos de prueba
+## Chat de Mensajes
+#### Para la prueba del chat, entrar a la ruta "/productos/" 
