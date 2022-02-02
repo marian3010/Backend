@@ -18,6 +18,30 @@
     MONGO_USER: process.env.MONGO_USER,
     MONGO_PASS: process.env.MONGO_PASS
 
-## Rutas
+## Persistencias
+#### en entorno de desarrollo, FileSystem
+#### en entorno productivo, mongoAtlas
+#### funcionan todos los dao, salvo la ruta "carrito/comprar/:id_carrito" que solo está hecho en fileSystem y mongoAtlas
+
+## Rutas para las pruebas
+### Login
+#### "ecommerce/registro" --> muestra formulario de registro, y de ahí a login
+#### "ecommerce/login" --> muestra formulario de login, y una vez logueado muestra los datos del user logueado
+#### "ecommerce/logout" --> muestra saludo
+#### "ecommerce/info" --> muestra los datos de proceso
+
+### Productos
+#### "productos/" --> muestra filtros (no funciona por el front, si funciona por postman con los filtros en el body), muestra lista de productos, y muestra y funciona el chat
+#### "productos/guardar" --> muestra formulario para cargar un nuevo producto, devuelve producto cargado en formato json.
+#### "productos/listar/:id?" --> devuelve la lista de productos en json
+#### "productos/borrar/:id" --> devuelve producto borrado en formato json
+#### "productos/actualizar/:id" --> recibe datos a modificar en el body en formato json, devuelve producto actualizado en formato json
+#### "productos/graphql" --> tiene implementados los metodos para guardarProducto, getProducto por Id, y getProductos
+
+### Carrito
+#### "carrito/listar/:id?" --> devuelve lista de productos o producto por id en formato json
+#### "carrito/agregar/:id_producto/:cant" --> agrega al carrito un producto por su id, y con la cantidad pasada por parámetro. Devuelve producto agregado en formato json.
+#### "carrito/borrar/:id" --> elimina un producto del carrito, devuelve producto eliminado en formato json.
+#### "carrito/comprar/:id" --> genera una orden para el user logueado, con los productos del carrito del id pasado como parámetro. Envía comunicaciones vía Twilio. Devuelve los productos comprados en formato json.
 
 ### Datos de prueba
