@@ -47,16 +47,14 @@ export const getProducto = async ({id}: any) => {
 
 export const getProductos = async (filtro:any, valorDesde:any, valorHasta:any) => {
   try {
-    const productos = await prods.listarProductos(filtro, valorDesde, valorHasta)
-    return productos;
+    return await prods.listarProductos(filtro, valorDesde, valorHasta)
   } catch(err) {
     console.log(err);
   }
-  return;   
+ 
 };
 
 export const guardarProducto = async ({code, title, description, price, thumbnail, stock}: IGuardarProducto) => {
-
   try {
       const prod = await prods.agregarProducto(code, title, description, price, thumbnail, stock);
       consoleLogger.info(`producto guardado ${JSON.stringify(prod)}`)

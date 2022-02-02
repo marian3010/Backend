@@ -72,15 +72,13 @@ var getProducto = function (_a) {
 };
 exports.getProducto = getProducto;
 var getProductos = function (filtro, valorDesde, valorHasta) { return __awaiter(void 0, void 0, void 0, function () {
-    var productos, err_2;
+    var err_2;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
                 _a.trys.push([0, 2, , 3]);
                 return [4 /*yield*/, exports.prods.listarProductos(filtro, valorDesde, valorHasta)];
-            case 1:
-                productos = _a.sent();
-                return [2 /*return*/, productos];
+            case 1: return [2 /*return*/, _a.sent()];
             case 2:
                 err_2 = _a.sent();
                 console.log(err_2);
