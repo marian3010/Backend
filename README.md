@@ -1,5 +1,9 @@
 # Aplicación de eCommerce para el curso de Backend
 
+## Scripts para ejecutar el proyecto en modo desarrollo y en modo productivo
+
+### ![image](https://user-images.githubusercontent.com/78000027/152186952-857426f4-79b8-4c05-9640-6282d25313b1.png)
+
 ## Configuraciones
     MODE_ENV: process.env.MODE_ENV,
     PORT: process.env.PORT,
